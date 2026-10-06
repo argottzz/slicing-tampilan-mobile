@@ -57,11 +57,23 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 8),
           Stack(
             children: [
-              const CircleAvatar(
-                radius: 62,
-                backgroundColor: Color(0xFFE8DCC8),
-                backgroundImage:
-                    AssetImage('assets/higuruma_pp.jpg'),
+              ClipOval(
+                child: Image.asset(
+                  'assets/higuruma_pp.jpg',
+                  width: 124,
+                  height: 124,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 124,
+                      height: 124,
+                      color: const Color(0xFFE8DCC8),
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.person,
+                          size: 64, color: Colors.white),
+                    );
+                  },
+                ),
               ),
               Positioned(
                 right: 0,
