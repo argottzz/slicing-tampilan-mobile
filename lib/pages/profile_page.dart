@@ -60,8 +60,8 @@ class ProfilePage extends StatelessWidget {
               const CircleAvatar(
                 radius: 62,
                 backgroundColor: Color(0xFFE8DCC8),
-                child: Icon(Icons.person,
-                    size: 64, color: Colors.white),
+                backgroundImage:
+                    AssetImage('assets/higuruma_pp.jpg'),
               ),
               Positioned(
                 right: 0,

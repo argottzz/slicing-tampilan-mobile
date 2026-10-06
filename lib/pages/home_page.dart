@@ -44,9 +44,8 @@ class HomePage extends StatelessWidget {
           ),
           const TaskCard(
             title: "April's content selection",
-            time: '',
+            time: 'Friday 01:00 PM - 02:00 PM',
             dot: AppColors.dotBlue,
-            highlighted: true,
           ),
           const SizedBox(height: 8),
           const SectionHeader('30 Apr (1)'),

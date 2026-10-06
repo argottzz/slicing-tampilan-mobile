@@ -108,13 +108,11 @@ class TaskCard extends StatelessWidget {
   final String title;
   final String time;
   final Color dot;
-  final bool highlighted;
   const TaskCard({
     super.key,
     required this.title,
     required this.time,
     required this.dot,
-    this.highlighted = false,
   });
 
   @override
@@ -123,87 +121,51 @@ class TaskCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: highlighted ? AppColors.cardPurple : Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: highlighted
-            ? null
-            : Border.all(color: AppColors.inputBorder.withValues(alpha: 0.6)),
+        border: Border.all(
+            color: AppColors.inputBorder.withValues(alpha: 0.6)),
       ),
-      child: highlighted
-          ? Row(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 16,
+            height: 16,
+            margin: const EdgeInsets.only(top: 2),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: dot, width: 2),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 28,
-                  height: 28,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.black38),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.description_outlined,
-                      size: 16),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title,
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: 13, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.calendar_month_outlined,
+                        size: 12, color: AppColors.brown),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(time,
                           style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 4),
-                      const Text('In april\'s content selection...',
-                          style: TextStyle(
-                              fontSize: 11, color: Colors.black54)),
-                    ],
-                  ),
-                ),
-              ],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  margin: const EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: dot, width: 2),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(title,
-                          style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600)),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          const Icon(Icons.calendar_month_outlined,
-                              size: 12, color: AppColors.brown),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(time,
-                                style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.brown)),
-                          ),
-                          const Icon(Icons.access_time,
-                              size: 12, color: Colors.black38),
-                        ],
-                      ),
-                    ],
-                  ),
+                              fontSize: 11, color: AppColors.brown)),
+                    ),
+                    const Icon(Icons.access_time,
+                        size: 12, color: Colors.black38),
+                  ],
                 ),
               ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }

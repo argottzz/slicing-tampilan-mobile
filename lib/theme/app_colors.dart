@@ -10,7 +10,6 @@ class AppColors {
   static const disabledText = Color(0xFFB5B5B5);
   static const cream = Color(0xFFFAF7F1);
   static const searchBg = Color(0xFFF3EEE5);
-  static const cardPurple = Color(0xFFEDE8FF);
   static const fabPurple = Color(0xFFC9BCFF);
   static const brown = Color(0xFFA67C3B);
   static const selectedBlue = Color(0xFF2F7CF6);

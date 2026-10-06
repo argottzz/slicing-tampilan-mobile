@@ -27,9 +27,8 @@ class TodayPage extends StatelessWidget {
         ),
         TaskCard(
           title: "April's content selection",
-          time: '',
+          time: 'Friday 01:00 PM - 02:00 PM',
           dot: AppColors.dotBlue,
-          highlighted: true,
         ),
         TaskCard(
           title: 'Design Wireframe',
