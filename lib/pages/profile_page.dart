@@ -19,10 +19,10 @@ class ProfilePage extends StatelessWidget {
             height: 38,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: AppColors.cream,
+              color: AppColors.navy.withValues(alpha: 0.06),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, size: 18, color: Colors.black54),
+            child: Icon(icon, size: 18, color: AppColors.navy),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -32,7 +32,7 @@ class ProfilePage extends StatelessWidget {
                 Text(label,
                     style: const TextStyle(
                         fontSize: 10,
-                        color: Colors.black45,
+                        color: AppColors.inputHint,
                         letterSpacing: 0.4)),
                 const SizedBox(height: 2),
                 Text(value,
@@ -42,7 +42,7 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const Icon(Icons.chevron_right,
-              size: 18, color: Colors.black26),
+              size: 18, color: AppColors.inputHint),
         ],
       ),
     );
@@ -67,7 +67,7 @@ class ProfilePage extends StatelessWidget {
                     return Container(
                       width: 124,
                       height: 124,
-                      color: const Color(0xFFE8DCC8),
+                      color: AppColors.inputBorder,
                       alignment: Alignment.center,
                       child: const Icon(Icons.person,
                           size: 64, color: Colors.white),
@@ -87,7 +87,7 @@ class ProfilePage extends StatelessWidget {
                     border: Border.all(color: AppColors.inputBorder),
                   ),
                   child: const Icon(Icons.edit,
-                      size: 14, color: Colors.black54),
+                      size: 14, color: AppColors.navy),
                 ),
               ),
             ],

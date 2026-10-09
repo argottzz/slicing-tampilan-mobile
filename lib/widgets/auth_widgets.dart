@@ -41,7 +41,61 @@ class LeafLogo extends StatelessWidget {
   }
 }
 
-/// Header kecil dipakai di Login / Signup / Register.
+/// Ikon Google digambar ulang (tanpa package tambahan).
+class GoogleGIcon extends StatelessWidget {
+  final double size;
+  const GoogleGIcon({super.key, this.size = 20});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _GoogleGPainter(),
+    );
+  }
+}
+
+class _GoogleGPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final s = size.width;
+    final stroke = s * 0.20;
+    final rect = Rect.fromLTWH(stroke / 2, stroke / 2, s - stroke, s - stroke);
+
+    Paint strokePaint(Color c) => Paint()
+      ..color = c
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.butt;
+
+    // Lingkaran penuh dibagi 4 warna khas Google.
+    canvas.drawArc(rect, -0.5, 1.35, false,
+        strokePaint(const Color(0xFF4285F4)));
+    canvas.drawArc(rect, 0.85, 1.10, false,
+        strokePaint(const Color(0xFF34A853)));
+    canvas.drawArc(rect, 1.95, 1.60, false,
+        strokePaint(const Color(0xFFFBBC05)));
+    canvas.drawArc(rect, 3.55, 2.23, false,
+        strokePaint(const Color(0xFFEA4335)));
+
+    // Palang horizontal G.
+    final barPaint = Paint()..color = const Color(0xFF4285F4);
+    canvas.drawRect(
+      Rect.fromLTWH(
+        size.width / 2,
+        size.height / 2 - stroke / 2,
+        size.width / 2 - stroke / 2,
+        stroke,
+      ),
+      barPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Header kecil dipakai di Login / Register.
 class AuthHeader extends StatelessWidget {
   final String subtitle;
   const AuthHeader({super.key, this.subtitle = 'Work without limits'});
@@ -126,6 +180,7 @@ class AuthLabel extends StatelessWidget {
 }
 
 /// Tombol Continue pil penuh, abu saat disabled & hijau saat enabled.
+/// Teks center, chevron rata kanan seperti desain.
 class ContinueButton extends StatelessWidget {
   final bool enabled;
   final String text;
@@ -153,15 +208,20 @@ class ContinueButton extends StatelessWidget {
           disabledForegroundColor: AppColors.disabledText,
           elevation: 0,
           shape: const StadiumBorder(),
+          padding: EdgeInsets.zero,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Text(text,
-                style: const TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w600)),
-            const SizedBox(width: 4),
-            const Icon(Icons.chevron_right, size: 18),
+            Center(
+              child: Text(text,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+            ),
+            const Positioned(
+              right: 18,
+              child: Icon(Icons.chevron_right, size: 18),
+            ),
           ],
         ),
       ),

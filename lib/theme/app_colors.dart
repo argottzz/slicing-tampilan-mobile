@@ -16,4 +16,13 @@ class AppColors {
   static const dotRed = Color(0xFFE26D5A);
   static const dotBlue = Color(0xFF3E8BFF);
   static const dotGreen = Color(0xFF4CC38A);
+
+  // Alias tema utama (splash + auth). Pakai ini untuk halaman lain.
+  static const primaryNavy = navy;
+  static const accent = leafGreen;
+  static const accentDark = leafGreenDark;
+  static const link = navy;
+  static const muted = inputHint;
+  static const cardBg = Colors.white;
+  static const fieldBg = Colors.white;
 }

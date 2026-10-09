@@ -27,15 +27,15 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     final showFab = _index == 0 || _index == 1;
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: IndexedStack(index: _index, children: _pages),
       ),
       floatingActionButton: showFab
           ? FloatingActionButton(
               onPressed: () {},
-              backgroundColor: AppColors.fabPurple,
-              foregroundColor: Colors.black87,
+              backgroundColor: AppColors.leafGreen,
+              foregroundColor: AppColors.navy,
               shape: const CircleBorder(),
               child: const Icon(Icons.add),
             )
@@ -45,8 +45,8 @@ class _MenuPageState extends State<MenuPage> {
         onTap: (i) => setState(() => _index = i),
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: AppColors.selectedBlue,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: AppColors.navy,
+        unselectedItemColor: AppColors.inputHint,
         selectedFontSize: 11,
         unselectedFontSize: 11,
         items: const [

@@ -3,8 +3,8 @@ import '../theme/app_colors.dart';
 import '../widgets/auth_widgets.dart';
 import 'menu_page.dart';
 
-/// Signup — contoh state terisi, tombol Continue hijau
-/// (mockup kanan screenshot Auth).
+/// Signup disamakan dengan Login: satu halaman auth dinamis.
+/// Kosong -> tombol abu, terisi valid -> tombol hijau.
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
 
@@ -14,16 +14,9 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _email;
-  late final TextEditingController _password;
+  final _email = TextEditingController();
+  final _password = TextEditingController();
   bool _obscure = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _email = TextEditingController(text: 'dillerragip@gmail.com');
-    _password = TextEditingController(text: 'password123');
-  }
 
   @override
   void dispose() {
@@ -39,17 +32,9 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text('Sign up',
-            style: TextStyle(color: Colors.black, fontSize: 16)),
-        centerTitle: true,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Form(
             key: _formKey,
             onChanged: () => setState(() {}),
@@ -65,7 +50,7 @@ class _SignupPageState extends State<SignupPage> {
                   keyboardType: TextInputType.emailAddress,
                   style: const TextStyle(
                       fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: Colors.black),
                   decoration: authInputDecoration(
                       hint: 'dillerragip@gmail.com'),
@@ -81,22 +66,27 @@ class _SignupPageState extends State<SignupPage> {
                 TextFormField(
                   controller: _password,
                   obscureText: _obscure,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration: authInputDecoration(
                     hint: 'min. 8 characters',
                     suffix: IconButton(
                       onPressed: () =>
                           setState(() => _obscure = !_obscure),
                       icon: Icon(
-                        Icons.visibility_off_outlined,
+                        _obscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
                         size: 18,
-                        color: Colors.grey.shade400,
+                        color: AppColors.inputHint,
                       ),
                     ),
                   ),
                   validator: (v) {
-                    if (v == null || v.length < 8) {
-                      return 'Minimal 8 karakter';
-                    }
+                    if (v == null || v.isEmpty) return 'Password wajib diisi';
+                    if (v.length < 8) return 'Minimal 8 karakter';
                     return null;
                   },
                 ),
@@ -116,13 +106,9 @@ class _SignupPageState extends State<SignupPage> {
                 const SizedBox(height: 16),
                 const OrDivider(),
                 const SizedBox(height: 16),
-                SocialButton(
+                const SocialButton(
                   text: 'Sign up with Google',
-                  icon: const Text('G',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.selectedBlue)),
+                  icon: GoogleGIcon(size: 20),
                 ),
                 const SizedBox(height: 12),
                 const SocialButton(

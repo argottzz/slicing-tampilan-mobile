@@ -3,8 +3,8 @@ import '../theme/app_colors.dart';
 import '../widgets/auth_widgets.dart';
 import 'menu_page.dart';
 
-/// Register — mirip Auth + field Nama & Konfirmasi password.
-/// Halaman ke-8.
+/// Register — desain disamakan persis dengan Login/Auth.
+/// Satu sistem: header, input pil, Continue dinamis, divider, social.
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
@@ -41,30 +41,26 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: const BackButton(color: Colors.black),
-        title: const Text('Register',
-            style: TextStyle(color: Colors.black, fontSize: 16)),
-        centerTitle: true,
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Form(
             key: _formKey,
             onChanged: () => setState(() {}),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const AuthHeader(subtitle: 'Create your account'),
-                const SizedBox(height: 28),
+                const AuthHeader(),
+                const SizedBox(height: 36),
                 const AuthLabel('Full name'),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _name,
                   textCapitalization: TextCapitalization.words,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration:
                       authInputDecoration(hint: 'Ralph Fernando'),
                   validator: (v) {
@@ -75,12 +71,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
                 const AuthLabel('Your email address'),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration: authInputDecoration(
                       hint: 'dillerragip@gmail.com'),
                   validator: (v) {
@@ -89,12 +89,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
                 const AuthLabel('Choose a password'),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _password,
                   obscureText: _obscure1,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration: authInputDecoration(
                     hint: 'min. 8 characters',
                     suffix: IconButton(
@@ -117,12 +121,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 18),
                 const AuthLabel('Confirm password'),
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _confirm,
                   obscureText: _obscure2,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration: authInputDecoration(
                     hint: 'repeat your password',
                     suffix: IconButton(
@@ -147,7 +155,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 22),
                 ContinueButton(
                   enabled: _canRegister,
-                  text: 'Register',
                   onPressed: () {
                     if (_formKey.currentState?.validate() ?? false) {
                       Navigator.pushReplacement(
@@ -161,13 +168,9 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 16),
                 const OrDivider(),
                 const SizedBox(height: 16),
-                SocialButton(
+                const SocialButton(
                   text: 'Sign up with Google',
-                  icon: const Text('G',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.selectedBlue)),
+                  icon: GoogleGIcon(size: 20),
                 ),
                 const SizedBox(height: 12),
                 const SocialButton(
@@ -186,7 +189,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.selectedBlue)),
+                              color: AppColors.navy)),
                     ),
                   ],
                 ),

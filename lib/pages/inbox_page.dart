@@ -17,7 +17,7 @@ class InboxPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF6E3),
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                   color: AppColors.inputBorder.withValues(alpha: 0.6)),
@@ -29,7 +29,7 @@ class InboxPage extends StatelessWidget {
                   height: 44,
                   alignment: Alignment.center,
                   decoration: const BoxDecoration(
-                    color: Color(0xFFC9A44A),
+                    color: AppColors.navy,
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(Icons.notifications,
@@ -47,8 +47,7 @@ class InboxPage extends StatelessWidget {
                       SizedBox(height: 4),
                       Text('Lorem Ipsmu dolor is amet for a...',
                           style: TextStyle(
-                              fontSize: 11,
-                              color: AppColors.brown)),
+                              fontSize: 11, color: Colors.black54)),
                     ],
                   ),
                 ),
@@ -66,7 +65,7 @@ class InboxPage extends StatelessWidget {
             ),
             child: const Row(
               children: [
-                Icon(Icons.login, size: 20, color: Colors.black54),
+                Icon(Icons.login, size: 20, color: AppColors.navy),
                 SizedBox(width: 12),
                 Expanded(
                   child: Column(

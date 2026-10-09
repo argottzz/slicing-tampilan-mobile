@@ -67,19 +67,20 @@ class SearchField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: 'Search',
         hintStyle:
-            const TextStyle(fontSize: 13, color: Colors.black54),
+            const TextStyle(fontSize: 13, color: AppColors.inputHint),
         prefixIcon: const Icon(Icons.search,
-            size: 20, color: Colors.black54),
+            size: 20, color: AppColors.navy),
         filled: true,
-        fillColor: AppColors.searchBg,
-        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+        fillColor: Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(28),
+          borderSide: const BorderSide(color: AppColors.inputBorder),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(28),
+          borderSide: const BorderSide(color: AppColors.leafGreenDark),
         ),
       ),
     );
@@ -150,15 +151,15 @@ class TaskCard extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(Icons.calendar_month_outlined,
-                        size: 12, color: AppColors.brown),
+                        size: 12, color: AppColors.navy),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(time,
                           style: const TextStyle(
-                              fontSize: 11, color: AppColors.brown)),
+                              fontSize: 11, color: Colors.black54)),
                     ),
                     const Icon(Icons.access_time,
-                        size: 12, color: Colors.black38),
+                        size: 12, color: AppColors.inputHint),
                   ],
                 ),
               ],

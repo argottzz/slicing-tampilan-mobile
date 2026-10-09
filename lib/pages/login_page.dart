@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../widgets/auth_widgets.dart';
-import 'signup_page.dart';
 import 'register_page.dart';
 import 'menu_page.dart';
 
-/// Login — state kosong, tombol Continue abu (mockup tengah screenshot Auth).
+/// Auth dinamis: kosong -> tombol abu, terisi valid -> tombol hijau.
+/// Satu halaman untuk 2 state desain (215458 & 215529).
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Form(
             key: _formKey,
             onChanged: () => setState(() {}),
@@ -58,6 +58,10 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration: authInputDecoration(
                       hint: 'dillerragip@gmail.com'),
                   validator: (v) {
@@ -72,6 +76,10 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   controller: _password,
                   obscureText: _obscure,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black),
                   decoration: authInputDecoration(
                     hint: 'min. 8 characters',
                     suffix: IconButton(
@@ -98,13 +106,9 @@ class _LoginPageState extends State<LoginPage> {
                 const SizedBox(height: 16),
                 const OrDivider(),
                 const SizedBox(height: 16),
-                SocialButton(
+                const SocialButton(
                   text: 'Sign up with Google',
-                  icon: const Text('G',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.selectedBlue)),
+                  icon: GoogleGIcon(size: 20),
                 ),
                 const SizedBox(height: 12),
                 const SocialButton(
@@ -127,20 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.selectedBlue)),
-                    ),
-                    const Text('  •  ',
-                        style: TextStyle(fontSize: 12)),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const SignupPage()),
-                      ),
-                      child: const Text('Lihat contoh terisi',
-                          style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700)),
+                              color: AppColors.navy)),
                     ),
                   ],
                 ),
