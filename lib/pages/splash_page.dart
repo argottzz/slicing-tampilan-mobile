@@ -1,89 +1,112 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
-import '../widgets/auth_widgets.dart';
 import 'login_page.dart';
 
+// Halaman pembuka.
+// Materi #9: Scaffold, Column, Container, Text, ElevatedButton.
+// Materi #8: SingleChildScrollView biar tidak overflow di HP kecil.
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.sizeOf(context).height;
+    // Warna navy untuk header atas.
+    var navy = const Color(0xFF101E33);
+    // Warna hijau muda untuk tombol.
+    var hijau = const Color(0xFF8DEE9C);
+    // Warna hijau tua untuk logo daun.
+    var hijauTua = const Color(0xFF5ED67E);
+    // Tinggi header navy.
+    double headerHeight = 320;
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        top: false,
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. Header navy polos melengkung U (pusat lebih rendah)
+            // 1. Header navy atas + logo putih di tengah bawah.
             Stack(
               clipBehavior: Clip.none,
               children: [
-                ClipPath(
-                  clipper: _HeaderClipper(),
-                  child: Container(
-                    height: screenHeight * 0.44,
-                    width: double.infinity,
-                    color: AppColors.navy,
+                Container(
+                  height: headerHeight,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: navy,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(120),
+                      bottomRight: Radius.circular(120),
+                    ),
                   ),
                 ),
-                // Logo putih tepat menempel di titik terendah U
-                const Positioned(
+                Positioned(
                   left: 0,
                   right: 0,
                   bottom: -44,
-                  child: Center(child: LeafLogo(size: 88)),
+                  child: Center(
+                    child: Container(
+                      width: 88,
+                      height: 88,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Icon(Icons.eco, size: 48, color: hijauTua),
+                          Positioned(
+                            right: 24,
+                            bottom: 22,
+                            child:
+                                Icon(Icons.eco, size: 33, color: navy),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
-
             const SizedBox(height: 76),
 
-            // 2. Judul
+            // 2. Judul.
             const Text(
               'Leafboard',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                letterSpacing: -0.6,
                 color: Colors.black,
               ),
             ),
             const SizedBox(height: 12),
 
-            // 3. Subtitle
+            // 3. Sub judul.
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 48),
               child: Text(
                 'A platform built for a new way of working',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black54,
-                  height: 1.4,
-                ),
+                style: TextStyle(fontSize: 14, color: Colors.black54),
               ),
             ),
+            const SizedBox(height: 64),
 
-            const Spacer(),
-
-            // 4. Tombol pil hijau kecil di tengah seperti foto
+            // 4. Tombol hijau pindah ke Login.
             Padding(
               padding: const EdgeInsets.only(bottom: 48),
               child: SizedBox(
                 height: 44,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const LoginPage(),
+                        builder: (context) => const LoginPage(),
                       ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.leafGreen,
+                    backgroundColor: hijau,
                     foregroundColor: Colors.black87,
                     elevation: 0,
                     shape: const StadiumBorder(),
@@ -111,29 +134,4 @@ class SplashPage extends StatelessWidget {
       ),
     );
   }
-}
-
-/// Navy polos seperti foto: sisi kiri/kanan lurus vertikal dulu
-/// sampai (h-110), baru menikuk membulat ke dasar U (~h-12).
-class _HeaderClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final w = size.width;
-    final h = size.height;
-
-    final path = Path()
-      ..lineTo(0, h - 110)
-      ..cubicTo(
-        0, h + 20,
-        w, h + 20,
-        w, h - 110,
-      )
-      ..lineTo(w, 0)
-      ..close();
-
-    return path;
-  }
-
-  @override
-  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => true;
 }

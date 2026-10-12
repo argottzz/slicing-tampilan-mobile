@@ -1,119 +1,151 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
-import '../widgets/menu_widgets.dart';
 
-// Inbox — kartu Aktifitas Login baru (mockup ke-3 screenshot Menu).
-// Ditambahkan responsive untuk lebar layar handphone.
+// Inbox - daftar notifikasi.
+// Materi #9: Column, Container, Row, Icon, Text.
 class InboxPage extends StatelessWidget {
   const InboxPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
-    final isLandscape = orientation == Orientation.landscape;
+    // Warna navy untuk ikon.
+    var navy = const Color(0xFF101E33);
+    // Warna abu garis.
+    var garis = const Color(0xFFE9E4DC);
 
     return SingleChildScrollView(
-      padding: EdgeInsets.symmetric(
-          horizontal: isLandscape ? 12.0 : 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          // Header menu
-          MenuHeader(),
-
-          // SizedBox with adaptive height - not const because depends on orientation
-          SizedBox(height: isLandscape ? 12.0 : 18.0),
-
-          // Card 1: Notifikasi baru
-          _BuildCard(isLandscape: isLandscape),
-
-          SizedBox(height: isLandscape ? 10.0 : 12.0),
-
-          // Card 2: Login dari perangkat baru
-          _BuildCard2(isLandscape: isLandscape),
-        ],
-      ),
-    );
-  }
-}
-
-class _BuildCard extends StatelessWidget {
-  final bool isLandscape;
-  const _BuildCard({required this.isLandscape});
-
-  @override
-  Widget build(BuildContext context) {
-    final size = isLandscape ? 40.0 : 44.0;
-    final iconSize = isLandscape ? 20.0 : 22.0;
-    return Container(
-      padding: EdgeInsets.all(isLandscape ? 12.0 : 14.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(isLandscape ? 12.0 : 16.0),
-        border: Border.all(
-            color: AppColors.inputBorder.withValues(alpha: 0.6)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: size,
-            height: size,
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: AppColors.navy,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.notifications, color: Colors.white, size: iconSize),
+          // Header atas: lingkaran FR + lonceng.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: garis),
+                  color: Colors.white,
+                ),
+                child: const Text(
+                  'FR',
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: garis),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.notifications_outlined, size: 20),
+                    SizedBox(width: 8),
+                    Icon(Icons.more_horiz, size: 20),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          const SizedBox(height: 18),
+
+          // Kartu 1: aktifitas login.
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: garis),
+            ),
+            child: Row(
               children: [
-                Text('Aktifitas Login baru',
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 4),
-                Text('Lorem Ipsmu dolor is amet for a...',
-                    style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                Container(
+                  width: 44,
+                  height: 44,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: navy,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.notifications,
+                    color: Colors.white,
+                    size: 22,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Aktifitas Login baru',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Lorem Ipsmu dolor is amet for a...',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
+          const SizedBox(height: 12),
 
-class _BuildCard2 extends StatelessWidget {
-  final bool isLandscape;
-  const _BuildCard2({required this.isLandscape});
-
-  @override
-  Widget build(BuildContext context) {
-    final iconSize = isLandscape ? 20.0 : 20.0;
-    return Container(
-      padding: EdgeInsets.all(isLandscape ? 12.0 : 14.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(isLandscape ? 12.0 : 16.0),
-        border: Border.all(
-            color: AppColors.inputBorder.withValues(alpha: 0.6)),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.notifications_outlined,
-              size: iconSize, color: AppColors.navy),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Kartu 2: login perangkat baru.
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: garis),
+            ),
+            child: Row(
               children: [
-                Text('Login dari perangkat baru',
-                    style: const TextStyle(
-                        fontSize: 12, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 2),
-                Text('Hari ini, 08:41 • Jakarta',
-                    style: const TextStyle(fontSize: 11, color: Colors.black54)),
+                Icon(
+                  Icons.notifications_outlined,
+                  size: 20,
+                  color: navy,
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Login dari perangkat baru',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Hari ini, 08:41 - Jakarta',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

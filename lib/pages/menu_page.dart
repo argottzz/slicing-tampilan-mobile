@@ -1,11 +1,11 @@
+// Halaman Menu - menampung 4 halaman dengan BottomNavigationBar
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
 import 'home_page.dart';
 import 'today_page.dart';
 import 'inbox_page.dart';
 import 'profile_page.dart';
 
-/// Shell Menu dengan BottomNav — menampung 4 halaman mockup Menu.
+// StatefulWidget karena tab bisa ganti-ganti dengan setState
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
 
@@ -14,9 +14,11 @@ class MenuPage extends StatefulWidget {
 }
 
 class _MenuPageState extends State<MenuPage> {
-  int _index = 2; // default Inbox sesuai mockup terpilih
+  // index untuk pindah tab, mulai dari 0 = Home
+  int index = 0;
 
-  static const _pages = [
+  // daftar halaman untuk tiap tab
+  List<Widget> pages = [
     HomePage(),
     TodayPage(),
     InboxPage(),
@@ -25,40 +27,62 @@ class _MenuPageState extends State<MenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    final showFab = _index == 0 || _index == 1;
+    // warna langsung di sini biar gampang dipahami pemula
+    var navy = Color(0xFF101E33);
+    var hijau = Color(0xFF8DEE9C);
+    var abuHint = Color(0xFFB9B3A8);
+
+    // FAB hanya tampil di tab Home dan Today
+    bool tampilFab = index == 0 || index == 1;
+
     return Scaffold(
       backgroundColor: Colors.white,
+      // pakai pages[index] saja, ganti IndexedStack biar pemula
       body: SafeArea(
-        child: IndexedStack(index: _index, children: _pages),
+        child: pages[index],
       ),
-      floatingActionButton: showFab
+      floatingActionButton: tampilFab
           ? FloatingActionButton(
               onPressed: () {},
-              backgroundColor: AppColors.leafGreen,
-              foregroundColor: AppColors.navy,
-              shape: const CircleBorder(),
-              child: const Icon(Icons.add),
+              backgroundColor: hijau,
+              foregroundColor: navy,
+              shape: CircleBorder(),
+              child: Icon(Icons.add),
             )
           : null,
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _index,
-        onTap: (i) => setState(() => _index = i),
+        currentIndex: index,
+        onTap: (i) {
+          setState(() {
+            index = i;
+          });
+        },
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
-        selectedItemColor: AppColors.navy,
-        unselectedItemColor: AppColors.inputHint,
+        selectedItemColor: navy,
+        unselectedItemColor: abuHint,
         selectedFontSize: 11,
         unselectedFontSize: 11,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_outlined), label: 'Today'),
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.inbox_outlined), label: 'Inbox'),
+            icon: Icon(Icons.calendar_month_outlined),
+            label: 'Today',
+          ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline), label: 'Profil'),
+            icon: Icon(Icons.inbox_outlined),
+            label: 'Inbox',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profil',
+          ),
         ],
       ),
     );
   }
 }
+

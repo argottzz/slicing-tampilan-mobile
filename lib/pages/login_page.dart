@@ -1,172 +1,264 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
-import '../widgets/auth_widgets.dart';
 import 'register_page.dart';
 import 'menu_page.dart';
 
-// Auth dinamis: kosong -> tombol abu, terisi valid -> tombol hijau.
-// Satu halaman untuk 2 state desain (215458 & 215529).
-// Ditambahkan responsive untuk handphone landscape & potrait.
-class LoginPage extends StatefulWidget {
+// Halaman login.
+// Materi #4: TextField, InputDecoration.
+// Materi #9: Scaffold, Column, Row, Text.
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _email = TextEditingController();
-  final _password = TextEditingController();
-  bool _obscure = true;
-
-  bool get _canContinue =>
-      _email.text.contains('@') && _password.text.length >= 8;
-
-  @override
-  void dispose() {
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  void _goMenu() {
-    if (_formKey.currentState?.validate() ?? false) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MenuPage()),
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
-    // Adaptive padding: lebih kecil di landscape
-    final horizontalPadding = isLandscape ? 16.0 : 20.0;
-    final fontSize = isLandscape ? 14.0 : 13.0;
+    // Warna hijau tua untuk logo daun.
+    var hijauTua = const Color(0xFF5ED67E);
+    // Warna abu garis input.
+    var garis = const Color(0xFFE9E4DC);
+    // Warna abu teks hint.
+    var hint = const Color(0xFFB9B3A8);
+    // Warna abu tombol.
+    var abuTombol = const Color(0xFFF0EFEF);
+    // Warna abu teks tombol.
+    var abuTeks = const Color(0xFFB5B5B5);
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: OrientationBuilder(
-          builder: (context, orientation) {
-            return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-              child: Form(
-                key: _formKey,
-                onChanged: () => setState(() {}),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const AuthHeader(),
-                    const SizedBox(height: 36),
-                    AuthLabel('Your email address',
-                        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _email,
-                      keyboardType: TextInputType.emailAddress,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
-                      decoration: authInputDecoration(
-                          hint: 'dillerragip@gmail.com'),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Email wajib diisi';
-                        if (!v.contains('@')) return 'Email tidak valid';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 18),
-                    AuthLabel('Choose a password',
-                        style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.w500)),
-                    const SizedBox(height: 8),
-                    TextFormField(
-                      controller: _password,
-                      obscureText: _obscure,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black),
-                      decoration: authInputDecoration(
-                        hint: 'min. 8 characters',
-                        suffix: IconButton(
-                          onPressed: () =>
-                              setState(() => _obscure = !_obscure),
-                          icon: Icon(
-                            _obscure
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                            size: 18,
-                            color: AppColors.inputHint,
-                          ),
-                        ),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Password wajib diisi';
-                        if (v.length < 8) return 'Minimal 8 karakter';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 22),
-                    ContinueButton(
-                        enabled: _canContinue, onPressed: _goMenu),
-                    const SizedBox(height: 16),
-                    const OrDivider(),
-                    const SizedBox(height: 16),
-                    const SocialButton(
-                      text: 'Sign up with Google',
-                      icon: GoogleGIcon(size: 20),
-                    ),
-                    const SizedBox(height: 12),
-                    const SocialButton(
-                      text: 'Sign up with Apple',
-                      icon: Icon(Icons.apple, size: 20, color: Colors.black),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('Belum punya akun? ',
-                            style: TextStyle(fontSize: 12)),
-                        GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => const RegisterPage()),
-                          ),
-                          child: const Text('Register',
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.navy)),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 28),
-                  ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Judul atas.
+              const SizedBox(height: 12),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.eco, size: 26, color: Color(0xFF5ED67E)),
+                  SizedBox(width: 6),
+                  Text(
+                    'Leafboard',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              const Center(
+                child: Text(
+                  'Work without limits',
+                  style: TextStyle(fontSize: 13, color: Colors.black87),
                 ),
               ),
-            );
-          },
+              const SizedBox(height: 36),
+
+              // Email.
+              const Text(
+                'Your email address',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: 'dillerragip@gmail.com',
+                  hintStyle: TextStyle(fontSize: 13, color: hint),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(color: garis),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(color: hijauTua),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 18),
+
+              // Password.
+              const Text(
+                'Choose a password',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: 'min. 8 characters',
+                  hintStyle: TextStyle(fontSize: 13, color: hint),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(color: garis),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(28),
+                    borderSide: BorderSide(color: hijauTua),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+
+              // Tombol Continue pindah ke Menu.
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MenuPage(),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: abuTombol,
+                    foregroundColor: abuTeks,
+                    elevation: 0,
+                    shape: const StadiumBorder(),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Continue',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Icon(Icons.chevron_right, size: 18),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Garis or.
+              Row(
+                children: [
+                  Expanded(child: Divider(color: garis)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text(
+                      'or',
+                      style: TextStyle(fontSize: 12, color: hint),
+                    ),
+                  ),
+                  Expanded(child: Divider(color: garis)),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              // Tombol Google, hanya tampilan.
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    side: BorderSide(color: garis),
+                    foregroundColor: Colors.black87,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'G',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF4285F4),
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        'Sign up with Google',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // Tombol Apple, hanya tampilan.
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    shape: const StadiumBorder(),
+                    side: BorderSide(color: garis),
+                    foregroundColor: Colors.black87,
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.apple, size: 20, color: Colors.black),
+                      SizedBox(width: 8),
+                      Text(
+                        'Sign up with Apple',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Teks bawah pindah ke Register.
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Belum punya akun? ',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegisterPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 28),
+            ],
+          ),
         ),
       ),
-    );
-  }
-}
-
-class AuthLabel extends StatelessWidget {
-  final String text;
-  final TextStyle? style;
-  const AuthLabel(this.text, {super.key, this.style});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: style ?? const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
     );
   }
 }
