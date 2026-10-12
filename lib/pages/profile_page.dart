@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// Profile — Alex Gilles (mockup kanan screenshot Menu).
+// Profile — Alex Gilles (mockup kanan screenshot Menu).
+// Ditambahkan responsive untuk lebar layar handphone.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
@@ -30,14 +31,11 @@ class ProfilePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(label,
-                    style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.inputHint,
-                        letterSpacing: 0.4)),
+                    style: TextStyle(
+                        fontSize: 10, color: AppColors.inputHint, letterSpacing: 0.4)),
                 const SizedBox(height: 2),
                 Text(value,
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w600)),
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
               ],
             ),
           ),
@@ -108,19 +106,20 @@ class ProfilePage extends StatelessWidget {
             child: Column(
               children: [
                 _infoTile(
-                    icon: Icons.phone_outlined,
-                    label: 'PHONE',
-                    value: '+7 904 599 XXX 11'),
+                  icon: Icons.phone_outlined,
+                  label: 'PHONE',
+                  value: '+7 904 599 XXX 11',
+                ),
                 const Divider(height: 1),
                 _infoTile(
-                    icon: Icons.mail_outlined,
-                    label: 'EMAIL',
-                    value: 'alexg@gmail.com'),
+                  icon: Icons.mail_outlined,
+                  label: 'EMAIL',
+                  value: 'alexg@gmail.com'),
                 const Divider(height: 1),
                 _infoTile(
-                    icon: Icons.location_on_outlined,
-                    label: 'ADDRESS',
-                    value: 'St. Petersburg, Vos...'),
+                  icon: Icons.location_on_outlined,
+                  label: 'ADDRESS',
+                  value: 'St. Petersburg, Vos...'),
               ],
             ),
           ),
