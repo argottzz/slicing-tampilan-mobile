@@ -2,8 +2,22 @@ import 'package:flutter/material.dart';
 import 'register_page.dart';
 import 'menu_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  static const navy = Color(0xFF101E33);
+
+  String _email = '';
+  String _password = '';
+
+  // Tombol Continue bisa diklik (hijau) hanya jika email terisi
+  // dan password minimal 8 karakter.
+  bool get _isiValid => _email.trim().isNotEmpty && _password.length >= 8;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +63,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 8),
               TextField(
                 keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => setState(() => _email = value),
                 decoration: InputDecoration(
                   hintText: 'dillerragip@gmail.com',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
@@ -77,6 +92,7 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 8),
               TextField(
                 obscureText: true,
+                onChanged: (value) => setState(() => _password = value),
                 decoration: InputDecoration(
                   hintText: 'min. 8 characters',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
@@ -102,17 +118,21 @@ class LoginPage extends StatelessWidget {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MenuPage(),
-                      ),
-                    );
-                  },
+                  onPressed: _isiValid
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MenuPage(),
+                            ),
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: abuTombol,
-                    foregroundColor: abuTeks,
+                    backgroundColor: _isiValid ? hijauTua : abuTombol,
+                    foregroundColor: _isiValid ? navy : abuTeks,
+                    disabledBackgroundColor: abuTombol,
+                    disabledForegroundColor: abuTeks,
                     elevation: 0,
                     shape: const StadiumBorder(),
                   ),

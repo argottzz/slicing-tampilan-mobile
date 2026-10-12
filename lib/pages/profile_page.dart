@@ -17,30 +17,14 @@ class ProfilePage extends StatelessWidget {
           Container(
             width: 124,
             height: 124,
-            alignment: Alignment.center,
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               color: garis,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.person,
-              size: 64,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            width: 124,
-            height: 124,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: garis,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.person,
-              size: 64,
-              color: Colors.white,
+            child: Image.asset(
+              'assets/higuruma_pp.jpg',
+              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(height: 12),

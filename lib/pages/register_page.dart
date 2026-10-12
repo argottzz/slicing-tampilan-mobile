@@ -2,8 +2,28 @@ import 'package:flutter/material.dart';
 import 'login_page.dart';
 import 'menu_page.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  static const navy = Color(0xFF101E33);
+
+  String _nama = '';
+  String _email = '';
+  String _password = '';
+  String _konfirmasi = '';
+
+  // Tombol Continue bisa diklik (hijau) hanya jika semua kolom terisi,
+  // password minimal 8 karakter, dan konfirmasi password sama.
+  bool get _isiValid =>
+      _nama.trim().isNotEmpty &&
+      _email.trim().isNotEmpty &&
+      _password.length >= 8 &&
+      _konfirmasi == _password;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +68,7 @@ class RegisterPage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               TextField(
+                onChanged: (value) => setState(() => _nama = value),
                 decoration: InputDecoration(
                   hintText: 'Ralph Fernando',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
@@ -76,6 +97,7 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 8),
               TextField(
                 keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => setState(() => _email = value),
                 decoration: InputDecoration(
                   hintText: 'dillerragip@gmail.com',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
@@ -104,6 +126,7 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 8),
               TextField(
                 obscureText: true,
+                onChanged: (value) => setState(() => _password = value),
                 decoration: InputDecoration(
                   hintText: 'min. 8 characters',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
@@ -132,6 +155,7 @@ class RegisterPage extends StatelessWidget {
               const SizedBox(height: 8),
               TextField(
                 obscureText: true,
+                onChanged: (value) => setState(() => _konfirmasi = value),
                 decoration: InputDecoration(
                   hintText: 'repeat your password',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
@@ -157,17 +181,21 @@ class RegisterPage extends StatelessWidget {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MenuPage(),
-                      ),
-                    );
-                  },
+                  onPressed: _isiValid
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const MenuPage(),
+                            ),
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: abuTombol,
-                    foregroundColor: abuTeks,
+                    backgroundColor: _isiValid ? hijauTua : abuTombol,
+                    foregroundColor: _isiValid ? navy : abuTeks,
+                    disabledBackgroundColor: abuTombol,
+                    disabledForegroundColor: abuTeks,
                     elevation: 0,
                     shape: const StadiumBorder(),
                   ),
