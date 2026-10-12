@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
 
-// Halaman pembuka.
-// Materi #9: Scaffold, Column, Container, Text, ElevatedButton.
-// Materi #8: SingleChildScrollView biar tidak overflow di HP kecil.
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Warna navy untuk header atas.
     var navy = const Color(0xFF101E33);
-    // Warna hijau muda untuk tombol.
     var hijau = const Color(0xFF8DEE9C);
-    // Warna hijau tua untuk logo daun.
     var hijauTua = const Color(0xFF5ED67E);
-    // Tinggi header navy.
     double headerHeight = 320;
 
     return Scaffold(
@@ -23,7 +16,6 @@ class SplashPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. Header navy atas + logo putih di tengah bawah.
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -69,7 +61,6 @@ class SplashPage extends StatelessWidget {
             ),
             const SizedBox(height: 76),
 
-            // 2. Judul.
             const Text(
               'Leafboard',
               style: TextStyle(
@@ -80,7 +71,6 @@ class SplashPage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // 3. Sub judul.
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 48),
               child: Text(
@@ -91,7 +81,6 @@ class SplashPage extends StatelessWidget {
             ),
             const SizedBox(height: 64),
 
-            // 4. Tombol hijau pindah ke Login.
             Padding(
               padding: const EdgeInsets.only(bottom: 48),
               child: SizedBox(

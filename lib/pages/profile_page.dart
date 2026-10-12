@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 
-// Profile - foto, nama, dan info kontak.
-// Materi #9: Column, Container, Row, Icon, Text.
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Warna navy untuk ikon.
     var navy = const Color(0xFF101E33);
-    // Warna abu garis.
     var garis = const Color(0xFFE9E4DC);
-    // Warna abu teks kecil.
     var abu = const Color(0xFFB9B3A8);
 
     return SingleChildScrollView(
@@ -19,7 +14,6 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          // Foto profil lingkaran.
           Container(
             width: 124,
             height: 124,
@@ -35,7 +29,6 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          // Foto profil lingkaran.
           Container(
             width: 124,
             height: 124,
@@ -63,7 +56,6 @@ class ProfilePage extends StatelessWidget {
             ),
             child: Column(
               children: [
-                // Baris phone.
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
@@ -99,7 +91,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 const Divider(height: 1),
-                // Baris email.
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(
@@ -135,7 +126,6 @@ class ProfilePage extends StatelessWidget {
                   ),
                 ),
                 const Divider(height: 1),
-                // Baris alamat.
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   child: Row(

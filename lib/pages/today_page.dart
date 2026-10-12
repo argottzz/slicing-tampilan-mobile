@@ -1,13 +1,10 @@
-// Halaman Today - daftar tugas hari ini
 import 'package:flutter/material.dart';
 
-// StatelessWidget karena tampilannya statis saja
 class TodayPage extends StatelessWidget {
   const TodayPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // warna langsung di sini biar gampang dipahami pemula
     var navy = Color(0xFF101E33);
     var abuBorder = Color(0xFFE9E4DC);
     var abuHint = Color(0xFFB9B3A8);
@@ -19,7 +16,6 @@ class TodayPage extends StatelessWidget {
     return ListView(
       padding: EdgeInsets.fromLTRB(16, 12, 16, 96),
       children: [
-        // header atas: lingkaran FR + tombol lonceng
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -75,7 +71,6 @@ class TodayPage extends StatelessWidget {
           ],
         ),
         SizedBox(height: 12),
-        // kotak search bentuk pil
         TextField(
           decoration: InputDecoration(
             hintText: 'Search',
@@ -98,7 +93,6 @@ class TodayPage extends StatelessWidget {
           ),
         ),
         SizedBox(height: 14),
-        // kartu tugas 1: Design Wireframe
         Container(
           margin: EdgeInsets.only(bottom: 10),
           padding: EdgeInsets.all(12),
@@ -162,7 +156,6 @@ class TodayPage extends StatelessWidget {
             ],
           ),
         ),
-        // kartu tugas 2: Meet with client
         Container(
           margin: EdgeInsets.only(bottom: 10),
           padding: EdgeInsets.all(12),
@@ -226,7 +219,6 @@ class TodayPage extends StatelessWidget {
             ],
           ),
         ),
-        // kartu tugas 3: April content
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(12),
@@ -290,7 +282,6 @@ class TodayPage extends StatelessWidget {
             ],
           ),
         ),
-        // kartu tugas 4
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(12),
@@ -353,7 +344,6 @@ class TodayPage extends StatelessWidget {
             ],
           ),
         ),
-        // kartu tugas 5
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(12),
@@ -416,7 +406,6 @@ class TodayPage extends StatelessWidget {
             ],
           ),
         ),
-        // kartu tugas 6
         Container(
           margin: const EdgeInsets.only(bottom: 10),
           padding: const EdgeInsets.all(12),

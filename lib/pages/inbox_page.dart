@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 
-// Inbox - daftar notifikasi.
-// Materi #9: Column, Container, Row, Icon, Text.
 class InboxPage extends StatelessWidget {
   const InboxPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Warna navy untuk ikon.
     var navy = const Color(0xFF101E33);
-    // Warna abu garis.
     var garis = const Color(0xFFE9E4DC);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         children: [
-          // Header atas: lingkaran FR + lonceng.
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -56,7 +51,6 @@ class InboxPage extends StatelessWidget {
           ),
           const SizedBox(height: 18),
 
-          // Kartu 1: aktifitas login.
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
@@ -108,7 +102,6 @@ class InboxPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Kartu 2: login perangkat baru.
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(

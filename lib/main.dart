@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'pages/splash_page.dart';
 
-// File utama, hanya menampilkan SplashPage.
-// Materi #1: runApp + MaterialApp.
 void main() {
   runApp(const MyApp());
 }
@@ -18,4 +16,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

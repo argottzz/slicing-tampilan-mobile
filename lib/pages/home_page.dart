@@ -1,13 +1,10 @@
-// Halaman Home - Morning Ralph + daftar tugas
 import 'package:flutter/material.dart';
 
-// StatelessWidget karena tampilannya statis saja
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // warna langsung di sini biar gampang dipahami pemula
     var navy = Color(0xFF101E33);
     var abuBorder = Color(0xFFE9E4DC);
     var abuHint = Color(0xFFB9B3A8);
@@ -21,7 +18,6 @@ class HomePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // header atas: lingkaran FR + tombol lonceng
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -77,7 +73,6 @@ class HomePage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 16),
-          // judul sapaan tengah
           Center(
             child: Text(
               'Morning, Ralph',
@@ -92,7 +87,6 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 14),
-          // kotak search bentuk pil
           TextField(
             decoration: InputDecoration(
               hintText: 'Search',
@@ -115,7 +109,6 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16),
-          // judul section Today
           Row(
             children: [
               Text(
@@ -127,7 +120,6 @@ class HomePage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 10),
-          // kartu tugas: Design Wireframe
           Container(
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(12),
@@ -191,7 +183,6 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-          // kartu tugas: Meet with client
           Container(
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(12),
@@ -255,7 +246,6 @@ class HomePage extends StatelessWidget {
               ],
             ),
           ),
-          // kartu tugas: April content
           Container(
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(12),
@@ -320,7 +310,6 @@ class HomePage extends StatelessWidget {
             ),
           ),
           SizedBox(height: 8),
-          // judul section 30 Apr
           Row(
             children: [
               Text(
@@ -332,7 +321,6 @@ class HomePage extends StatelessWidget {
             ],
           ),
           SizedBox(height: 10),
-          // kartu tugas: Brainstorming
           Container(
             margin: EdgeInsets.only(bottom: 10),
             padding: EdgeInsets.all(12),
