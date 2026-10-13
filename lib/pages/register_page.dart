@@ -17,8 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String _password = '';
   String _konfirmasi = '';
 
-  // Tombol Continue bisa diklik (hijau) hanya jika semua kolom terisi,
-  // password minimal 8 karakter, dan konfirmasi password sama.
+  
   bool get _isiValid =>
       _nama.trim().isNotEmpty &&
       _email.trim().isNotEmpty &&

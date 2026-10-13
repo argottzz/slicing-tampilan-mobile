@@ -11,13 +11,21 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   static const navy = Color(0xFF101E33);
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool hidePassword = true;
 
   String _email = '';
   String _password = '';
 
-  // Tombol Continue bisa diklik (hijau) hanya jika email terisi
-  // dan password minimal 8 karakter.
   bool get _isiValid => _email.trim().isNotEmpty && _password.length >= 8;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +70,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) => setState(() => _email = value),
                 decoration: InputDecoration(
@@ -91,11 +100,20 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 8),
               TextField(
-                obscureText: true,
+                controller: passwordController,
+                obscureText: hidePassword,
                 onChanged: (value) => setState(() => _password = value),
                 decoration: InputDecoration(
                   hintText: 'min. 8 characters',
                   hintStyle: TextStyle(fontSize: 13, color: hint),
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      hidePassword ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: () {
+                      setState(() => hidePassword = !hidePassword);
+                    },
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 14,
