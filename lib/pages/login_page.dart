@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'register_page.dart';
+import 'package:tugas_slicing/service/api.dart';
 import 'menu_page.dart';
+import 'register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,6 +20,28 @@ class _LoginPageState extends State<LoginPage> {
   String _password = '';
 
   bool get _isiValid => _email.trim().isNotEmpty && _password.length >= 8;
+
+  Future<void> login() async {
+    try {
+      final response = await ApiService.post('/auth/login', {
+        'email': emailController.text.trim(),
+        'password': passwordController.text,
+      });
+
+      await ApiService.saveToken(response['data']['token']);
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MenuPage()),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -136,16 +159,7 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _isiValid
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MenuPage(),
-                            ),
-                          );
-                        }
-                      : null,
+                  onPressed: _isiValid ? login : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isiValid ? hijauTua : abuTombol,
                     foregroundColor: _isiValid ? navy : abuTeks,

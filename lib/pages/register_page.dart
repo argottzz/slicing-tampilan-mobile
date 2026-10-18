@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_slicing/service/api.dart';
 import 'login_page.dart';
 import 'menu_page.dart';
 
@@ -11,18 +12,57 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   static const navy = Color(0xFF101E33);
+  final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool loading = false;
 
   String _nama = '';
   String _email = '';
   String _password = '';
   String _konfirmasi = '';
 
-  
   bool get _isiValid =>
       _nama.trim().isNotEmpty &&
       _email.trim().isNotEmpty &&
       _password.length >= 8 &&
       _konfirmasi == _password;
+
+  Future<void> register() async {
+    setState(() => loading = true);
+
+    try {
+      final res = await ApiService.post('/auth/register', {
+        'name': usernameController.text.trim(),
+        'email': emailController.text.trim(),
+        'password': passwordController.text,
+      });
+      await ApiService.saveToken(res['data']['token']);
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MenuPage()),
+        (route) => false,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => loading = false);
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +107,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: usernameController,
                 onChanged: (value) => setState(() => _nama = value),
                 decoration: InputDecoration(
                   hintText: 'Ralph Fernando',
@@ -95,6 +136,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: emailController,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: (value) => setState(() => _email = value),
                 decoration: InputDecoration(
@@ -124,6 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: passwordController,
                 obscureText: true,
                 onChanged: (value) => setState(() => _password = value),
                 decoration: InputDecoration(
@@ -180,16 +223,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
-                  onPressed: _isiValid
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const MenuPage(),
-                            ),
-                          );
-                        }
-                      : null,
+                  onPressed: _isiValid && !loading ? register : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _isiValid ? hijauTua : abuTombol,
                     foregroundColor: _isiValid ? navy : abuTeks,
@@ -198,19 +232,25 @@ class _RegisterPageState extends State<RegisterPage> {
                     elevation: 0,
                     shape: const StadiumBorder(),
                   ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Continue',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(width: 8),
-                      Icon(Icons.chevron_right, size: 18),
-                    ],
+                  child: loading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Continue',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(width: 8),
+                            Icon(Icons.chevron_right, size: 18),
+                          ],
                   ),
                 ),
               ),
