@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
         'email': emailController.text.trim(),
         'password': passwordController.text,
       });
-      await ApiService.saveToken(res['data']['token']);
+      await ApiService.saveToken(res['token']);
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
         context,

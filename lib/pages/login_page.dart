@@ -28,7 +28,7 @@ class _LoginPageState extends State<LoginPage> {
         'password': passwordController.text,
       });
 
-      await ApiService.saveToken(response['data']['token']);
+      await ApiService.saveToken(response['token']);
       if (!mounted) return;
 
       Navigator.pushReplacement(
