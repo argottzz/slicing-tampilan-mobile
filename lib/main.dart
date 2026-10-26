@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:tugas_slicing/pages/permission_page.dart';
 import 'pages/menu_page.dart';
 import 'pages/welcom_page.dart';
 import 'service/api.dart';

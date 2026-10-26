@@ -92,7 +92,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    var navy = const Color(0xFF101E33);
     var garis = const Color(0xFFE9E4DC);
     var abu = const Color(0xFFB9B3A8);
 
