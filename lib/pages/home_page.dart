@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tugas_slicing/service/api.dart';
 import 'event_form_page.dart';
+import 'event_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -94,6 +95,12 @@ class _HomePageState extends State<HomePage> {
                   Text('Tanggal: ${e['date'] ?? ''}', style: const TextStyle(fontSize: 12)),
                   Text('Harga: ${e['price'] ?? 0}', style: const TextStyle(fontSize: 12)),
                   Text('Sisa kuota: ${e['available_quota'] ?? e['quota'] ?? 0}', style: const TextStyle(fontSize: 12)),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => EventDetailPage(eventId: e['id'] as int)));
+                    },
+                    child: const Text('Detail'),
+                  ),
                   if (isOwner) ...[
                     const SizedBox(height: 8),
                     Row(
