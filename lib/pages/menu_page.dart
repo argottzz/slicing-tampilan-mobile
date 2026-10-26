@@ -3,6 +3,7 @@ import 'home_page.dart';
 import 'today_page.dart';
 import 'inbox_page.dart';
 import 'profile_page.dart';
+import 'event_form_page.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});
@@ -27,7 +28,7 @@ class _MenuPageState extends State<MenuPage> {
     var hijau = Color(0xFF8DEE9C);
     var abuHint = Color(0xFFB9B3A8);
 
-    bool tampilFab = index == 0 || index == 1;
+    bool tampilFab = index == 0;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -36,7 +37,12 @@ class _MenuPageState extends State<MenuPage> {
       ),
       floatingActionButton: tampilFab
           ? FloatingActionButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const EventFormPage()),
+                );
+              },
               backgroundColor: hijau,
               foregroundColor: navy,
               shape: CircleBorder(),

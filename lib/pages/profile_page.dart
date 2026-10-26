@@ -2,8 +2,60 @@ import 'package:flutter/material.dart';
 import 'package:tugas_slicing/service/api.dart';
 import 'login_page.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  bool loading = true;
+  String name = '';
+  String email = '';
+  String role = 'user';
+  String error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  Future<void> loadProfile() async {
+    try {
+      final res = await ApiService.get('/auth/me');
+      final data = res['data'];
+      setState(() {
+        name = data['name'] ?? '';
+        email = data['email'] ?? '';
+        role = data['role'] ?? 'user';
+        loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        error = e.toString().replaceFirst('Exception: ', '');
+        loading = false;
+      });
+    }
+  }
+
+  Future<void> becomeOrganizer() async {
+    try {
+      final res = await ApiService.post('/auth/become-organizer', {});
+      await ApiService.saveToken(res['token']);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Berhasil jadi organizer')),
+      );
+      loadProfile();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
 
   Future<void> _logout(BuildContext context) async {
     final confirm = await showDialog<bool>(
@@ -44,6 +96,14 @@ class ProfilePage extends StatelessWidget {
     var garis = const Color(0xFFE9E4DC);
     var abu = const Color(0xFFB9B3A8);
 
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (error.isNotEmpty) {
+      return Center(child: Text(error));
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
       child: Column(
@@ -63,125 +123,22 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          const Text('Alex Gilles',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+          Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+          const SizedBox(height: 4),
+          Text(email, style: TextStyle(fontSize: 13, color: abu)),
+          const SizedBox(height: 4),
+          Text('Role: $role', style: TextStyle(fontSize: 13, color: abu)),
           const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: garis),
+          if (role != 'organizer')
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: becomeOrganizer,
+                child: const Text('Jadi Organizer'),
+              ),
             ),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3EEE5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(Icons.phone_outlined,
-                            size: 18, color: navy),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('PHONE',
-                                style:
-                                    TextStyle(fontSize: 10, color: abu)),
-                            const SizedBox(height: 2),
-                            const Text('+7 904 599 XXX 11',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3EEE5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(Icons.mail_outlined,
-                            size: 18, color: navy),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('EMAIL',
-                                style:
-                                    TextStyle(fontSize: 10, color: abu)),
-                            const SizedBox(height: 2),
-                            const Text('alexg@gmail.com',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Divider(height: 1),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF3EEE5),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(Icons.location_on_outlined,
-                            size: 18, color: navy),
-                      ),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('ADDRESS',
-                                style: TextStyle(fontSize: 10)),
-                            SizedBox(height: 2),
-                            Text('St. Petersburg, Vos...',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600)),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             height: 48,

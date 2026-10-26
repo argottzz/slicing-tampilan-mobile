@@ -1,390 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:tugas_slicing/service/api.dart';
+import 'event_form_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var navy = Color(0xFF101E33);
-    var abuBorder = Color(0xFFE9E4DC);
-    var abuHint = Color(0xFFB9B3A8);
-    var hijauTua = Color(0xFF5ED67E);
-    var dotMerah = Color(0xFFE26D5A);
-    var dotBiru = Color(0xFF3E8BFF);
-    var dotHijau = Color(0xFF4CC38A);
+  State<HomePage> createState() => _HomePageState();
+}
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, 96),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: abuBorder),
-                  color: Colors.white,
-                ),
-                child: Text(
-                  'FR',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: abuBorder),
-                ),
-                child: Row(
-                  children: [
-                    Stack(
+class _HomePageState extends State<HomePage> {
+  bool loading = true;
+  String error = '';
+  List<dynamic> events = [];
+  int? currentUserId;
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  Future<void> loadData() async {
+    setState(() {
+      loading = true;
+      error = '';
+    });
+    try {
+      final meRes = await ApiService.get('/auth/me');
+      currentUserId = meRes['data']['id'];
+
+      final eventRes = await ApiService.get('/events');
+      events = eventRes['data'] ?? [];
+    } catch (e) {
+      error = e.toString().replaceFirst('Exception: ', '');
+    } finally {
+      if (mounted) setState(() => loading = false);
+    }
+  }
+
+  Future<void> deleteEvent(int id) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus Event'),
+        content: const Text('Yakin ingin menghapus event ini?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Batal')),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Hapus')),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+    try {
+      await ApiService.delete('/events/$id');
+      loadData();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (error.isNotEmpty) {
+      return Center(child: Text(error));
+    }
+
+    return RefreshIndicator(
+      onRefresh: loadData,
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: events.length,
+        itemBuilder: (context, index) {
+          final e = events[index];
+          final isOwner = currentUserId != null && e['created_by'] == currentUserId;
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(e['title'] ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(e['location'] ?? '', style: const TextStyle(fontSize: 13)),
+                  const SizedBox(height: 4),
+                  Text('Tanggal: ${e['date'] ?? ''}', style: const TextStyle(fontSize: 12)),
+                  Text('Harga: ${e['price'] ?? 0}', style: const TextStyle(fontSize: 12)),
+                  Text('Sisa kuota: ${e['available_quota'] ?? e['quota'] ?? 0}', style: const TextStyle(fontSize: 12)),
+                  if (isOwner) ...[
+                    const SizedBox(height: 8),
+                    Row(
                       children: [
-                        Icon(Icons.notifications_outlined, size: 20),
-                        Positioned(
-                          right: 2,
-                          top: 2,
-                          child: CircleAvatar(
-                            radius: 3,
-                            backgroundColor: Colors.red,
-                          ),
+                        TextButton(
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => EventFormPage(event: e)),
+                            );
+                            if (result == true) loadData();
+                          },
+                          child: const Text('Edit'),
+                        ),
+                        TextButton(
+                          onPressed: () => deleteEvent(e['id']),
+                          child: const Text('Hapus', style: TextStyle(color: Colors.red)),
                         ),
                       ],
                     ),
-                    Container(
-                      height: 16,
-                      width: 1,
-                      color: abuBorder,
-                      margin: EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    Icon(Icons.more_horiz, size: 20),
                   ],
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16),
-          Center(
-            child: Text(
-              'Morning, Ralph',
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.w600),
-            ),
-          ),
-          SizedBox(height: 4),
-          Center(
-            child: Text(
-              'Apryl 27, 2026',
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-          SizedBox(height: 14),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search',
-              hintStyle: TextStyle(fontSize: 13, color: abuHint),
-              prefixIcon: Icon(Icons.search, size: 20, color: navy),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 12,
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28),
-                borderSide: BorderSide(color: abuBorder),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28),
-                borderSide: BorderSide(color: hijauTua),
+                ],
               ),
             ),
-          ),
-          SizedBox(height: 16),
-          Row(
-            children: [
-              Text(
-                'Today (3)',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-              ),
-              SizedBox(width: 4),
-              Icon(Icons.keyboard_arrow_down, size: 18),
-            ],
-          ),
-          SizedBox(height: 10),
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: abuBorder),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: dotMerah, width: 2),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Design Wireframe',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            size: 12,
-                            color: navy,
-                          ),
-                          SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'Friday 08:00 AM - 09:00 AM',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.access_time,
-                            size: 12,
-                            color: abuHint,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: abuBorder),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: dotBiru, width: 2),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Meet with client',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            size: 12,
-                            color: navy,
-                          ),
-                          SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'Friday 10:00 AM - 11:00 AM',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.access_time,
-                            size: 12,
-                            color: abuHint,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: abuBorder),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: dotBiru, width: 2),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "April's content selection",
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            size: 12,
-                            color: navy,
-                          ),
-                          SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'Friday 01:00 PM - 02:00 PM',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.access_time,
-                            size: 12,
-                            color: abuHint,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 8),
-          Row(
-            children: [
-              Text(
-                '30 Apr (1)',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-              ),
-              SizedBox(width: 4),
-              Icon(Icons.keyboard_arrow_down, size: 18),
-            ],
-          ),
-          SizedBox(height: 10),
-          Container(
-            margin: EdgeInsets.only(bottom: 10),
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: abuBorder),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 16,
-                  height: 16,
-                  margin: EdgeInsets.only(top: 2),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: dotHijau, width: 2),
-                  ),
-                ),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Brainstorming session - ideas',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_month_outlined,
-                            size: 12,
-                            color: navy,
-                          ),
-                          SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'Saturday 08:00 AM - 17:00 PM',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.black54,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.access_time,
-                            size: 12,
-                            color: abuHint,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
