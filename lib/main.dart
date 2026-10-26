@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Todo App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
-      home: PermissionPage(),
+      home: const AuthGate(),
     );
   }
 }

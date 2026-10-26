@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String _baseUrl = 'https://n5t1cf2l-3000.asse.devtunnels.ms/api';
+  static const String _baseUrl = 'http://10.0.2.2:8000/api';
   static const String _tokenKey = 'token';
 
   static Future<void> saveToken(String token) async {
