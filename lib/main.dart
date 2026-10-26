@@ -13,9 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Todo App',
+      title: 'GATIX',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(colorSchemeSeed: Colors.indigo, useMaterial3: true),
+      theme: ThemeData(colorSchemeSeed: Colors.deepPurple, useMaterial3: true),
       home: const AuthGate(),
     );
   }
