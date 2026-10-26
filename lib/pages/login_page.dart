@@ -73,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                   Icon(Icons.eco, size: 26, color: Color(0xFF5ED67E)),
                   SizedBox(width: 6),
                   Text(
-                    'Leafboard',
+                    'GATIX',
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -81,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 14),
               const Center(
                 child: Text(
-                  'Work without limits',
+                  'Event Ticketing',
                   style: TextStyle(fontSize: 13, color: Colors.black87),
                 ),
               ),
