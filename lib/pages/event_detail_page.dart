@@ -501,23 +501,29 @@ class _BagianBanner extends StatelessWidget {
                       itemBuilder: (context) => const [
                         PopupMenuItem(
                           value: 'edit',
-                          child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: Icon(Icons.edit_outlined),
-                            title: Text('Edit event'),
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(Icons.edit_outlined),
+                              title: Text('Edit event'),
+                            ),
                           ),
                         ),
                         PopupMenuItem(
                           value: 'hapus',
-                          child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: Icon(
-                              Icons.delete_outline_rounded,
-                              color: AppColors.danger,
-                            ),
-                            title: Text(
-                              'Hapus event',
-                              style: TextStyle(color: AppColors.danger),
+                          child: Material(
+                            type: MaterialType.transparency,
+                            child: ListTile(
+                              contentPadding: EdgeInsets.zero,
+                              leading: Icon(
+                                Icons.delete_outline_rounded,
+                                color: AppColors.danger,
+                              ),
+                              title: Text(
+                                'Hapus event',
+                                style: TextStyle(color: AppColors.danger),
+                              ),
                             ),
                           ),
                         ),

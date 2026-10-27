@@ -281,11 +281,12 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 22),
           Text('Pengaturan akun', style: tema.textTheme.titleMedium),
           const SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
+          Material(
+            color: Colors.white,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.line),
+              side: const BorderSide(color: AppColors.line),
             ),
             child: Column(
               children: [
@@ -338,11 +339,12 @@ class _ProfilePageState extends State<ProfilePage> {
           const SizedBox(height: 22),
           Text('Lainnya', style: tema.textTheme.titleMedium),
           const SizedBox(height: 8),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
+          Material(
+            color: Colors.white,
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.line),
+              side: const BorderSide(color: AppColors.line),
             ),
             child: ListTile(
               leading: const Icon(Icons.info_outline_rounded),
