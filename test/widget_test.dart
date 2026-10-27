@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tugas_slicing/config/api_config.dart';
@@ -14,6 +15,14 @@ void main() {
       expect(formatRupiah(50000), 'Rp50.000');
       expect(formatRupiah(1250000), 'Rp1.250.000');
     });
+  });
+
+  test('apiBaseUrl default web/desktop memakai localhost', () {
+    const override = String.fromEnvironment('API_URL');
+    if (override.isNotEmpty) return;
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) return;
+
+    expect(apiBaseUrl, 'http://localhost:8000/api');
   });
 
   group('formatTanggal', () {
