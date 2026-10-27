@@ -127,8 +127,8 @@ flutter drive --driver=test_driver/integration_test.dart --target=integration_te
 ```
 
 Cakupan integration test:
-- Login peserta, pencarian event, pendaftaran event gratis, konfirmasi pendaftaran event berbayar, tiket pending, filter tiket, dan logout.
-- Login organizer, membuka event miliknya, melihat bukti pembayaran, menyetujui peserta, dan memverifikasi status lewat API.
+- Login peserta, pencarian event, pendaftaran event gratis, konfirmasi pendaftaran event berbayar, tiket pending, filter tiket, pembatalan tiket dengan konfirmasi, dan logout.
+- Login organizer, membuka event miliknya, melihat bukti pembayaran, menyetujui peserta, mengedit judul event, menghapus event dengan konfirmasi, serta memverifikasi status persetujuan dan penghapusan lewat API.
 
 Hasil pengujian terakhir pada mesin pengembangan:
 | Pemeriksaan | Hasil |
@@ -149,7 +149,7 @@ Pengujian API manual juga dilakukan langsung ke backend lokal untuk register/log
 - Pemilihan gambar hanya dari galeri (bukan kamera).
 - Tanggal dari backend dikirim sebagai waktu lokal tanpa zona waktu; aplikasi menampilkannya apa adanya.
 - Belum ada fitur lupa password karena backend belum menyediakannya.
-- Integration test belum mengotomatiskan pemilih gambar galeri, form tanggal/waktu, banner event, dan tombol batal tiket; alur API-nya sudah diuji manual, tetapi interaksi UI tersebut perlu diuji pada perangkat.
+- Integration test belum mengotomatiskan pemilih gambar galeri, pembuatan event dari form lengkap dengan pemilih tanggal/waktu, dan pemasangan banner; alur API-nya sudah diuji manual, tetapi interaksi UI tersebut perlu diuji pada perangkat.
 - Emulator Android tidak dapat dijalankan pada mesin pengembangan karena keterbatasan RAM/commit memory Windows. Build APK berhasil, dan integration test UI dijalankan di Chrome; aplikasi belum diuji pada emulator Android atau HP fisik.
 
 ## Catatan Keamanan
