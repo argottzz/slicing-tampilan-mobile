@@ -181,14 +181,14 @@ class ApiService {
     } on ApiException {
       rethrow;
     } on TimeoutException {
-      throw const ApiException(
+      throw ApiException(
         0,
-        'Koneksi ke server terlalu lama. Periksa jaringan lalu coba lagi.',
+        'Koneksi ke server terlalu lama ($apiBaseUrl). Periksa jaringan lalu coba lagi.',
       );
     } catch (_) {
-      throw const ApiException(
+      throw ApiException(
         0,
-        'Tidak dapat terhubung ke server. Pastikan backend berjalan.',
+        'Tidak dapat terhubung ke server ($apiBaseUrl). Pastikan backend berjalan.',
       );
     }
   }
