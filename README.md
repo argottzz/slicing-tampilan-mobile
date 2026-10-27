@@ -81,8 +81,18 @@ HP dan komputer harus berada di jaringan yang sama. Backend harus listen di `0.0
 
 **Chrome / web** (port 3000 agar sesuai CORS backend):
 ```bash
-flutter run -d chrome --web-port=3000 --dart-define=API_URL=http://localhost:8000/api
+flutter run -d chrome --web-port=3000
 ```
+Tanpa `--dart-define`, web/desktop otomatis memakai `http://localhost:8000/api`. Jangan membuka aplikasi lewat `http://127.0.0.1:3000` dan jangan memakai `--web-hostname=127.0.0.1`, karena CORS backend hanya mengizinkan origin `http://localhost:3000`.
+
+### Jika muncul "Koneksi ke server terlalu lama"
+1. Pastikan backend hidup: `http://localhost:8000/api/health` mengembalikan `{"status":"ok"}`.
+2. Perhatikan alamat API di pesan error atau di bagian bawah tab **Profil**:
+   - Web/desktop: `http://localhost:8000/api`
+   - Emulator Android: `http://10.0.2.2:8000/api`
+   - HP fisik via USB: `http://127.0.0.1:8000/api` setelah `adb reverse tcp:8000 tcp:8000`
+3. Di Chrome, pastikan aplikasi berjalan di port **3000** dan dibuka lewat `localhost`, bukan `127.0.0.1`.
+4. Di HP fisik, jalankan ulang `adb reverse` setiap kali kabel dicabut atau HP disambungkan ulang.
 
 ## Akun Uji
 Tidak ada akun bawaan. Buat akun melalui halaman **Daftar**, lalu:
@@ -130,8 +140,11 @@ Prasyarat:
 
 ```bash
 chromedriver --port=4444
-flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d chrome --web-port=3000 --web-hostname=localhost --dart-define=API_URL=http://localhost:8000/api
+flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d chrome --web-port=3000 --web-hostname=localhost
 ```
+Perintah di atas sengaja tidak memakai `--dart-define` agar sekaligus memverifikasi default web/desktop `http://localhost:8000/api`.
+
+Jika `flutter drive` gagal dengan `AppConnectionException` saat menunggu debug service Chrome, verifikasi manual lewat `flutter run -d chrome --web-port=3000`. Kegagalan tersebut terjadi pada debug service Chrome, bukan pada API.
 
 Cakupan integration test:
 - Login peserta, pencarian event, pendaftaran event gratis, konfirmasi pendaftaran event berbayar, tiket pending, filter tiket, pembatalan tiket dengan konfirmasi, dan logout.
@@ -141,8 +154,10 @@ Hasil pengujian terakhir pada mesin pengembangan:
 | Pemeriksaan | Hasil |
 |---|---|
 | `flutter analyze` | Tidak ada issue |
-| `flutter test` | 5/5 lulus |
-| `flutter drive` (Chrome) | 2/2 lulus |
+| `flutter test` | 6/6 lulus |
+| `flutter build web --release` | Berhasil |
+| `flutter run -d chrome` + login manual | Berhasil: token tersimpan dan Beranda memuat event |
+| `flutter drive` (Chrome) | 2/2 lulus pada uji sebelumnya; percobaan ulang 28 Okt 2026 gagal connect debug Chrome (`AppConnectionException`) |
 | `flutter build apk --debug` | Berhasil |
 | `flutter run` di HP Android | Berhasil: login, Beranda, dan Tiket Saya tampil dengan data backend |
 
@@ -159,8 +174,9 @@ Pengujian API manual juga dilakukan langsung ke backend lokal untuk register/log
 - Belum ada fitur lupa password karena backend belum menyediakannya.
 - Integration test belum mengotomatiskan pemilih gambar galeri, pembuatan event dari form lengkap dengan pemilih tanggal/waktu, dan pemasangan banner; alur API-nya sudah diuji manual, tetapi interaksi UI tersebut perlu diuji pada perangkat.
 - Emulator Android tidak dapat dijalankan pada mesin pengembangan karena keterbatasan RAM/commit memory Windows. Aplikasi sudah dijalankan di HP fisik Android 11 (21061119AG) melalui `adb reverse` dan berhasil login serta menampilkan event/tiket dari backend; perangkat iOS dan emulator Android belum diuji.
+- Pada 28 Oktober 2026, `flutter drive` di Chrome gagal pada tahap koneksi debug service (`AppConnectionException`) walaupun `flutter run -d chrome` dan login manual berhasil. Kegagalan ini berasal dari harness Flutter Web/Chrome di mesin pengembangan, bukan dari endpoint backend; integration test dapat dijalankan ulang saat harness stabil.
 
 ## Catatan Keamanan
 - Jangan commit file `.env` atau kredensial backend.
-- Ganti `API_URL` melalui `--dart-define`, jangan hardcode IP pribadi ke dalam kode.
+- Untuk HP fisik atau backend di mesin lain, tentukan `API_URL` melalui `--dart-define`; jangan hardcode IP pribadi ke dalam kode. Web/desktop otomatis memakai `localhost`.
 - Untuk produksi, gunakan HTTPS, secure storage, dan endpoint logout/refresh token dari backend.
