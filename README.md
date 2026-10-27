@@ -66,7 +66,14 @@ flutter run
 ```
 Default: `http://10.0.2.2:8000/api`
 
-**HP fisik** (ganti dengan IP LAN komputer):
+**HP fisik via USB** (paling mudah, tidak perlu satu jaringan Wi-Fi):
+```bash
+adb reverse tcp:8000 tcp:8000
+flutter run -d <device-id> --dart-define=API_URL=http://127.0.0.1:8000/api
+```
+`adb reverse` meneruskan `localhost:8000` di HP ke backend laptop. Jalankan ulang perintah `adb reverse` setiap kali HP dicabut/di-reconnect.
+
+**HP fisik via Wi-Fi** (ganti dengan IP LAN komputer):
 ```bash
 flutter run --dart-define=API_URL=http://192.168.1.10:8000/api
 ```
@@ -137,6 +144,7 @@ Hasil pengujian terakhir pada mesin pengembangan:
 | `flutter test` | 5/5 lulus |
 | `flutter drive` (Chrome) | 2/2 lulus |
 | `flutter build apk --debug` | Berhasil |
+| `flutter run` di HP Android | Berhasil: login, Beranda, dan Tiket Saya tampil dengan data backend |
 
 Pengujian API manual juga dilakukan langsung ke backend lokal untuk register/login, profil, menjadi organizer, CRUD event dan banner, pendaftaran gratis/berbayar, unggah bukti, pembatalan tiket, daftar/approve peserta, filter/pencarian, serta respons 401/403.
 
@@ -150,7 +158,7 @@ Pengujian API manual juga dilakukan langsung ke backend lokal untuk register/log
 - Tanggal dari backend dikirim sebagai waktu lokal tanpa zona waktu; aplikasi menampilkannya apa adanya.
 - Belum ada fitur lupa password karena backend belum menyediakannya.
 - Integration test belum mengotomatiskan pemilih gambar galeri, pembuatan event dari form lengkap dengan pemilih tanggal/waktu, dan pemasangan banner; alur API-nya sudah diuji manual, tetapi interaksi UI tersebut perlu diuji pada perangkat.
-- Emulator Android tidak dapat dijalankan pada mesin pengembangan karena keterbatasan RAM/commit memory Windows. Build APK berhasil, dan integration test UI dijalankan di Chrome; aplikasi belum diuji pada emulator Android atau HP fisik.
+- Emulator Android tidak dapat dijalankan pada mesin pengembangan karena keterbatasan RAM/commit memory Windows. Aplikasi sudah dijalankan di HP fisik Android 11 (21061119AG) melalui `adb reverse` dan berhasil login serta menampilkan event/tiket dari backend; perangkat iOS dan emulator Android belum diuji.
 
 ## Catatan Keamanan
 - Jangan commit file `.env` atau kredensial backend.
