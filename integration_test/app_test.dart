@@ -23,7 +23,10 @@ void main() {
   late String judulBerbayar;
   late String judulBerbayarDua;
   late String judulGratis;
+  late String judulCrud;
+  late String judulCrudBaru;
   late int eventBerbayarId;
+  late int eventCrudId;
   late int registrasiBerbayarId;
 
   setUpAll(() async {
@@ -33,6 +36,8 @@ void main() {
     judulBerbayar = 'E2E Berbayar $stamp';
     judulBerbayarDua = 'E2E Berbayar Dua $stamp';
     judulGratis = 'E2E Gratis $stamp';
+    judulCrud = 'E2E CRUD $stamp';
+    judulCrudBaru = 'E2E CRUD Baru $stamp';
 
     final peserta = await _json(
       'POST',
@@ -91,6 +96,16 @@ void main() {
       'price': '0',
       'quota': '30',
     });
+
+    final crud = await _buatEvent(tokenOrganizer, {
+      'title': judulCrud,
+      'description': 'Event untuk menguji edit dan hapus dari aplikasi.',
+      'date': _tanggal(60),
+      'location': 'Surabaya E2E Hall',
+      'price': '0',
+      'quota': '5',
+    });
+    eventCrudId = (crud['id'] as num).toInt();
 
     final registrasi = await _json(
       'POST',
@@ -186,6 +201,32 @@ void main() {
     );
     expect(find.text(judulGratis), findsNothing);
 
+    await tester.tap(filterDisetujui);
+    await _tunggu(tester, find.text(judulGratis));
+    await tester.tap(find.text(judulGratis));
+    await _tunggu(tester, find.text('Detail tiket'));
+
+    final tombolBatalkan = find.widgetWithText(
+      OutlinedButton,
+      'Batalkan tiket',
+    );
+    await tester.scrollUntilVisible(
+      tombolBatalkan,
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(tombolBatalkan);
+    await _tunggu(tester, find.text('Batalkan tiket?'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(ElevatedButton, 'Batalkan tiket'),
+      ),
+    );
+    await _tunggu(tester, find.text('Tiket berhasil dibatalkan.'));
+    await tester.pageBack();
+    await _tunggu(tester, find.text('Tiket saya'));
+
     await tester.tap(find.text('Profil'));
     await _tunggu(tester, find.text(namaPeserta));
 
@@ -265,6 +306,48 @@ void main() {
       (item) => item['id'] == registrasiBerbayarId,
     );
     expect(tiket['status'], 'approved');
+
+    await tester.pageBack();
+    await _tunggu(tester, find.byTooltip('Kembali'));
+    await tester.tap(find.byTooltip('Kembali'));
+    await _tunggu(tester, find.byType(NavigationBar));
+
+    await tester.scrollUntilVisible(
+      find.text(judulCrud),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.tap(find.text(judulCrud));
+    await _tunggu(tester, find.byTooltip('Kembali'));
+
+    await tester.tap(find.byTooltip('Aksi event'));
+    await _tunggu(tester, find.text('Edit event'));
+    await tester.tap(find.text('Edit event'));
+    await _tunggu(tester, find.widgetWithText(AppBar, 'Edit event'));
+
+    await tester.enterText(find.byType(TextFormField).first, judulCrudBaru);
+    final simpan = find.widgetWithText(ElevatedButton, 'Simpan perubahan');
+    await tester.ensureVisible(simpan);
+    await tester.tap(simpan);
+    await _tunggu(tester, find.byTooltip('Kembali'));
+    await _tunggu(tester, find.text(judulCrudBaru));
+
+    await tester.tap(find.byTooltip('Aksi event'));
+    await _tunggu(tester, find.text('Hapus event'));
+    await tester.tap(find.text('Hapus event'));
+    await _tunggu(tester, find.text('Hapus event?'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(ElevatedButton, 'Hapus'),
+      ),
+    );
+    await _tunggu(tester, find.byType(NavigationBar));
+
+    expect(
+      await _status('/events/$eventCrudId', token: tokenOrganizer),
+      404,
+    );
   });
 }
 
@@ -365,6 +448,16 @@ String _tanggal(int hariKe) {
   final tanggal = DateTime.now().add(Duration(days: hariKe));
   String dua(int nilai) => nilai.toString().padLeft(2, '0');
   return '${tanggal.year}-${dua(tanggal.month)}-${dua(tanggal.day)}T19:00:00';
+}
+
+Future<int> _status(String path, {String? token}) async {
+  final headers = <String, String>{};
+  if (token != null) headers['Authorization'] = 'Bearer $token';
+  final response = await http.get(
+    Uri.parse('$apiBaseUrl$path'),
+    headers: headers,
+  );
+  return response.statusCode;
 }
 
 Future<Map<String, dynamic>> _json(
