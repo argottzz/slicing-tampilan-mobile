@@ -78,10 +78,7 @@ class _MainShellState extends State<MainShell> {
     final indexAman = _index.clamp(0, halaman.length - 1);
 
     return Scaffold(
-      body: IndexedStack(
-        index: indexAman,
-        children: halaman,
-      ),
+      body: halaman[indexAman],
       bottomNavigationBar: DecoratedBox(
         decoration: const BoxDecoration(
           border: Border(top: BorderSide(color: Color(0xFFE8E0E0))),
