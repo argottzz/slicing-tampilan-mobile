@@ -283,7 +283,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _bukaDetail(EventItem event) async {
-    final berubah = await Navigator.push<bool>(
+    await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) => EventDetailPage(
@@ -293,7 +293,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
 
-    if (berubah == true && mounted) {
+    if (mounted) {
       _load(reset: true);
     }
   }
