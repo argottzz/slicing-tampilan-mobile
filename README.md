@@ -105,11 +105,40 @@ Tidak ada akun bawaan. Buat akun melalui halaman **Daftar**, lalu:
 | Peserta event | `GET /events/:id/registrations` |
 
 ## Pengujian
+
+### Pemeriksaan statis, unit test, dan build Android
 ```bash
 flutter analyze
 flutter test
 flutter build apk --debug
 ```
+
+### Integration test UI di Chrome
+Test ini menjalankan aplikasi Flutter asli di Chrome dan terhubung ke backend lokal. Test membuat akun peserta, akun organizer, tiga event, serta satu tiket berbayar beserta bukti pembayaran; data uji tersebut tetap tersimpan di database setelah test selesai.
+
+Prasyarat:
+1. Backend berjalan di `http://localhost:8000/api`.
+2. Chrome dan chromedriver versi yang cocok tersedia. Jalankan chromedriver di port 4444.
+3. Port 3000 bebas dan CORS backend mengizinkan `http://localhost:3000`.
+
+```bash
+chromedriver --port=4444
+flutter drive --driver=test_driver/integration_test.dart --target=integration_test/app_test.dart -d chrome --web-port=3000 --web-hostname=localhost --dart-define=API_URL=http://localhost:8000/api
+```
+
+Cakupan integration test:
+- Login peserta, pencarian event, pendaftaran event gratis, konfirmasi pendaftaran event berbayar, tiket pending, filter tiket, dan logout.
+- Login organizer, membuka event miliknya, melihat bukti pembayaran, menyetujui peserta, dan memverifikasi status lewat API.
+
+Hasil pengujian terakhir pada mesin pengembangan:
+| Pemeriksaan | Hasil |
+|---|---|
+| `flutter analyze` | Tidak ada issue |
+| `flutter test` | 5/5 lulus |
+| `flutter drive` (Chrome) | 2/2 lulus |
+| `flutter build apk --debug` | Berhasil |
+
+Pengujian API manual juga dilakukan langsung ke backend lokal untuk register/login, profil, menjadi organizer, CRUD event dan banner, pendaftaran gratis/berbayar, unggah bukti, pembatalan tiket, daftar/approve peserta, filter/pencarian, serta respons 401/403.
 
 ## Batasan yang Diketahui
 - Backend tidak menyediakan endpoint logout atau refresh token. Logout hanya menghapus token di perangkat; token tetap valid sampai masa berlakunya habis.
@@ -120,7 +149,8 @@ flutter build apk --debug
 - Pemilihan gambar hanya dari galeri (bukan kamera).
 - Tanggal dari backend dikirim sebagai waktu lokal tanpa zona waktu; aplikasi menampilkannya apa adanya.
 - Belum ada fitur lupa password karena backend belum menyediakannya.
-- Pengujian runtime dilakukan pada emulator Android/Chrome; belum diuji pada iOS atau HP fisik tertentu.
+- Integration test belum mengotomatiskan pemilih gambar galeri, form tanggal/waktu, banner event, dan tombol batal tiket; alur API-nya sudah diuji manual, tetapi interaksi UI tersebut perlu diuji pada perangkat.
+- Emulator Android tidak dapat dijalankan pada mesin pengembangan karena keterbatasan RAM/commit memory Windows. Build APK berhasil, dan integration test UI dijalankan di Chrome; aplikasi belum diuji pada emulator Android atau HP fisik.
 
 ## Catatan Keamanan
 - Jangan commit file `.env` atau kredensial backend.
