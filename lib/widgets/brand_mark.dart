@@ -25,10 +25,14 @@ class BrandMark extends StatelessWidget {
                 ? Border.all(color: Colors.white.withValues(alpha: 0.18))
                 : null,
           ),
-          child: Icon(
-            Icons.local_activity_outlined,
-            size: size * 0.54,
-            color: Colors.white,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(size * 0.3),
+            child: Image.asset(
+              'assets/logo.jpg',
+              width: size,
+              height: size,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         SizedBox(width: size * 0.28),
