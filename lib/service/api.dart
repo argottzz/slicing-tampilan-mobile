@@ -24,13 +24,10 @@ class ApiException implements Exception {
 class ApiService {
   static const String _tokenKey = 'gatix_token';
 
-  // Alamat backend yang berhasil dipakai. Diisi otomatis saat request pertama.
   static String? _resolvedBaseUrl;
 
-  // Alamat terakhir yang dicoba, untuk pesan error yang jelas.
   static String? _lastTriedBaseUrl;
 
-  // Alamat yang sedang dipakai, untuk ditampilkan di pesan error/profil.
   static String get resolvedBaseUrl =>
       _resolvedBaseUrl ?? _lastTriedBaseUrl ?? apiBaseUrl;
 
@@ -64,10 +61,6 @@ class ApiService {
     };
   }
 
-  // Pilih alamat backend otomatis.
-  // - Web/desktop: localhost.
-  // - Android: coba 127.0.0.1 dulu (cocok untuk HP fisik via adb reverse),
-  //   lalu 10.0.2.2 (cocok untuk emulator Android).
   static Future<String> _tentukanBaseUrl() async {
     if (_resolvedBaseUrl != null) return _resolvedBaseUrl!;
 
@@ -98,12 +91,9 @@ class ApiService {
           return candidate;
         }
       } catch (_) {
-        // Coba alamat berikutnya.
       }
     }
 
-    // Jika semua gagal, jangan simpan cache agar request berikutnya
-    // bisa mencoba lagi (misalnya backend baru dinyalakan).
     return candidates.first;
   }
 

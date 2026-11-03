@@ -126,9 +126,6 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-  // Dipanggil setelah login atau register berhasil.
-  // Token sudah disimpan lebih dulu di AuthService, jadi di sini
-  // kita cukup simpan data user dan pindah ke halaman utama.
   void _setelahMasuk(AppUser user) {
     final dariDaftar = _tampilDaftar;
 
@@ -139,7 +136,6 @@ class _AuthGateState extends State<AuthGate> {
       _sesiBerakhir = false;
     });
 
-    // Tampilkan pesan sukses setelah halaman utama selesai dibangun.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = rootNavigatorKey.currentContext;
       if (context == null) return;
@@ -158,7 +154,6 @@ class _AuthGateState extends State<AuthGate> {
     setState(() => _user = user);
   }
 
-  // Logout: hapus token lokal, lalu kembali ke halaman login.
   Future<void> _keluar() async {
     await ApiService.clearToken();
     rootNavigatorKey.currentState?.popUntil((route) => route.isFirst);

@@ -2,14 +2,6 @@ import 'package:flutter/foundation.dart';
 
 const String _apiUrlOverride = String.fromEnvironment('API_URL');
 
-/// Alamat backend yang dipakai aplikasi.
-///
-/// `--dart-define=API_URL=...` selalu menang. Tanpa override:
-/// - Android memakai `10.0.2.2` (alias localhost untuk emulator Android).
-/// - Web, Windows, macOS, Linux, dan iOS memakai `localhost`.
-///
-/// HP Android fisik tetap perlu `--dart-define=API_URL=...` karena
-/// `10.0.2.2` hanya berlaku di emulator.
 String get apiBaseUrl {
   if (_apiUrlOverride.isNotEmpty) return _apiUrlOverride;
 
