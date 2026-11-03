@@ -244,10 +244,15 @@ class ApiService {
     } catch (_) {
       final alamat = resolvedBaseUrl;
       _resolvedBaseUrl = null;
-      throw ApiException(
-        0,
-        'Tidak dapat terhubung ke server ($alamat). Pastikan backend berjalan.',
-      );
+
+      final pesanDasar =
+          'Tidak dapat terhubung ke server ($alamat). Pastikan backend berjalan.';
+
+      final pesan = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)
+          ? '$pesanDasar Jika memakai HP fisik, jalankan: adb reverse tcp:8000 tcp:8000'
+          : pesanDasar;
+
+      throw ApiException(0, pesan);
     }
   }
 
