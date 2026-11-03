@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:flutter/foundation.dart';
 
 import '../config/api_config.dart';
 
@@ -23,6 +23,16 @@ class ApiException implements Exception {
 
 class ApiService {
   static const String _tokenKey = 'gatix_token';
+
+  // Alamat backend yang berhasil dipakai. Diisi otomatis saat request pertama.
+  static String? _resolvedBaseUrl;
+
+  // Alamat terakhir yang dicoba, untuk pesan error yang jelas.
+  static String? _lastTriedBaseUrl;
+
+  // Alamat yang sedang dipakai, untuk ditampilkan di pesan error/profil.
+  static String get resolvedBaseUrl =>
+      _resolvedBaseUrl ?? _lastTriedBaseUrl ?? apiBaseUrl;
 
   static void Function()? onUnauthorized;
 
@@ -54,8 +64,52 @@ class ApiService {
     };
   }
 
-  static Uri _uri(String endpoint, [Map<String, dynamic>? query]) {
-    final uri = Uri.parse('$apiBaseUrl$endpoint');
+  // Pilih alamat backend otomatis.
+  // - Web/desktop: localhost.
+  // - Android: coba 127.0.0.1 dulu (cocok untuk HP fisik via adb reverse),
+  //   lalu 10.0.2.2 (cocok untuk emulator Android).
+  static Future<String> _tentukanBaseUrl() async {
+    if (_resolvedBaseUrl != null) return _resolvedBaseUrl!;
+
+    const override = String.fromEnvironment('API_URL');
+    if (override.isNotEmpty) {
+      _resolvedBaseUrl = override;
+      return override;
+    }
+
+    final candidates = <String>[];
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      candidates.add('http://localhost:8000/api');
+    } else {
+      candidates.addAll([
+        'http://127.0.0.1:8000/api',
+        'http://10.0.2.2:8000/api',
+      ]);
+    }
+
+    for (final candidate in candidates) {
+      _lastTriedBaseUrl = candidate;
+      try {
+        final response = await http
+            .get(Uri.parse('$candidate/health'))
+            .timeout(const Duration(seconds: 2));
+        if (response.statusCode == 200) {
+          _resolvedBaseUrl = candidate;
+          return candidate;
+        }
+      } catch (_) {
+        // Coba alamat berikutnya.
+      }
+    }
+
+    // Jika semua gagal, jangan simpan cache agar request berikutnya
+    // bisa mencoba lagi (misalnya backend baru dinyalakan).
+    return candidates.first;
+  }
+
+  static Future<Uri> _uri(String endpoint, [Map<String, dynamic>? query]) async {
+    final base = await _tentukanBaseUrl();
+    final uri = Uri.parse('$base$endpoint');
 
     if (query == null || query.isEmpty) return uri;
 
@@ -77,7 +131,7 @@ class ApiService {
   }) {
     return _send(() async {
       final response = await http.get(
-        _uri(endpoint, query),
+        await _uri(endpoint, query),
         headers: await _headers(auth: auth),
       );
       return response;
@@ -93,7 +147,7 @@ class ApiService {
     return _send(
       () async {
         final response = await http.post(
-          _uri(endpoint),
+          await _uri(endpoint),
           headers: await _headers(auth: auth),
           body: jsonEncode(body ?? <String, dynamic>{}),
         );
@@ -112,7 +166,7 @@ class ApiService {
     return _send(
       () async {
         final response = await http.patch(
-          _uri(endpoint),
+          await _uri(endpoint),
           headers: await _headers(auth: auth),
           body: jsonEncode(body ?? <String, dynamic>{}),
         );
@@ -125,7 +179,7 @@ class ApiService {
   static Future<dynamic> delete(String endpoint, {bool auth = true}) {
     return _send(() async {
       final response = await http.delete(
-        _uri(endpoint),
+        await _uri(endpoint),
         headers: await _headers(auth: auth),
       );
       return response;
@@ -141,7 +195,7 @@ class ApiService {
     String? fileName,
   }) {
     return _send(() async {
-      final request = http.MultipartRequest(method, _uri(endpoint));
+      final request = http.MultipartRequest(method, await _uri(endpoint));
       request.headers.addAll(await _headers(json: false));
 
       if (fields.isNotEmpty) request.fields.addAll(fields);
@@ -181,14 +235,18 @@ class ApiService {
     } on ApiException {
       rethrow;
     } on TimeoutException {
+      final alamat = resolvedBaseUrl;
+      _resolvedBaseUrl = null;
       throw ApiException(
         0,
-        'Koneksi ke server terlalu lama ($apiBaseUrl). Periksa jaringan lalu coba lagi.',
+        'Koneksi ke server terlalu lama ($alamat). Periksa jaringan lalu coba lagi.',
       );
     } catch (_) {
+      final alamat = resolvedBaseUrl;
+      _resolvedBaseUrl = null;
       throw ApiException(
         0,
-        'Tidak dapat terhubung ke server ($apiBaseUrl). Pastikan backend berjalan.',
+        'Tidak dapat terhubung ke server ($alamat). Pastikan backend berjalan.',
       );
     }
   }

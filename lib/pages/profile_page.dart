@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../config/api_config.dart';
 import '../config/app_theme.dart';
 import '../model/app_user.dart';
 import '../service/api.dart';
@@ -205,7 +204,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               const SizedBox(height: 4),
               Text(
-                'API: $apiBaseUrl',
+                'API: ${ApiService.resolvedBaseUrl}',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       fontSize: 11,
                     ),

@@ -60,6 +60,12 @@ flutter pub get
 
 ### 3. Pilih base URL
 
+Aplikasi sekarang mencoba alamat umum otomatis:
+- Web/desktop: `http://localhost:8000/api`
+- Android: coba `http://127.0.0.1:8000/api` (cocok untuk HP fisik via `adb reverse`), lalu `http://10.0.2.2:8000/api` (cocok untuk emulator).
+
+Jika backend berada di mesin lain, tetap gunakan `--dart-define=API_URL=...`.
+
 **Emulator Android** (default, tanpa `--dart-define`):
 ```bash
 flutter run
