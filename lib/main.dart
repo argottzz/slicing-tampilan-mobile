@@ -126,12 +126,31 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
+  // Dipanggil setelah login atau register berhasil.
+  // Token sudah disimpan lebih dulu di AuthService, jadi di sini
+  // kita cukup simpan data user dan pindah ke halaman utama.
   void _setelahMasuk(AppUser user) {
+    final dariDaftar = _tampilDaftar;
+
     setState(() {
       _user = user;
       _status = _StatusAuth.masuk;
       _tampilDaftar = false;
       _sesiBerakhir = false;
+    });
+
+    // Tampilkan pesan sukses setelah halaman utama selesai dibangun.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = rootNavigatorKey.currentContext;
+      if (context == null) return;
+
+      final pesan = dariDaftar
+          ? 'Pendaftaran berhasil. Selamat datang, ${user.name}.'
+          : 'Login berhasil. Selamat datang, ${user.name}.';
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(pesan)),
+      );
     });
   }
 
@@ -139,6 +158,7 @@ class _AuthGateState extends State<AuthGate> {
     setState(() => _user = user);
   }
 
+  // Logout: hapus token lokal, lalu kembali ke halaman login.
   Future<void> _keluar() async {
     await ApiService.clearToken();
     rootNavigatorKey.currentState?.popUntil((route) => route.isFirst);
@@ -149,6 +169,15 @@ class _AuthGateState extends State<AuthGate> {
       _status = _StatusAuth.belumMasuk;
       _tampilDaftar = false;
       _sesiBerakhir = false;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final context = rootNavigatorKey.currentContext;
+      if (context == null) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Berhasil keluar dari akun.')),
+      );
     });
   }
 
