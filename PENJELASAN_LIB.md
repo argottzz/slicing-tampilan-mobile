@@ -1,0 +1,7925 @@
+# Penjelasan Folder dan Kode di `lib`
+
+Dokumen ini menjelaskan struktur folder `lib`, fungsi setiap file, relasi antar file, dan penjelasan per baris kode.
+
+## Ringkasan Folder
+
+| Folder/File | Isi | Fungsi |
+|---|---|---|
+| `lib/main.dart` | Entry point aplikasi | Menjalankan app dan mengecek sesi login. |
+| `lib/config/` | Konfigurasi | Base URL API, tema, format tanggal/rupiah. |
+| `lib/model/` | Model data | Struktur data User, Event, Ticket. |
+| `lib/service/` | Service API | HTTP, auth, event, registrasi/tiket. |
+| `lib/pages/` | Halaman UI | Login, register, home, detail, form, profil, tiket, peserta. |
+| `lib/widgets/` | Komponen UI | Kartu event/tiket, banner, status, loading/error. |
+| `lib/utils/` | Helper | Pemilihan gambar dari galeri. |
+
+## Relasi Utama
+
+- `main.dart` memanggil `AuthService.me()` untuk cek sesi.
+- `LoginPage` dan `RegisterPage` memanggil `AuthService`.
+- `AuthService` memanggil `ApiService`.
+- `HomePage`, `EventDetailPage`, `ManageEventsPage`, dll. memanggil `EventService` dan `RegistrationService`.
+- Semua service memanggil `ApiService`.
+- `ApiService` memakai `apiBaseUrl` dari `config/api_config.dart`.
+- Model di `model/` dipakai oleh service dan halaman.
+- Widget di `widgets/` dipakai oleh halaman.
+
+## lib/config/api_config.dart
+
+Jumlah baris: 118
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/foundation.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `const String _apiUrlOverride = String.fromEnvironment('API_URL');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `/// Alamat backend yang dipakai aplikasi.` — Komentar: Alamat backend yang dipakai aplikasi.
+- **Baris 6**: `///` — Komentar: 
+- **Baris 7**: `/// `--dart-define=API_URL=...` selalu menang. Tanpa override:` — Komentar: `--dart-define=API_URL=...` selalu menang. Tanpa override:
+- **Baris 8**: `/// - Android memakai `10.0.2.2` (alias localhost untuk emulator Android).` — Komentar: - Android memakai `10.0.2.2` (alias localhost untuk emulator Android).
+- **Baris 9**: `/// - Web, Windows, macOS, Linux, dan iOS memakai `localhost`.` — Komentar: - Web, Windows, macOS, Linux, dan iOS memakai `localhost`.
+- **Baris 10**: `///` — Komentar: 
+- **Baris 11**: `/// HP Android fisik tetap perlu `--dart-define=API_URL=...` karena` — Komentar: HP Android fisik tetap perlu `--dart-define=API_URL=...` karena
+- **Baris 12**: `/// `10.0.2.2` hanya berlaku di emulator.` — Komentar: `10.0.2.2` hanya berlaku di emulator.
+- **Baris 13**: `String get apiBaseUrl {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `  if (_apiUrlOverride.isNotEmpty) return _apiUrlOverride;` — Pengecekan kondisi.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {` — Pengecekan kondisi.
+- **Baris 17**: `    return 'http://10.0.2.2:8000/api';` — Mengembalikan nilai dari fungsi.
+- **Baris 18**: `  }` — Pembuka/penutup blok kode.
+- **Baris 19**: `` — Baris kosong untuk kerapian.
+- **Baris 20**: `  return 'http://localhost:8000/api';` — Mengembalikan nilai dari fungsi.
+- **Baris 21**: `}` — Pembuka/penutup blok kode.
+- **Baris 22**: `` — Baris kosong untuk kerapian.
+- **Baris 23**: `const Duration apiTimeout = Duration(seconds: 20);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 24**: `` — Baris kosong untuk kerapian.
+- **Baris 25**: `const List<String> _bulanPendek = [` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 26**: `  'Jan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `  'Feb',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `  'Mar',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `  'Apr',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `  'Mei',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `  'Jun',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `  'Jul',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `  'Agu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `  'Sep',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `  'Okt',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `  'Nov',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `  'Des',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `];` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `` — Baris kosong untuk kerapian.
+- **Baris 40**: `const List<String> _hari = [` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 41**: `  'Senin',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `  'Selasa',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `  'Rabu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `  'Kamis',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `  'Jumat',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `  'Sabtu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `  'Minggu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `];` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `` — Baris kosong untuk kerapian.
+- **Baris 50**: `DateTime? parseTanggal(String? raw) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `  if (raw == null \|\| raw.trim().isEmpty) return null;` — Pengecekan kondisi.
+- **Baris 52**: `  return DateTime.tryParse(raw.trim());` — Mengembalikan nilai dari fungsi.
+- **Baris 53**: `}` — Pembuka/penutup blok kode.
+- **Baris 54**: `` — Baris kosong untuk kerapian.
+- **Baris 55**: `String formatTanggal(String? raw, {bool pakaiJam = true}) {` — Fungsi/method `formatTanggal` untuk menjalankan bagian logika ini.
+- **Baris 56**: `  final tanggal = parseTanggal(raw);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 57**: `  if (tanggal == null) return '-';` — Pengecekan kondisi.
+- **Baris 58**: `` — Baris kosong untuk kerapian.
+- **Baris 59**: `  final hari = _hari[tanggal.weekday - 1];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 60**: `  final bulan = _bulanPendek[tanggal.month - 1];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 61**: `  final dasar = '$hari, ${tanggal.day} $bulan ${tanggal.year}';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 62**: `` — Baris kosong untuk kerapian.
+- **Baris 63**: `  if (!pakaiJam) return dasar;` — Pengecekan kondisi.
+- **Baris 64**: `` — Baris kosong untuk kerapian.
+- **Baris 65**: `  final jam = tanggal.hour.toString().padLeft(2, '0');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 66**: `  final menit = tanggal.minute.toString().padLeft(2, '0');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 67**: `  return '$dasar • $jam.$menit';` — Mengembalikan nilai dari fungsi.
+- **Baris 68**: `}` — Pembuka/penutup blok kode.
+- **Baris 69**: `` — Baris kosong untuk kerapian.
+- **Baris 70**: `String formatTanggalPendek(String? raw) {` — Fungsi/method `formatTanggalPendek` untuk menjalankan bagian logika ini.
+- **Baris 71**: `  final tanggal = parseTanggal(raw);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 72**: `  if (tanggal == null) return '-';` — Pengecekan kondisi.
+- **Baris 73**: `  final bulan = _bulanPendek[tanggal.month - 1];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 74**: `  return '${tanggal.day} $bulan ${tanggal.year}';` — Mengembalikan nilai dari fungsi.
+- **Baris 75**: `}` — Pembuka/penutup blok kode.
+- **Baris 76**: `` — Baris kosong untuk kerapian.
+- **Baris 77**: `String formatRupiah(num nilai) {` — Fungsi/method `formatRupiah` untuk menjalankan bagian logika ini.
+- **Baris 78**: `  final angka = nilai.round();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 79**: `  if (angka == 0) return 'Gratis';` — Pengecekan kondisi.
+- **Baris 80**: `` — Baris kosong untuk kerapian.
+- **Baris 81**: `  final teks = angka.abs().toString();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 82**: `  final buffer = StringBuffer();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 83**: `` — Baris kosong untuk kerapian.
+- **Baris 84**: `  for (var i = 0; i < teks.length; i++) {` — Perulangan untuk memproses beberapa data.
+- **Baris 85**: `    if (i > 0 && (teks.length - i) % 3 == 0) {` — Pengecekan kondisi.
+- **Baris 86**: `      buffer.write('.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `    }` — Pembuka/penutup blok kode.
+- **Baris 88**: `    buffer.write(teks[i]);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `  }` — Pembuka/penutup blok kode.
+- **Baris 90**: `` — Baris kosong untuk kerapian.
+- **Baris 91**: `  return '${angka < 0 ? '-' : ''}Rp$buffer';` — Mengembalikan nilai dari fungsi.
+- **Baris 92**: `}` — Pembuka/penutup blok kode.
+- **Baris 93**: `` — Baris kosong untuk kerapian.
+- **Baris 94**: `String labelStatus(String status) {` — Fungsi/method `labelStatus` untuk menjalankan bagian logika ini.
+- **Baris 95**: `  switch (status) {` — Memilih aksi berdasarkan nilai.
+- **Baris 96**: `    case 'pending':` — Salah satu cabang dari switch.
+- **Baris 97**: `      return 'Menunggu';` — Mengembalikan nilai dari fungsi.
+- **Baris 98**: `    case 'approved':` — Salah satu cabang dari switch.
+- **Baris 99**: `      return 'Disetujui';` — Mengembalikan nilai dari fungsi.
+- **Baris 100**: `    case 'cancelled':` — Salah satu cabang dari switch.
+- **Baris 101**: `      return 'Dibatalkan';` — Mengembalikan nilai dari fungsi.
+- **Baris 102**: `    default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `      return status;` — Mengembalikan nilai dari fungsi.
+- **Baris 104**: `  }` — Pembuka/penutup blok kode.
+- **Baris 105**: `}` — Pembuka/penutup blok kode.
+- **Baris 106**: `` — Baris kosong untuk kerapian.
+- **Baris 107**: `String pesanStatus(String status) {` — Fungsi/method `pesanStatus` untuk menjalankan bagian logika ini.
+- **Baris 108**: `  switch (status) {` — Memilih aksi berdasarkan nilai.
+- **Baris 109**: `    case 'pending':` — Salah satu cabang dari switch.
+- **Baris 110**: `      return 'Menunggu pemeriksaan pembayaran oleh organizer.';` — Mengembalikan nilai dari fungsi.
+- **Baris 111**: `    case 'approved':` — Salah satu cabang dari switch.
+- **Baris 112**: `      return 'Tiket aktif dan siap digunakan.';` — Mengembalikan nilai dari fungsi.
+- **Baris 113**: `    case 'cancelled':` — Salah satu cabang dari switch.
+- **Baris 114**: `      return 'Pendaftaran ini sudah dibatalkan.';` — Mengembalikan nilai dari fungsi.
+- **Baris 115**: `    default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `      return '';` — Mengembalikan nilai dari fungsi.
+- **Baris 117**: `  }` — Pembuka/penutup blok kode.
+- **Baris 118**: `}` — Pembuka/penutup blok kode.
+
+## lib/config/app_theme.dart
+
+Jumlah baris: 275
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `class AppColors {` — Mendefinisikan class bernama AppColors.
+- **Baris 4**: `  static const brand = Color(0xFF74070E);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 5**: `  static const brandDark = Color(0xFF5A050B);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 6**: `  static const brandSoft = Color(0xFFFBF1F1);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 7**: `  static const brandLine = Color(0xFFEFDCDC);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  static const ink = Color(0xFF1B1315);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 10**: `  static const muted = Color(0xFF6F6264);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 11**: `  static const line = Color(0xFFE8E0E0);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `  static const surfaceAlt = Color(0xFFFAF7F7);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `` — Baris kosong untuk kerapian.
+- **Baris 14**: `  static const success = Color(0xFF157347);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `  static const successSoft = Color(0xFFECFDF3);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `  static const warning = Color(0xFFB45309);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `  static const warningSoft = Color(0xFFFFFAF1);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `  static const danger = Color(0xFFB42318);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `  static const dangerSoft = Color(0xFFFEF3F2);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `}` — Pembuka/penutup blok kode.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `class AppRadius {` — Mendefinisikan class bernama AppRadius.
+- **Baris 23**: `  static const field = 14.0;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `  static const card = 20.0;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `  static const sheet = 24.0;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `}` — Pembuka/penutup blok kode.
+- **Baris 27**: `` — Baris kosong untuk kerapian.
+- **Baris 28**: `class AppTheme {` — Mendefinisikan class bernama AppTheme.
+- **Baris 29**: `  static ThemeData build() {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `    final scheme = ColorScheme.fromSeed(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 31**: `      seedColor: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `      brightness: Brightness.light,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `    ).copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `      primary: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `      onPrimary: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `      secondary: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `      onSecondary: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `      surface: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `      onSurface: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `      error: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `` — Baris kosong untuk kerapian.
+- **Baris 43**: `    return ThemeData(` — Mengembalikan nilai dari fungsi.
+- **Baris 44**: `      useMaterial3: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `      colorScheme: scheme,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `      scaffoldBackgroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `      dividerTheme: const DividerThemeData(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `        color: AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `        thickness: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `        space: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `      textTheme: const TextTheme(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `        displaySmall: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `          fontSize: 32,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `          height: 1.12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `          fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `          letterSpacing: -0.8,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `        headlineMedium: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `          fontSize: 26,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `          height: 1.18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `          fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `          letterSpacing: -0.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `        headlineSmall: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `          fontSize: 21,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `          height: 1.25,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `          letterSpacing: -0.3,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `        titleLarge: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `          fontSize: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `          height: 1.3,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `        titleMedium: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `          fontSize: 15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `          height: 1.35,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `          fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `        bodyLarge: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `          fontSize: 15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `          height: 1.55,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `        bodyMedium: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `          fontSize: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `          height: 1.55,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 94**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 95**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `        bodySmall: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `          fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `          height: 1.45,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 99**: `          color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `        labelLarge: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `          fontSize: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 105**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `        labelSmall: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `          fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `          letterSpacing: 1.1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `          color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `      appBarTheme: const AppBarTheme(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `        backgroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `        foregroundColor: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `        surfaceTintColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `        elevation: 0,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `        scrolledUnderElevation: 0,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `        centerTitle: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `        titleTextStyle: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `          fontSize: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `        iconTheme: IconThemeData(color: AppColors.ink, size: 22),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 127**: `      inputDecorationTheme: InputDecorationTheme(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `        filled: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `        fillColor: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `        contentPadding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 131**: `          horizontal: 16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `          vertical: 16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `        hintStyle: const TextStyle(color: AppColors.muted, fontSize: 14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `        labelStyle: const TextStyle(color: AppColors.muted, fontSize: 14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `        floatingLabelStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `          color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `          fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `          fontSize: 13,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `        prefixIconColor: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `        suffixIconColor: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `        errorStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `          color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `          fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 146**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `        border: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `          borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `          borderSide: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 151**: `        enabledBorder: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 152**: `          borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `          borderSide: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `        focusedBorder: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `          borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `          borderSide: const BorderSide(color: AppColors.brand, width: 1.4),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `        errorBorder: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `          borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 161**: `          borderSide: const BorderSide(color: AppColors.danger),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `        focusedErrorBorder: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `          borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 165**: `          borderSide: const BorderSide(color: AppColors.danger, width: 1.4),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `      elevatedButtonTheme: ElevatedButtonThemeData(` — Membuat tombol aksi.
+- **Baris 169**: `        style: ElevatedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 170**: `          backgroundColor: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `          foregroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `          disabledBackgroundColor: AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `          disabledForegroundColor: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `          elevation: 0,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `          minimumSize: const Size(0, 52),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 177**: `          textStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 178**: `            fontSize: 15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `            fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `          shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `            borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `      outlinedButtonTheme: OutlinedButtonThemeData(` — Membuat tombol aksi.
+- **Baris 187**: `        style: OutlinedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 188**: `          foregroundColor: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `          minimumSize: const Size(0, 52),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `          side: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `          textStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `            fontSize: 15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `            fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `          shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `            borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `      textButtonTheme: TextButtonThemeData(` — Membuat tombol aksi.
+- **Baris 202**: `        style: TextButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 203**: `          foregroundColor: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `          textStyle: const TextStyle(fontWeight: FontWeight.w600),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `      snackBarTheme: SnackBarThemeData(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 208**: `        behavior: SnackBarBehavior.floating,` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 209**: `        backgroundColor: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `        contentTextStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `          color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `          fontSize: 13,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `          height: 1.4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `        shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `          borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `        insetPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `      navigationBarTheme: NavigationBarThemeData(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `        backgroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `        surfaceTintColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `        indicatorColor: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 224**: `        elevation: 0,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `        height: 68,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 227**: `        iconTheme: WidgetStateProperty.resolveWith((states) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 228**: `          final selected = states.contains(WidgetState.selected);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 229**: `          return IconThemeData(` — Mengembalikan nilai dari fungsi.
+- **Baris 230**: `            size: 24,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `            color: selected ? AppColors.brand : AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 232**: `          );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `        }),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `        labelTextStyle: WidgetStateProperty.resolveWith((states) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `          final selected = states.contains(WidgetState.selected);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 236**: `          return TextStyle(` — Mengembalikan nilai dari fungsi.
+- **Baris 237**: `            fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 238**: `            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `            color: selected ? AppColors.brand : AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `          );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `        }),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `      progressIndicatorTheme: const ProgressIndicatorThemeData(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `        color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `        linearTrackColor: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `      bottomSheetTheme: const BottomSheetThemeData(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `        backgroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `        surfaceTintColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `        shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `          borderRadius: BorderRadius.vertical(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `            top: Radius.circular(AppRadius.sheet),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `      dialogTheme: DialogThemeData(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 257**: `        backgroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 258**: `        surfaceTintColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `        shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `          borderRadius: BorderRadius.circular(AppRadius.card),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `        titleTextStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `          fontSize: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 265**: `          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 266**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 267**: `        contentTextStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `          fontSize: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `          height: 1.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `          color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 271**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 272**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 273**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 274**: `  }` — Pembuka/penutup blok kode.
+- **Baris 275**: `}` — Pembuka/penutup blok kode.
+
+## lib/main.dart
+
+Jumlah baris: 255
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:async';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `import 'config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import 'model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import 'pages/login_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import 'pages/main_shell.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import 'pages/register_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import 'pages/splash_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import 'service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `import 'service/auth_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 13**: `import 'widgets/brand_mark.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 14**: `import 'widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `void main() {` — Fungsi/method `main` untuk menjalankan bagian logika ini.
+- **Baris 19**: `  WidgetsFlutterBinding.ensureInitialized();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `  runApp(const MyApp());` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `}` — Pembuka/penutup blok kode.
+- **Baris 22**: `` — Baris kosong untuk kerapian.
+- **Baris 23**: `class MyApp extends StatelessWidget {` — Mendefinisikan class bernama MyApp.
+- **Baris 24**: `  const MyApp({super.key});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 25**: `` — Baris kosong untuk kerapian.
+- **Baris 26**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 28**: `    return MaterialApp(` — Mengembalikan nilai dari fungsi.
+- **Baris 29**: `      title: 'GATIX',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `      debugShowCheckedModeBanner: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `      navigatorKey: rootNavigatorKey,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `      theme: AppTheme.build(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `      home: const AuthGate(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `  }` — Pembuka/penutup blok kode.
+- **Baris 36**: `}` — Pembuka/penutup blok kode.
+- **Baris 37**: `` — Baris kosong untuk kerapian.
+- **Baris 38**: `enum _StatusAuth { memeriksa, masuk, belumMasuk, gagal }` — Mendefinisikan enum bernama _StatusAuth.
+- **Baris 39**: `` — Baris kosong untuk kerapian.
+- **Baris 40**: `class AuthGate extends StatefulWidget {` — Mendefinisikan class bernama AuthGate.
+- **Baris 41**: `  const AuthGate({super.key});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 42**: `` — Baris kosong untuk kerapian.
+- **Baris 43**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `  State<AuthGate> createState() => _AuthGateState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 45**: `}` — Pembuka/penutup blok kode.
+- **Baris 46**: `` — Baris kosong untuk kerapian.
+- **Baris 47**: `class _AuthGateState extends State<AuthGate> {` — Mendefinisikan class bernama _AuthGateState.
+- **Baris 48**: `  _StatusAuth _status = _StatusAuth.memeriksa;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `  AppUser? _user;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `  String _error = '';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 51**: `  bool _tampilDaftar = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 52**: `  bool _sesiBerakhir = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 53**: `` — Baris kosong untuk kerapian.
+- **Baris 54**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 56**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `    ApiService.onUnauthorized = () => unawaited(_sesiHabis());` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `    _cekSesi();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `  }` — Pembuka/penutup blok kode.
+- **Baris 60**: `` — Baris kosong untuk kerapian.
+- **Baris 61**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `  void dispose() {` — Fungsi/method `dispose` untuk menjalankan bagian logika ini.
+- **Baris 63**: `    ApiService.onUnauthorized = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `    super.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `  }` — Pembuka/penutup blok kode.
+- **Baris 66**: `` — Baris kosong untuk kerapian.
+- **Baris 67**: `  Future<void> _sesiHabis() async {` — Fungsi/method `_sesiHabis` untuk menjalankan bagian logika ini.
+- **Baris 68**: `    await ApiService.clearToken();` — Menunggu proses asynchronous selesai.
+- **Baris 69**: `    rootNavigatorKey.currentState?.popUntil((route) => route.isFirst);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `` — Baris kosong untuk kerapian.
+- **Baris 71**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 72**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 73**: `      _status = _StatusAuth.belumMasuk;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `      _user = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `      _tampilDaftar = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `      _sesiBerakhir = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `  }` — Pembuka/penutup blok kode.
+- **Baris 79**: `` — Baris kosong untuk kerapian.
+- **Baris 80**: `  Future<void> _cekSesi() async {` — Fungsi/method `_cekSesi` untuk menjalankan bagian logika ini.
+- **Baris 81**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 82**: `      _status = _StatusAuth.memeriksa;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `      _error = '';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `` — Baris kosong untuk kerapian.
+- **Baris 86**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 87**: `      final token = await ApiService.getToken();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 88**: `` — Baris kosong untuk kerapian.
+- **Baris 89**: `      if (token == null \|\| token.isEmpty) {` — Pengecekan kondisi.
+- **Baris 90**: `        if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 91**: `        setState(() => _status = _StatusAuth.belumMasuk);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 92**: `        return;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `      }` — Pembuka/penutup blok kode.
+- **Baris 94**: `` — Baris kosong untuk kerapian.
+- **Baris 95**: `      final user = await AuthService.me();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 96**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 97**: `` — Baris kosong untuk kerapian.
+- **Baris 98**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 99**: `        _user = user;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `        _status = _StatusAuth.masuk;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `        _sesiBerakhir = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 104**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 105**: `` — Baris kosong untuk kerapian.
+- **Baris 106**: `      if (error.statusCode == 401 \|\| error.statusCode == 403) {` — Pengecekan kondisi.
+- **Baris 107**: `        await ApiService.clearToken();` — Menunggu proses asynchronous selesai.
+- **Baris 108**: `        if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 109**: `        setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 110**: `          _status = _StatusAuth.belumMasuk;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `          _user = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `          _sesiBerakhir = error.statusCode == 401;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `        });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `      } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `        setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 116**: `          _status = _StatusAuth.gagal;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `          _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `        });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `      }` — Pembuka/penutup blok kode.
+- **Baris 120**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 121**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 122**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 123**: `        _status = _StatusAuth.gagal;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `        _error = 'Tidak dapat memeriksa sesi. Pastikan server dapat diakses.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `    }` — Pembuka/penutup blok kode.
+- **Baris 127**: `  }` — Pembuka/penutup blok kode.
+- **Baris 128**: `` — Baris kosong untuk kerapian.
+- **Baris 129**: `  // Dipanggil setelah login atau register berhasil.` — Komentar: Dipanggil setelah login atau register berhasil.
+- **Baris 130**: `  // Token sudah disimpan lebih dulu di AuthService, jadi di sini` — Komentar: Token sudah disimpan lebih dulu di AuthService, jadi di sini
+- **Baris 131**: `  // kita cukup simpan data user dan pindah ke halaman utama.` — Komentar: kita cukup simpan data user dan pindah ke halaman utama.
+- **Baris 132**: `  void _setelahMasuk(AppUser user) {` — Fungsi/method `_setelahMasuk` untuk menjalankan bagian logika ini.
+- **Baris 133**: `    final dariDaftar = _tampilDaftar;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 134**: `` — Baris kosong untuk kerapian.
+- **Baris 135**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 136**: `      _user = user;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `      _status = _StatusAuth.masuk;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `      _tampilDaftar = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `      _sesiBerakhir = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `` — Baris kosong untuk kerapian.
+- **Baris 142**: `    // Tampilkan pesan sukses setelah halaman utama selesai dibangun.` — Komentar: Tampilkan pesan sukses setelah halaman utama selesai dibangun.
+- **Baris 143**: `    WidgetsBinding.instance.addPostFrameCallback((_) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `      final context = rootNavigatorKey.currentContext;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 145**: `      if (context == null) return;` — Pengecekan kondisi.
+- **Baris 146**: `` — Baris kosong untuk kerapian.
+- **Baris 147**: `      final pesan = dariDaftar` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 148**: `          ? 'Pendaftaran berhasil. Selamat datang, ${user.name}.'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `          : 'Login berhasil. Selamat datang, ${user.name}.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `` — Baris kosong untuk kerapian.
+- **Baris 151**: `      ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 152**: `        SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 153**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `  }` — Pembuka/penutup blok kode.
+- **Baris 156**: `` — Baris kosong untuk kerapian.
+- **Baris 157**: `  void _userBerubah(AppUser user) {` — Fungsi/method `_userBerubah` untuk menjalankan bagian logika ini.
+- **Baris 158**: `    setState(() => _user = user);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 159**: `  }` — Pembuka/penutup blok kode.
+- **Baris 160**: `` — Baris kosong untuk kerapian.
+- **Baris 161**: `  // Logout: hapus token lokal, lalu kembali ke halaman login.` — Komentar: Logout: hapus token lokal, lalu kembali ke halaman login.
+- **Baris 162**: `  Future<void> _keluar() async {` — Fungsi/method `_keluar` untuk menjalankan bagian logika ini.
+- **Baris 163**: `    await ApiService.clearToken();` — Menunggu proses asynchronous selesai.
+- **Baris 164**: `    rootNavigatorKey.currentState?.popUntil((route) => route.isFirst);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 165**: `` — Baris kosong untuk kerapian.
+- **Baris 166**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 167**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 168**: `      _user = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `      _status = _StatusAuth.belumMasuk;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `      _tampilDaftar = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `      _sesiBerakhir = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `` — Baris kosong untuk kerapian.
+- **Baris 174**: `    WidgetsBinding.instance.addPostFrameCallback((_) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `      final context = rootNavigatorKey.currentContext;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 176**: `      if (context == null) return;` — Pengecekan kondisi.
+- **Baris 177**: `` — Baris kosong untuk kerapian.
+- **Baris 178**: `      ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 179**: `        const SnackBar(content: Text('Berhasil keluar dari akun.')),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 180**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `  }` — Pembuka/penutup blok kode.
+- **Baris 183**: `` — Baris kosong untuk kerapian.
+- **Baris 184**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 186**: `    switch (_status) {` — Memilih aksi berdasarkan nilai.
+- **Baris 187**: `      case _StatusAuth.memeriksa:` — Salah satu cabang dari switch.
+- **Baris 188**: `        return const SplashPage();` — Mengembalikan nilai dari fungsi.
+- **Baris 189**: `` — Baris kosong untuk kerapian.
+- **Baris 190**: `      case _StatusAuth.gagal:` — Salah satu cabang dari switch.
+- **Baris 191**: `        return _LayarGagal(` — Mengembalikan nilai dari fungsi.
+- **Baris 192**: `          pesan: _error,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `          onCobaLagi: _cekSesi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `` — Baris kosong untuk kerapian.
+- **Baris 196**: `      case _StatusAuth.masuk:` — Salah satu cabang dari switch.
+- **Baris 197**: `        return MainShell(` — Mengembalikan nilai dari fungsi.
+- **Baris 198**: `          user: _user!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `          onUserChanged: _userBerubah,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `          onLogout: _keluar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `` — Baris kosong untuk kerapian.
+- **Baris 203**: `      case _StatusAuth.belumMasuk:` — Salah satu cabang dari switch.
+- **Baris 204**: `        if (_tampilDaftar) {` — Pengecekan kondisi.
+- **Baris 205**: `          return RegisterPage(` — Mengembalikan nilai dari fungsi.
+- **Baris 206**: `            onRegistered: _setelahMasuk,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `            onBackToLogin: () => setState(() => _tampilDaftar = false),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 208**: `          );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `        }` — Pembuka/penutup blok kode.
+- **Baris 210**: `` — Baris kosong untuk kerapian.
+- **Baris 211**: `        return LoginPage(` — Mengembalikan nilai dari fungsi.
+- **Baris 212**: `          onLoggedIn: _setelahMasuk,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `          onOpenRegister: () => setState(() => _tampilDaftar = true),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 214**: `          sessionExpired: _sesiBerakhir,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `    }` — Pembuka/penutup blok kode.
+- **Baris 217**: `  }` — Pembuka/penutup blok kode.
+- **Baris 218**: `}` — Pembuka/penutup blok kode.
+- **Baris 219**: `` — Baris kosong untuk kerapian.
+- **Baris 220**: `class _LayarGagal extends StatelessWidget {` — Mendefinisikan class bernama _LayarGagal.
+- **Baris 221**: `  final String pesan;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 222**: `  final VoidCallback onCobaLagi;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 223**: `` — Baris kosong untuk kerapian.
+- **Baris 224**: `  const _LayarGagal({required this.pesan, required this.onCobaLagi});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 225**: `` — Baris kosong untuk kerapian.
+- **Baris 226**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 227**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 228**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 229**: `      body: SafeArea(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `        child: Column(` — Menyusun layout tampilan.
+- **Baris 231**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 232**: `            Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `              padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `              child: Align(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `                alignment: Alignment.centerLeft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `                child: BrandMark(size: 34),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 237**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 238**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `            Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `              child: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `                child: SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `                  child: ErrorState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `                    title: 'Tidak dapat terhubung',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `                    message: pesan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `                    onRetry: onCobaLagi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `  }` — Pembuka/penutup blok kode.
+- **Baris 255**: `}` — Pembuka/penutup blok kode.
+
+## lib/model/app_user.dart
+
+Jumlah baris: 34
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `class AppUser {` — Mendefinisikan class bernama AppUser.
+- **Baris 4**: `  final int id;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 5**: `  final String name;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 6**: `  final String email;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final String role;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const AppUser({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `    required this.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 11**: `    required this.name,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `    required this.email,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `    required this.role,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `  bool get isOrganizer => role == 'organizer';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `  String get inisial {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `    final bagian = name.trim().split(RegExp(r'\s+'));` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 20**: `    if (bagian.isEmpty \|\| bagian.first.isEmpty) return 'G';` — Pengecekan kondisi.
+- **Baris 21**: `    if (bagian.length == 1) return bagian.first.substring(0, 1).toUpperCase();` — Pengecekan kondisi.
+- **Baris 22**: `    return (bagian.first.substring(0, 1) + bagian.last.substring(0, 1))` — Mengembalikan nilai dari fungsi.
+- **Baris 23**: `        .toUpperCase();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `  }` — Pembuka/penutup blok kode.
+- **Baris 25**: `` — Baris kosong untuk kerapian.
+- **Baris 26**: `  factory AppUser.fromJson(Map<String, dynamic> json) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `    return AppUser(` — Mengembalikan nilai dari fungsi.
+- **Baris 28**: `      id: readInt(json['id']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `      name: readText(json['name'], 'Pengguna'),` — Menampilkan teks di UI.
+- **Baris 30**: `      email: readText(json['email']),` — Menampilkan teks di UI.
+- **Baris 31**: `      role: readText(json['role'], 'user'),` — Menampilkan teks di UI.
+- **Baris 32**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `  }` — Pembuka/penutup blok kode.
+- **Baris 34**: `}` — Pembuka/penutup blok kode.
+
+## lib/model/event_item.dart
+
+Jumlah baris: 60
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `class EventItem {` — Mendefinisikan class bernama EventItem.
+- **Baris 4**: `  final int id;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 5**: `  final int createdBy;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 6**: `  final String title;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final String description;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `  final String date;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 9**: `  final String location;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `  final String? bannerUrl;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `  final double price;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final int quota;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `  final int taken;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `  final int availableQuota;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `  final String organizerName;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `  final String organizerEmail;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `  const EventItem({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `    required this.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `    required this.createdBy,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `    required this.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `    required this.description,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `    required this.date,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `    required this.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `    required this.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `    required this.price,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `    required this.quota,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `    required this.taken,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `    required this.availableQuota,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `    required this.organizerName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `    required this.organizerEmail,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `` — Baris kosong untuk kerapian.
+- **Baris 34**: `  bool get gratis => price <= 0;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 35**: `  bool get kuotaHabis => availableQuota <= 0;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 36**: `` — Baris kosong untuk kerapian.
+- **Baris 37**: `  factory EventItem.fromJson(Map<String, dynamic> json) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `    final quota = readInt(json['quota']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 39**: `    final taken = readInt(json['taken']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 40**: `    final available = json['available_quota'] == null` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 41**: `        ? quota - taken` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `        : readInt(json['available_quota']);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `` — Baris kosong untuk kerapian.
+- **Baris 44**: `    return EventItem(` — Mengembalikan nilai dari fungsi.
+- **Baris 45**: `      id: readInt(json['id']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `      createdBy: readInt(json['created_by']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `      title: readText(json['title'], 'Tanpa judul'),` — Menampilkan teks di UI.
+- **Baris 48**: `      description: readText(json['description']),` — Menampilkan teks di UI.
+- **Baris 49**: `      date: readText(json['date']),` — Menampilkan teks di UI.
+- **Baris 50**: `      location: readText(json['location'], '-'),` — Menampilkan teks di UI.
+- **Baris 51**: `      bannerUrl: readNullableText(json['banner_url']),` — Menampilkan teks di UI.
+- **Baris 52**: `      price: readDouble(json['price']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `      quota: quota,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `      taken: taken,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `      availableQuota: available < 0 ? 0 : available,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `      organizerName: readText(json['organizer_name'], 'Organizer'),` — Menampilkan teks di UI.
+- **Baris 57**: `      organizerEmail: readText(json['organizer_email']),` — Menampilkan teks di UI.
+- **Baris 58**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `  }` — Pembuka/penutup blok kode.
+- **Baris 60**: `}` — Pembuka/penutup blok kode.
+
+## lib/model/model_utils.dart
+
+Jumlah baris: 28
+
+### Penjelasan per baris
+
+- **Baris 1**: `int readInt(dynamic value, [int fallback = 0]) {` — Fungsi/method `readInt` untuk menjalankan bagian logika ini.
+- **Baris 2**: `  if (value is int) return value;` — Pengecekan kondisi.
+- **Baris 3**: `  if (value is num) return value.toInt();` — Pengecekan kondisi.
+- **Baris 4**: `  return int.tryParse(value?.toString() ?? '') ?? fallback;` — Mengembalikan nilai dari fungsi.
+- **Baris 5**: `}` — Pembuka/penutup blok kode.
+- **Baris 6**: `` — Baris kosong untuk kerapian.
+- **Baris 7**: `double readDouble(dynamic value, [double fallback = 0]) {` — Fungsi/method `readDouble` untuk menjalankan bagian logika ini.
+- **Baris 8**: `  if (value is double) return value;` — Pengecekan kondisi.
+- **Baris 9**: `  if (value is num) return value.toDouble();` — Pengecekan kondisi.
+- **Baris 10**: `  return double.tryParse(value?.toString() ?? '') ?? fallback;` — Mengembalikan nilai dari fungsi.
+- **Baris 11**: `}` — Pembuka/penutup blok kode.
+- **Baris 12**: `` — Baris kosong untuk kerapian.
+- **Baris 13**: `String readText(dynamic value, [String fallback = '']) {` — Fungsi/method `readText` untuk menjalankan bagian logika ini.
+- **Baris 14**: `  if (value == null) return fallback;` — Pengecekan kondisi.
+- **Baris 15**: `  final text = value.toString().trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `  return text.isEmpty ? fallback : text;` — Mengembalikan nilai dari fungsi.
+- **Baris 17**: `}` — Pembuka/penutup blok kode.
+- **Baris 18**: `` — Baris kosong untuk kerapian.
+- **Baris 19**: `String? readNullableText(dynamic value) {` — Fungsi/method `readNullableText` untuk menjalankan bagian logika ini.
+- **Baris 20**: `  final text = readText(value);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 21**: `  return text.isEmpty ? null : text;` — Mengembalikan nilai dari fungsi.
+- **Baris 22**: `}` — Pembuka/penutup blok kode.
+- **Baris 23**: `` — Baris kosong untuk kerapian.
+- **Baris 24**: `Map<String, dynamic> readMap(dynamic value) {` — Fungsi/method `readMap` untuk menjalankan bagian logika ini.
+- **Baris 25**: `  if (value is Map<String, dynamic>) return value;` — Pengecekan kondisi.
+- **Baris 26**: `  if (value is Map) return Map<String, dynamic>.from(value);` — Pengecekan kondisi.
+- **Baris 27**: `  return <String, dynamic>{};` — Mengembalikan nilai dari fungsi.
+- **Baris 28**: `}` — Pembuka/penutup blok kode.
+
+## lib/model/ticket.dart
+
+Jumlah baris: 52
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `class Ticket {` — Mendefinisikan class bernama Ticket.
+- **Baris 4**: `  final int id;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 5**: `  final int eventId;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 6**: `  final int userId;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final String status;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `  final String? paymentProofUrl;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 9**: `  final String title;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `  final String date;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `  final String location;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final String? bannerUrl;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `  final double price;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `  final String userName;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `  final String userEmail;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `` — Baris kosong untuk kerapian.
+- **Baris 17**: `  const Ticket({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 18**: `    required this.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `    required this.eventId,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `    required this.userId,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `    required this.status,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `    required this.paymentProofUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `    required this.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `    required this.date,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `    required this.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `    required this.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `    required this.price,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `    required this.userName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `    required this.userEmail,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `` — Baris kosong untuk kerapian.
+- **Baris 32**: `  bool get pending => status == 'pending';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 33**: `  bool get approved => status == 'approved';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `  bool get cancelled => status == 'cancelled';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 35**: `` — Baris kosong untuk kerapian.
+- **Baris 36**: `  factory Ticket.fromJson(Map<String, dynamic> json) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `    return Ticket(` — Mengembalikan nilai dari fungsi.
+- **Baris 38**: `      id: readInt(json['id']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `      eventId: readInt(json['event_id']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `      userId: readInt(json['user_id']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `      status: readText(json['status'], 'pending'),` — Menampilkan teks di UI.
+- **Baris 42**: `      paymentProofUrl: readNullableText(json['payment_proof_url']),` — Menampilkan teks di UI.
+- **Baris 43**: `      title: readText(json['title'], 'Event #${readInt(json['event_id'])}'),` — Menampilkan teks di UI.
+- **Baris 44**: `      date: readText(json['date']),` — Menampilkan teks di UI.
+- **Baris 45**: `      location: readText(json['location'], '-'),` — Menampilkan teks di UI.
+- **Baris 46**: `      bannerUrl: readNullableText(json['banner_url']),` — Menampilkan teks di UI.
+- **Baris 47**: `      price: readDouble(json['price']),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `      userName: readText(json['user_name']),` — Menampilkan teks di UI.
+- **Baris 49**: `      userEmail: readText(json['user_email']),` — Menampilkan teks di UI.
+- **Baris 50**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `  }` — Pembuka/penutup blok kode.
+- **Baris 52**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/event_detail_page.dart
+
+Jumlah baris: 862
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../model/event_item.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import '../service/event_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import '../service/registration_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import '../widgets/initials_avatar.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `import '../widgets/network_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 13**: `import '../widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 14**: `import 'event_form_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 15**: `import 'participants_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 16**: `import 'ticket_detail_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `class EventDetailPage extends StatefulWidget {` — Mendefinisikan class bernama EventDetailPage.
+- **Baris 19**: `  final int eventId;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 20**: `  final AppUser user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `  const EventDetailPage({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 23**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `    required this.eventId,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `    required this.user,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `` — Baris kosong untuk kerapian.
+- **Baris 28**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `  State<EventDetailPage> createState() => _EventDetailPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 30**: `}` — Pembuka/penutup blok kode.
+- **Baris 31**: `` — Baris kosong untuk kerapian.
+- **Baris 32**: `class _EventDetailPageState extends State<EventDetailPage> {` — Mendefinisikan class bernama _EventDetailPageState.
+- **Baris 33**: `  EventItem? _event;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `  Ticket? _tiketSaya;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `  bool _loading = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 36**: `  bool _busy = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 37**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 38**: `` — Baris kosong untuk kerapian.
+- **Baris 39**: `  bool get _pemilik =>` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 40**: `      _event != null && _event!.createdBy == widget.user.id;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `` — Baris kosong untuk kerapian.
+- **Baris 42**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 44**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `    _load();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `  }` — Pembuka/penutup blok kode.
+- **Baris 47**: `` — Baris kosong untuk kerapian.
+- **Baris 48**: `  Future<void> _load({bool diam = false}) async {` — Fungsi/method `_load` untuk menjalankan bagian logika ini.
+- **Baris 49**: `    if (!diam) {` — Pengecekan kondisi.
+- **Baris 50**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 51**: `        _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `    }` — Pembuka/penutup blok kode.
+- **Baris 55**: `` — Baris kosong untuk kerapian.
+- **Baris 56**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 57**: `      final event = await EventService.detail(widget.eventId);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 58**: `      Ticket? tiket;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `` — Baris kosong untuk kerapian.
+- **Baris 60**: `      if (event.createdBy != widget.user.id) {` — Pengecekan kondisi.
+- **Baris 61**: `        try {` — Memulai blok try untuk menangani error.
+- **Baris 62**: `          final tiketSaya = await RegistrationService.myTickets();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 63**: `          for (final item in tiketSaya) {` — Perulangan untuk memproses beberapa data.
+- **Baris 64**: `            if (item.eventId == widget.eventId && !item.cancelled) {` — Pengecekan kondisi.
+- **Baris 65**: `              tiket = item;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `              break;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `            }` — Pembuka/penutup blok kode.
+- **Baris 68**: `          }` — Pembuka/penutup blok kode.
+- **Baris 69**: `        } catch (_) {` — Menangkap error dari blok try.
+- **Baris 70**: `          tiket = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `        }` — Pembuka/penutup blok kode.
+- **Baris 72**: `      }` — Pembuka/penutup blok kode.
+- **Baris 73**: `` — Baris kosong untuk kerapian.
+- **Baris 74**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 75**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 76**: `        _event = event;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `        _tiketSaya = tiket;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 82**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 83**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 84**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 88**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 89**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 90**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `        _error = 'Gagal memuat detail event.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `    }` — Pembuka/penutup blok kode.
+- **Baris 94**: `  }` — Pembuka/penutup blok kode.
+- **Baris 95**: `` — Baris kosong untuk kerapian.
+- **Baris 96**: `  Future<void> _daftar() async {` — Fungsi/method `_daftar` untuk menjalankan bagian logika ini.
+- **Baris 97**: `    final event = _event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 98**: `    if (event == null \|\| _busy) return;` — Pengecekan kondisi.
+- **Baris 99**: `` — Baris kosong untuk kerapian.
+- **Baris 100**: `    if (!event.gratis) {` — Pengecekan kondisi.
+- **Baris 101**: `      final lanjut = await showDialog<bool>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 102**: `        context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `        builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `          return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 105**: `            title: const Text('Daftar event berbayar?'),` — Menampilkan teks di UI.
+- **Baris 106**: `            content: Text(` — Menampilkan teks di UI.
+- **Baris 107**: `              'Setelah mendaftar, kamu perlu mengunggah bukti pembayaran '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `              '${formatRupiah(event.price)} dari halaman Tiket Saya.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `            actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `              TextButton(` — Membuat tombol aksi.
+- **Baris 112**: `                onPressed: () => Navigator.pop(context, false),` — Berpindah halaman atau mengatur route.
+- **Baris 113**: `                child: const Text('Batal'),` — Menampilkan teks di UI.
+- **Baris 114**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `              ElevatedButton(` — Membuat tombol aksi.
+- **Baris 116**: `                onPressed: () => Navigator.pop(context, true),` — Berpindah halaman atau mengatur route.
+- **Baris 117**: `                child: const Text('Lanjut daftar'),` — Menampilkan teks di UI.
+- **Baris 118**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `          );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `        },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `      if (lanjut != true) return;` — Pengecekan kondisi.
+- **Baris 124**: `    }` — Pembuka/penutup blok kode.
+- **Baris 125**: `` — Baris kosong untuk kerapian.
+- **Baris 126**: `    setState(() => _busy = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 127**: `` — Baris kosong untuk kerapian.
+- **Baris 128**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 129**: `      final tiket = await RegistrationService.create(event.id);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 130**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 131**: `` — Baris kosong untuk kerapian.
+- **Baris 132**: `      _snack(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `        tiket.approved` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `            ? 'Pendaftaran berhasil. Tiketmu sudah aktif.'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `            : 'Pendaftaran berhasil. Unggah bukti pembayaran di halaman tiket.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `` — Baris kosong untuk kerapian.
+- **Baris 138**: `      await Navigator.push(` — Berpindah halaman atau mengatur route.
+- **Baris 139**: `        context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `        MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `          builder: (_) => TicketDetailPage(registrationId: tiket.id),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `` — Baris kosong untuk kerapian.
+- **Baris 145**: `      if (mounted) await _load(diam: true);` — Pengecekan kondisi.
+- **Baris 146**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 147**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 148**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `      if (error.message.toLowerCase().contains('sudah terdaftar')) {` — Pengecekan kondisi.
+- **Baris 150**: `        await _load(diam: true);` — Menunggu proses asynchronous selesai.
+- **Baris 151**: `      }` — Pembuka/penutup blok kode.
+- **Baris 152**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 153**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 154**: `      _snack('Gagal mendaftar event. Silakan coba lagi.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `      if (mounted) setState(() => _busy = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 157**: `    }` — Pembuka/penutup blok kode.
+- **Baris 158**: `  }` — Pembuka/penutup blok kode.
+- **Baris 159**: `` — Baris kosong untuk kerapian.
+- **Baris 160**: `  Future<void> _bukaTiket() async {` — Fungsi/method `_bukaTiket` untuk menjalankan bagian logika ini.
+- **Baris 161**: `    final tiket = _tiketSaya;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 162**: `    if (tiket == null) return;` — Pengecekan kondisi.
+- **Baris 163**: `` — Baris kosong untuk kerapian.
+- **Baris 164**: `    await Navigator.push(` — Berpindah halaman atau mengatur route.
+- **Baris 165**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `      MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `        builder: (_) => TicketDetailPage(registrationId: tiket.id),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `` — Baris kosong untuk kerapian.
+- **Baris 171**: `    if (mounted) await _load(diam: true);` — Pengecekan kondisi.
+- **Baris 172**: `  }` — Pembuka/penutup blok kode.
+- **Baris 173**: `` — Baris kosong untuk kerapian.
+- **Baris 174**: `  Future<void> _edit() async {` — Fungsi/method `_edit` untuk menjalankan bagian logika ini.
+- **Baris 175**: `    final event = _event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 176**: `    if (event == null) return;` — Pengecekan kondisi.
+- **Baris 177**: `` — Baris kosong untuk kerapian.
+- **Baris 178**: `    final berubah = await Navigator.push<bool>(` — Berpindah halaman atau mengatur route.
+- **Baris 179**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `      MaterialPageRoute(builder: (_) => EventFormPage(event: event)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `` — Baris kosong untuk kerapian.
+- **Baris 183**: `    if (berubah == true && mounted) {` — Pengecekan kondisi.
+- **Baris 184**: `      await _load(diam: true);` — Menunggu proses asynchronous selesai.
+- **Baris 185**: `    }` — Pembuka/penutup blok kode.
+- **Baris 186**: `  }` — Pembuka/penutup blok kode.
+- **Baris 187**: `` — Baris kosong untuk kerapian.
+- **Baris 188**: `  Future<void> _hapus() async {` — Fungsi/method `_hapus` untuk menjalankan bagian logika ini.
+- **Baris 189**: `    final event = _event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 190**: `    if (event == null \|\| _busy) return;` — Pengecekan kondisi.
+- **Baris 191**: `` — Baris kosong untuk kerapian.
+- **Baris 192**: `    final setuju = await showDialog<bool>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 193**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 196**: `          title: const Text('Hapus event?'),` — Menampilkan teks di UI.
+- **Baris 197**: `          content: Text(` — Menampilkan teks di UI.
+- **Baris 198**: `            'Event "${event.title}" akan dihapus permanen beserta '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `            'pendaftaran dan bukti pembayarannya.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 203**: `              onPressed: () => Navigator.pop(context, false),` — Berpindah halaman atau mengatur route.
+- **Baris 204**: `              child: const Text('Batal'),` — Menampilkan teks di UI.
+- **Baris 205**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `            ElevatedButton(` — Membuat tombol aksi.
+- **Baris 207**: `              style: ElevatedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 208**: `                backgroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `              onPressed: () => Navigator.pop(context, true),` — Berpindah halaman atau mengatur route.
+- **Baris 211**: `              child: const Text('Hapus'),` — Menampilkan teks di UI.
+- **Baris 212**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `` — Baris kosong untuk kerapian.
+- **Baris 218**: `    if (setuju != true \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 219**: `` — Baris kosong untuk kerapian.
+- **Baris 220**: `    setState(() => _busy = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 221**: `` — Baris kosong untuk kerapian.
+- **Baris 222**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 223**: `      await EventService.delete(event.id);` — Menunggu proses asynchronous selesai.
+- **Baris 224**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 225**: `      _snack('Event berhasil dihapus.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `      Navigator.pop(context, true);` — Berpindah halaman atau mengatur route.
+- **Baris 227**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 228**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 229**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 231**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 232**: `      _snack('Gagal menghapus event.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `      if (mounted) setState(() => _busy = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 235**: `    }` — Pembuka/penutup blok kode.
+- **Baris 236**: `  }` — Pembuka/penutup blok kode.
+- **Baris 237**: `` — Baris kosong untuk kerapian.
+- **Baris 238**: `  Future<void> _bukaPeserta() async {` — Fungsi/method `_bukaPeserta` untuk menjalankan bagian logika ini.
+- **Baris 239**: `    final event = _event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 240**: `    if (event == null) return;` — Pengecekan kondisi.
+- **Baris 241**: `` — Baris kosong untuk kerapian.
+- **Baris 242**: `    await Navigator.push(` — Berpindah halaman atau mengatur route.
+- **Baris 243**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `      MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `        builder: (_) => ParticipantsPage(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `          eventId: event.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `          eventTitle: event.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `` — Baris kosong untuk kerapian.
+- **Baris 252**: `    if (mounted) await _load(diam: true);` — Pengecekan kondisi.
+- **Baris 253**: `  }` — Pembuka/penutup blok kode.
+- **Baris 254**: `` — Baris kosong untuk kerapian.
+- **Baris 255**: `  void _snack(String pesan) {` — Fungsi/method `_snack` untuk menjalankan bagian logika ini.
+- **Baris 256**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 257**: `    ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 258**: `      SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 259**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `  }` — Pembuka/penutup blok kode.
+- **Baris 261**: `` — Baris kosong untuk kerapian.
+- **Baris 262**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 264**: `    if (_loading) {` — Pengecekan kondisi.
+- **Baris 265**: `      return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 266**: `        appBar: AppBar(title: const Text('Detail event')),` — Menampilkan teks di UI.
+- **Baris 267**: `        body: const LoadingState(message: 'Memuat detail event...'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `    }` — Pembuka/penutup blok kode.
+- **Baris 270**: `` — Baris kosong untuk kerapian.
+- **Baris 271**: `    if (_error != null \|\| _event == null) {` — Pengecekan kondisi.
+- **Baris 272**: `      return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 273**: `        appBar: AppBar(title: const Text('Detail event')),` — Menampilkan teks di UI.
+- **Baris 274**: `        body: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `          child: SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 276**: `            child: ErrorState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 277**: `              message: _error ?? 'Event tidak ditemukan.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 278**: `              onRetry: _load,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 279**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 281**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 282**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 283**: `    }` — Pembuka/penutup blok kode.
+- **Baris 284**: `` — Baris kosong untuk kerapian.
+- **Baris 285**: `    final event = _event!;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 286**: `    final tanggal = parseTanggal(event.date);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 287**: `    final sudahLewat = tanggal != null && tanggal.isBefore(DateTime.now());` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 288**: `` — Baris kosong untuk kerapian.
+- **Baris 289**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 290**: `      body: Column(` — Menyusun layout tampilan.
+- **Baris 291**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `          Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 293**: `            child: ListView(` — Menyusun layout tampilan.
+- **Baris 294**: `              padding: EdgeInsets.zero,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 295**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 296**: `                _BagianBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 297**: `                  event: event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 298**: `                  pemilik: _pemilik,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 299**: `                  onKembali: () => Navigator.pop(context),` — Berpindah halaman atau mengatur route.
+- **Baris 300**: `                  onEdit: _edit,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 301**: `                  onHapus: _hapus,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 303**: `                Transform.translate(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 304**: `                  offset: const Offset(0, -24),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 305**: `                  child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 306**: `                    width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 307**: `                    decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 308**: `                      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 309**: `                      borderRadius: BorderRadius.vertical(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 310**: `                        top: Radius.circular(24),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 311**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 312**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 313**: `                    padding: const EdgeInsets.fromLTRB(20, 22, 20, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 314**: `                    child: Column(` — Menyusun layout tampilan.
+- **Baris 315**: `                      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 316**: `                      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `                        Row(` — Menyusun layout tampilan.
+- **Baris 318**: `                          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `                            Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 320**: `                              child: Text(` — Menampilkan teks di UI.
+- **Baris 321**: `                                event.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 322**: `                                style: Theme.of(context).textTheme.headlineSmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 323**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 324**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 325**: `                            const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 326**: `                            Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 327**: `                              padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 328**: `                                horizontal: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 329**: `                                vertical: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 330**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 331**: `                              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 332**: `                                color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 333**: `                                borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 334**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `                              child: Text(` — Menampilkan teks di UI.
+- **Baris 336**: `                                formatRupiah(event.price),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 337**: `                                style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 338**: `                                  color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 339**: `                                  fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 340**: `                                  fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 341**: `                                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 342**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 344**: `                          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 346**: `                        const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 347**: `                        _BarisDetail(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `                          ikon: Icons.calendar_today_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `                          label: 'Tanggal',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 350**: `                          nilai: formatTanggal(event.date),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 351**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 352**: `                        const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 353**: `                        _BarisDetail(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 354**: `                          ikon: Icons.place_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 355**: `                          label: 'Lokasi',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 356**: `                          nilai: event.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 357**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 358**: `                        const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 359**: `                        _KartuKuota(event: event),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 360**: `                        const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 361**: `                        Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 362**: `                          padding: const EdgeInsets.all(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 363**: `                          decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 364**: `                            color: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 365**: `                            borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 366**: `                            border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 367**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 368**: `                          child: Row(` — Menyusun layout tampilan.
+- **Baris 369**: `                            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 370**: `                              InitialsAvatar(name: event.organizerName, size: 44),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 371**: `                              const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 372**: `                              Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 373**: `                                child: Column(` — Menyusun layout tampilan.
+- **Baris 374**: `                                  crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 375**: `                                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 376**: `                                    Text(` — Menampilkan teks di UI.
+- **Baris 377**: `                                      'Diselenggarakan oleh',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `                                      style: Theme.of(context)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 379**: `                                          .textTheme` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 380**: `                                          .bodySmall` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 381**: `                                          ?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 382**: `                                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 383**: `                                    const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 384**: `                                    Text(` — Menampilkan teks di UI.
+- **Baris 385**: `                                      event.organizerName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 386**: `                                      style: Theme.of(context)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 387**: `                                          .textTheme` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 388**: `                                          .titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 389**: `                                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 390**: `                                    if (event.organizerEmail.isNotEmpty)` — Pengecekan kondisi.
+- **Baris 391**: `                                      Text(` — Menampilkan teks di UI.
+- **Baris 392**: `                                        event.organizerEmail,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 393**: `                                        style: Theme.of(context)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 394**: `                                            .textTheme` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `                                            .bodySmall` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 396**: `                                            ?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `                                        maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `                                        overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 399**: `                                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 400**: `                                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 401**: `                                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 402**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `                            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 404**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 405**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `                        const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 407**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 408**: `                          'Tentang event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 409**: `                          style: Theme.of(context).textTheme.titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 410**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `                        const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 412**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 413**: `                          event.description.isEmpty` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 414**: `                              ? 'Belum ada deskripsi untuk event ini.'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 415**: `                              : event.description,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 416**: `                          style: Theme.of(context).textTheme.bodyMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 417**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 418**: `                        const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 419**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 420**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 421**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 422**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 423**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 424**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 425**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 426**: `          _BilahAksi(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 427**: `            event: event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 428**: `            pemilik: _pemilik,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 429**: `            tiket: _tiketSaya,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 430**: `            busy: _busy,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 431**: `            sudahLewat: sudahLewat,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 432**: `            onDaftar: _daftar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 433**: `            onLihatTiket: _bukaTiket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 434**: `            onKelolaPeserta: _bukaPeserta,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 435**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 436**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 437**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 438**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 439**: `  }` — Pembuka/penutup blok kode.
+- **Baris 440**: `}` — Pembuka/penutup blok kode.
+- **Baris 441**: `` — Baris kosong untuk kerapian.
+- **Baris 442**: `class _BagianBanner extends StatelessWidget {` — Mendefinisikan class bernama _BagianBanner.
+- **Baris 443**: `  final EventItem event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 444**: `  final bool pemilik;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 445**: `  final VoidCallback onKembali;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 446**: `  final VoidCallback onEdit;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 447**: `  final VoidCallback onHapus;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 448**: `` — Baris kosong untuk kerapian.
+- **Baris 449**: `  const _BagianBanner({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 450**: `    required this.event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 451**: `    required this.pemilik,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 452**: `    required this.onKembali,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 453**: `    required this.onEdit,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 454**: `    required this.onHapus,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 455**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 456**: `` — Baris kosong untuk kerapian.
+- **Baris 457**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 458**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 459**: `    return SizedBox(` — Mengembalikan nilai dari fungsi.
+- **Baris 460**: `      height: 278,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 461**: `      child: Stack(` — Menyusun layout tampilan.
+- **Baris 462**: `        fit: StackFit.expand,` — Menyusun layout tampilan.
+- **Baris 463**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 464**: `          NetworkBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 465**: `            url: event.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 466**: `            fallbackIcon: Icons.local_activity_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 467**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 468**: `          Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 469**: `            decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 470**: `              gradient: LinearGradient(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 471**: `                begin: Alignment.topCenter,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 472**: `                end: Alignment.bottomCenter,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 473**: `                colors: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 474**: `                  Colors.black.withValues(alpha: 0.42),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 475**: `                  Colors.transparent,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 476**: `                  Colors.black.withValues(alpha: 0.46),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 477**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 478**: `                stops: const [0, 0.45, 1],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 479**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 480**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 481**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 482**: `          SafeArea(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 483**: `            child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 484**: `              padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 485**: `              child: Row(` — Menyusun layout tampilan.
+- **Baris 486**: `                crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 487**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 488**: `                  _TombolBulat(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 489**: `                    ikon: Icons.arrow_back_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 490**: `                    onTap: onKembali,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 491**: `                    tooltip: 'Kembali',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 492**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 493**: `                  const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 494**: `                  if (pemilik)` — Pengecekan kondisi.
+- **Baris 495**: `                    PopupMenuButton<String>(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 496**: `                      tooltip: 'Aksi event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 497**: `                      onSelected: (value) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 498**: `                        if (value == 'edit') onEdit();` — Pengecekan kondisi.
+- **Baris 499**: `                        if (value == 'hapus') onHapus();` — Pengecekan kondisi.
+- **Baris 500**: `                      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 501**: `                      itemBuilder: (context) => const [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 502**: `                        PopupMenuItem(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 503**: `                          value: 'edit',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 504**: `                          child: Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 505**: `                            type: MaterialType.transparency,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 506**: `                            child: ListTile(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 507**: `                              contentPadding: EdgeInsets.zero,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 508**: `                              leading: Icon(Icons.edit_outlined),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 509**: `                              title: Text('Edit event'),` — Menampilkan teks di UI.
+- **Baris 510**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 511**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 512**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 513**: `                        PopupMenuItem(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 514**: `                          value: 'hapus',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 515**: `                          child: Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 516**: `                            type: MaterialType.transparency,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 517**: `                            child: ListTile(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 518**: `                              contentPadding: EdgeInsets.zero,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 519**: `                              leading: Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 520**: `                                Icons.delete_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 521**: `                                color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 522**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 523**: `                              title: Text(` — Menampilkan teks di UI.
+- **Baris 524**: `                                'Hapus event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 525**: `                                style: TextStyle(color: AppColors.danger),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 526**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 527**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 528**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 529**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 530**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 531**: `                      child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 532**: `                        width: 40,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 533**: `                        height: 40,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 534**: `                        decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 535**: `                          color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 536**: `                          shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 537**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 538**: `                        child: const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 539**: `                          Icons.more_horiz_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 540**: `                          size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 541**: `                          color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 542**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 543**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 544**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 545**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 546**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 547**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 548**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 549**: `          Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 550**: `            left: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 551**: `            right: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 552**: `            bottom: 34,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 553**: `            child: Column(` — Menyusun layout tampilan.
+- **Baris 554**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 555**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 556**: `                Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 557**: `                  padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 558**: `                    horizontal: 9,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 559**: `                    vertical: 4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 560**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 561**: `                  decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 562**: `                    color: Colors.white.withValues(alpha: 0.18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 563**: `                    borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 564**: `                    border: Border.all(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 565**: `                      color: Colors.white.withValues(alpha: 0.24),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 566**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 567**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 568**: `                  child: const Text(` — Menampilkan teks di UI.
+- **Baris 569**: `                    'EVENT',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 570**: `                    style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 571**: `                      fontSize: 9.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 572**: `                      letterSpacing: 1.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 573**: `                      fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 574**: `                      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 575**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 576**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 577**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 578**: `                const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 579**: `                Text(` — Menampilkan teks di UI.
+- **Baris 580**: `                  event.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 581**: `                  maxLines: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 582**: `                  overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 583**: `                  style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 584**: `                    color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 585**: `                    fontSize: 24,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 586**: `                    height: 1.18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 587**: `                    fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 588**: `                    letterSpacing: -0.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 589**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 590**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 591**: `                const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 592**: `                Row(` — Menyusun layout tampilan.
+- **Baris 593**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 594**: `                    const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 595**: `                      Icons.place_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 596**: `                      size: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 597**: `                      color: Colors.white70,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 598**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 599**: `                    const SizedBox(width: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 600**: `                    Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 601**: `                      child: Text(` — Menampilkan teks di UI.
+- **Baris 602**: `                        event.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 603**: `                        maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 604**: `                        overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 605**: `                        style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 606**: `                          color: Colors.white70,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 607**: `                          fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 608**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 609**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 610**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 611**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 612**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 613**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 614**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 615**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 616**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 617**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 618**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 619**: `  }` — Pembuka/penutup blok kode.
+- **Baris 620**: `}` — Pembuka/penutup blok kode.
+- **Baris 621**: `` — Baris kosong untuk kerapian.
+- **Baris 622**: `class _TombolBulat extends StatelessWidget {` — Mendefinisikan class bernama _TombolBulat.
+- **Baris 623**: `  final IconData ikon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 624**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 625**: `  final String tooltip;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 626**: `` — Baris kosong untuk kerapian.
+- **Baris 627**: `  const _TombolBulat({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 628**: `    required this.ikon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 629**: `    required this.onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 630**: `    required this.tooltip,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 631**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 632**: `` — Baris kosong untuk kerapian.
+- **Baris 633**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 634**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 635**: `    return Tooltip(` — Mengembalikan nilai dari fungsi.
+- **Baris 636**: `      message: tooltip,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 637**: `      child: Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 638**: `        color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 639**: `        shape: const CircleBorder(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 640**: `        clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 641**: `        child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 642**: `          onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 643**: `          child: SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 644**: `            width: 40,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 645**: `            height: 40,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 646**: `            child: Icon(ikon, size: 20, color: AppColors.ink),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 647**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 648**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 649**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 650**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 651**: `  }` — Pembuka/penutup blok kode.
+- **Baris 652**: `}` — Pembuka/penutup blok kode.
+- **Baris 653**: `` — Baris kosong untuk kerapian.
+- **Baris 654**: `class _BarisDetail extends StatelessWidget {` — Mendefinisikan class bernama _BarisDetail.
+- **Baris 655**: `  final IconData ikon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 656**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 657**: `  final String nilai;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 658**: `` — Baris kosong untuk kerapian.
+- **Baris 659**: `  const _BarisDetail({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 660**: `    required this.ikon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 661**: `    required this.label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 662**: `    required this.nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 663**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 664**: `` — Baris kosong untuk kerapian.
+- **Baris 665**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 666**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 667**: `    return Row(` — Mengembalikan nilai dari fungsi.
+- **Baris 668**: `      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 669**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 670**: `        Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 671**: `          width: 38,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 672**: `          height: 38,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 673**: `          decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 674**: `            color: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 675**: `            borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 676**: `            border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 677**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 678**: `          child: Icon(ikon, size: 18, color: AppColors.brand),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 679**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 680**: `        const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 681**: `        Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 682**: `          child: Column(` — Menyusun layout tampilan.
+- **Baris 683**: `            crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 684**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 685**: `              Text(` — Menampilkan teks di UI.
+- **Baris 686**: `                label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 687**: `                style: Theme.of(context)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 688**: `                    .textTheme` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 689**: `                    .bodySmall` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 690**: `                    ?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 691**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 692**: `              const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 693**: `              Text(` — Menampilkan teks di UI.
+- **Baris 694**: `                nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 695**: `                style: Theme.of(context).textTheme.bodyMedium?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 696**: `                      fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 697**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 698**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 699**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 700**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 701**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 702**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 703**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 704**: `  }` — Pembuka/penutup blok kode.
+- **Baris 705**: `}` — Pembuka/penutup blok kode.
+- **Baris 706**: `` — Baris kosong untuk kerapian.
+- **Baris 707**: `class _KartuKuota extends StatelessWidget {` — Mendefinisikan class bernama _KartuKuota.
+- **Baris 708**: `  final EventItem event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 709**: `` — Baris kosong untuk kerapian.
+- **Baris 710**: `  const _KartuKuota({required this.event});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 711**: `` — Baris kosong untuk kerapian.
+- **Baris 712**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 713**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 714**: `    final rasio = event.quota <= 0` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 715**: `        ? 0.0` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 716**: `        : (event.taken / event.quota).clamp(0.0, 1.0);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 717**: `` — Baris kosong untuk kerapian.
+- **Baris 718**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 719**: `      width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 720**: `      padding: const EdgeInsets.all(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 721**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 722**: `        color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 723**: `        borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 724**: `        border: Border.all(color: AppColors.brandLine),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 725**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 726**: `      child: Column(` — Menyusun layout tampilan.
+- **Baris 727**: `        crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 728**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 729**: `          Row(` — Menyusun layout tampilan.
+- **Baris 730**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 731**: `              const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 732**: `                Icons.confirmation_number_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 733**: `                size: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 734**: `                color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 735**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 736**: `              const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 737**: `              Text(` — Menampilkan teks di UI.
+- **Baris 738**: `                'Sisa kuota',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 739**: `                style: Theme.of(context).textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 740**: `                      color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 741**: `                      fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 742**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 743**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 744**: `              const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 745**: `              Text(` — Menampilkan teks di UI.
+- **Baris 746**: `                '${event.availableQuota} / ${event.quota}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 747**: `                style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 748**: `                  color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 749**: `                  fontSize: 13,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 750**: `                  fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 751**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 752**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 753**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 754**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 755**: `          const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 756**: `          ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 757**: `            borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 758**: `            child: LinearProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 759**: `              value: rasio,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 760**: `              minHeight: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 761**: `              backgroundColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 762**: `              color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 763**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 764**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 765**: `          const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 766**: `          Text(` — Menampilkan teks di UI.
+- **Baris 767**: `            event.kuotaHabis` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 768**: `                ? 'Kuota event sudah habis.'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 769**: `                : '${event.availableQuota} tiket masih tersedia.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 770**: `            style: Theme.of(context).textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 771**: `                  fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 772**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 773**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 774**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 775**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 776**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 777**: `  }` — Pembuka/penutup blok kode.
+- **Baris 778**: `}` — Pembuka/penutup blok kode.
+- **Baris 779**: `` — Baris kosong untuk kerapian.
+- **Baris 780**: `class _BilahAksi extends StatelessWidget {` — Mendefinisikan class bernama _BilahAksi.
+- **Baris 781**: `  final EventItem event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 782**: `  final bool pemilik;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 783**: `  final Ticket? tiket;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 784**: `  final bool busy;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 785**: `  final bool sudahLewat;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 786**: `  final VoidCallback onDaftar;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 787**: `  final VoidCallback onLihatTiket;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 788**: `  final VoidCallback onKelolaPeserta;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 789**: `` — Baris kosong untuk kerapian.
+- **Baris 790**: `  const _BilahAksi({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 791**: `    required this.event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 792**: `    required this.pemilik,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 793**: `    required this.tiket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 794**: `    required this.busy,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 795**: `    required this.sudahLewat,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 796**: `    required this.onDaftar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 797**: `    required this.onLihatTiket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 798**: `    required this.onKelolaPeserta,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 799**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 800**: `` — Baris kosong untuk kerapian.
+- **Baris 801**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 802**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 803**: `    Widget tombol;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 804**: `` — Baris kosong untuk kerapian.
+- **Baris 805**: `    if (pemilik) {` — Pengecekan kondisi.
+- **Baris 806**: `      tombol = ElevatedButton.icon(` — Membuat tombol aksi.
+- **Baris 807**: `        onPressed: onKelolaPeserta,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 808**: `        icon: const Icon(Icons.people_alt_outlined, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 809**: `        label: const Text('Kelola peserta'),` — Menampilkan teks di UI.
+- **Baris 810**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 811**: `    } else if (tiket != null) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 812**: `      tombol = OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 813**: `        onPressed: onLihatTiket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 814**: `        icon: const Icon(Icons.confirmation_number_outlined, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 815**: `        label: const Text('Lihat tiket saya'),` — Menampilkan teks di UI.
+- **Baris 816**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 817**: `    } else if (sudahLewat) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 818**: `      tombol = const ElevatedButton(` — Membuat tombol aksi.
+- **Baris 819**: `        onPressed: null,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 820**: `        child: Text('Event sudah berlangsung'),` — Menampilkan teks di UI.
+- **Baris 821**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 822**: `    } else if (event.kuotaHabis) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 823**: `      tombol = const ElevatedButton(` — Membuat tombol aksi.
+- **Baris 824**: `        onPressed: null,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 825**: `        child: Text('Kuota habis'),` — Menampilkan teks di UI.
+- **Baris 826**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 827**: `    } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 828**: `      tombol = ElevatedButton(` — Membuat tombol aksi.
+- **Baris 829**: `        onPressed: busy ? null : onDaftar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 830**: `        child: busy` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 831**: `            ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 832**: `                width: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 833**: `                height: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 834**: `                child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 835**: `                  strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 836**: `                  color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 837**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 838**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 839**: `            : Text(` — Menampilkan teks di UI.
+- **Baris 840**: `                event.gratis` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 841**: `                    ? 'Daftar sekarang'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 842**: `                    : 'Daftar • ${formatRupiah(event.price)}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 843**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 844**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 845**: `    }` — Pembuka/penutup blok kode.
+- **Baris 846**: `` — Baris kosong untuk kerapian.
+- **Baris 847**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 848**: `      width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 849**: `      padding: EdgeInsets.fromLTRB(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 850**: `        16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 851**: `        12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 852**: `        16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 853**: `        12 + MediaQuery.paddingOf(context).bottom,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 854**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 855**: `      decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 856**: `        color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 857**: `        border: Border(top: BorderSide(color: AppColors.line)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 858**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 859**: `      child: tombol,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 860**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 861**: `  }` — Pembuka/penutup blok kode.
+- **Baris 862**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/event_form_page.dart
+
+Jumlah baris: 650
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `import 'package:flutter/services.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 3**: `` — Baris kosong untuk kerapian.
+- **Baris 4**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../model/event_item.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../model/model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import '../service/event_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import '../utils/pilih_gambar.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import '../widgets/info_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `` — Baris kosong untuk kerapian.
+- **Baris 13**: `class EventFormPage extends StatefulWidget {` — Mendefinisikan class bernama EventFormPage.
+- **Baris 14**: `  final EventItem? event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `  const EventFormPage({super.key, this.event});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `  State<EventFormPage> createState() => _EventFormPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 20**: `}` — Pembuka/penutup blok kode.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `class _EventFormPageState extends State<EventFormPage> {` — Mendefinisikan class bernama _EventFormPageState.
+- **Baris 23**: `  final _formKey = GlobalKey<FormState>();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 24**: `  final _judulController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 25**: `  final _deskripsiController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 26**: `  final _lokasiController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 27**: `  final _hargaController = TextEditingController(text: '0');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `  final _kuotaController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `` — Baris kosong untuk kerapian.
+- **Baris 30**: `  DateTime? _tanggal;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `  TimeOfDay _jam = const TimeOfDay(hour: 19, minute: 0);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `  Uint8List? _bannerBytes;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `  String? _bannerName;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `` — Baris kosong untuk kerapian.
+- **Baris 35**: `  bool _loading = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 36**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 37**: `  String? _errorTanggal;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 38**: `` — Baris kosong untuk kerapian.
+- **Baris 39**: `  bool get _modeEdit => widget.event != null;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 40**: `` — Baris kosong untuk kerapian.
+- **Baris 41**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 43**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `    final event = widget.event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 45**: `` — Baris kosong untuk kerapian.
+- **Baris 46**: `    if (event != null) {` — Pengecekan kondisi.
+- **Baris 47**: `      _judulController.text = event.title;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `      _deskripsiController.text = event.description;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `      _lokasiController.text = event.location;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `      _hargaController.text = event.price.round().toString();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `      _kuotaController.text = event.quota.toString();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `` — Baris kosong untuk kerapian.
+- **Baris 53**: `      final tanggal = parseTanggal(event.date);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 54**: `      if (tanggal != null) {` — Pengecekan kondisi.
+- **Baris 55**: `        _tanggal = DateTime(tanggal.year, tanggal.month, tanggal.day);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `        _jam = TimeOfDay(hour: tanggal.hour, minute: tanggal.minute);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `      }` — Pembuka/penutup blok kode.
+- **Baris 58**: `    }` — Pembuka/penutup blok kode.
+- **Baris 59**: `  }` — Pembuka/penutup blok kode.
+- **Baris 60**: `` — Baris kosong untuk kerapian.
+- **Baris 61**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `  void dispose() {` — Fungsi/method `dispose` untuk menjalankan bagian logika ini.
+- **Baris 63**: `    _judulController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `    _deskripsiController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `    _lokasiController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `    _hargaController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `    _kuotaController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `    super.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `  }` — Pembuka/penutup blok kode.
+- **Baris 70**: `` — Baris kosong untuk kerapian.
+- **Baris 71**: `  String? _validasiJudul(String? value) {` — Fungsi/method `_validasiJudul` untuk menjalankan bagian logika ini.
+- **Baris 72**: `    final judul = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 73**: `    if (judul.isEmpty) return 'Judul event wajib diisi';` — Pengecekan kondisi.
+- **Baris 74**: `    if (judul.length < 3) return 'Judul minimal 3 karakter';` — Pengecekan kondisi.
+- **Baris 75**: `    if (judul.length > 150) return 'Judul maksimal 150 karakter';` — Pengecekan kondisi.
+- **Baris 76**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 77**: `  }` — Pembuka/penutup blok kode.
+- **Baris 78**: `` — Baris kosong untuk kerapian.
+- **Baris 79**: `  String? _validasiDeskripsi(String? value) {` — Fungsi/method `_validasiDeskripsi` untuk menjalankan bagian logika ini.
+- **Baris 80**: `    if ((value ?? '').trim().isEmpty) return 'Deskripsi wajib diisi';` — Pengecekan kondisi.
+- **Baris 81**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 82**: `  }` — Pembuka/penutup blok kode.
+- **Baris 83**: `` — Baris kosong untuk kerapian.
+- **Baris 84**: `  String? _validasiLokasi(String? value) {` — Fungsi/method `_validasiLokasi` untuk menjalankan bagian logika ini.
+- **Baris 85**: `    final lokasi = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 86**: `    if (lokasi.isEmpty) return 'Lokasi wajib diisi';` — Pengecekan kondisi.
+- **Baris 87**: `    if (lokasi.length > 255) return 'Lokasi maksimal 255 karakter';` — Pengecekan kondisi.
+- **Baris 88**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 89**: `  }` — Pembuka/penutup blok kode.
+- **Baris 90**: `` — Baris kosong untuk kerapian.
+- **Baris 91**: `  String? _validasiHarga(String? value) {` — Fungsi/method `_validasiHarga` untuk menjalankan bagian logika ini.
+- **Baris 92**: `    final teks = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 93**: `    if (teks.isEmpty) return 'Harga wajib diisi';` — Pengecekan kondisi.
+- **Baris 94**: `    final harga = int.tryParse(teks);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 95**: `    if (harga == null) return 'Harga harus berupa angka';` — Pengecekan kondisi.
+- **Baris 96**: `    if (harga < 0) return 'Harga tidak boleh negatif';` — Pengecekan kondisi.
+- **Baris 97**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 98**: `  }` — Pembuka/penutup blok kode.
+- **Baris 99**: `` — Baris kosong untuk kerapian.
+- **Baris 100**: `  String? _validasiKuota(String? value) {` — Fungsi/method `_validasiKuota` untuk menjalankan bagian logika ini.
+- **Baris 101**: `    final teks = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 102**: `    if (teks.isEmpty) return 'Kuota wajib diisi';` — Pengecekan kondisi.
+- **Baris 103**: `    final kuota = int.tryParse(teks);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 104**: `    if (kuota == null) return 'Kuota harus berupa angka';` — Pengecekan kondisi.
+- **Baris 105**: `    if (kuota < 1) return 'Kuota minimal 1';` — Pengecekan kondisi.
+- **Baris 106**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 107**: `  }` — Pembuka/penutup blok kode.
+- **Baris 108**: `` — Baris kosong untuk kerapian.
+- **Baris 109**: `  Future<void> _pilihTanggal() async {` — Fungsi/method `_pilihTanggal` untuk menjalankan bagian logika ini.
+- **Baris 110**: `    final sekarang = DateTime.now();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 111**: `    final awal = DateTime(sekarang.year, sekarang.month, sekarang.day);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 112**: `    var terpilih = _tanggal ?? sekarang.add(const Duration(days: 7));` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 113**: `    if (terpilih.isBefore(awal)) terpilih = awal;` — Pengecekan kondisi.
+- **Baris 114**: `` — Baris kosong untuk kerapian.
+- **Baris 115**: `    final hasil = await showDatePicker(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 116**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `      initialDate: terpilih,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `      firstDate: awal,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `      lastDate: DateTime(sekarang.year + 5, 12, 31),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `      helpText: 'Pilih tanggal event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `      cancelText: 'Batal',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `      confirmText: 'Pilih',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `` — Baris kosong untuk kerapian.
+- **Baris 125**: `    if (hasil != null && mounted) {` — Pengecekan kondisi.
+- **Baris 126**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 127**: `        _tanggal = hasil;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `        _errorTanggal = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `    }` — Pembuka/penutup blok kode.
+- **Baris 131**: `  }` — Pembuka/penutup blok kode.
+- **Baris 132**: `` — Baris kosong untuk kerapian.
+- **Baris 133**: `  Future<void> _pilihJam() async {` — Fungsi/method `_pilihJam` untuk menjalankan bagian logika ini.
+- **Baris 134**: `    final hasil = await showTimePicker(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 135**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `      initialTime: _jam,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `      helpText: 'Pilih jam event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `      cancelText: 'Batal',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `      confirmText: 'Pilih',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `` — Baris kosong untuk kerapian.
+- **Baris 142**: `    if (hasil != null && mounted) {` — Pengecekan kondisi.
+- **Baris 143**: `      setState(() => _jam = hasil);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 144**: `    }` — Pembuka/penutup blok kode.
+- **Baris 145**: `  }` — Pembuka/penutup blok kode.
+- **Baris 146**: `` — Baris kosong untuk kerapian.
+- **Baris 147**: `  Future<void> _pilihBanner() async {` — Fungsi/method `_pilihBanner` untuk menjalankan bagian logika ini.
+- **Baris 148**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 149**: `      final gambar = await pilihGambarDariGaleri();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 150**: `      if (gambar == null \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 151**: `` — Baris kosong untuk kerapian.
+- **Baris 152**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 153**: `        _bannerBytes = gambar.bytes;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `        _bannerName = gambar.nama;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `    } on PilihGambarException catch (error) {` — Menangkap error dari blok try.
+- **Baris 157**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 158**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 160**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 161**: `      _snack('Gagal memilih gambar. Coba lagi.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `    }` — Pembuka/penutup blok kode.
+- **Baris 163**: `  }` — Pembuka/penutup blok kode.
+- **Baris 164**: `` — Baris kosong untuk kerapian.
+- **Baris 165**: `  Future<void> _simpan() async {` — Fungsi/method `_simpan` untuk menjalankan bagian logika ini.
+- **Baris 166**: `    if (_loading) return;` — Pengecekan kondisi.
+- **Baris 167**: `` — Baris kosong untuk kerapian.
+- **Baris 168**: `    FocusScope.of(context).unfocus();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `` — Baris kosong untuk kerapian.
+- **Baris 170**: `    final formValid = _formKey.currentState?.validate() ?? false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 171**: `    final tanggalKosong = _tanggal == null;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 172**: `` — Baris kosong untuk kerapian.
+- **Baris 173**: `    if (tanggalKosong) {` — Pengecekan kondisi.
+- **Baris 174**: `      setState(() => _errorTanggal = 'Tanggal event wajib dipilih');` — Memperbarui state dan me-refresh tampilan.
+- **Baris 175**: `    }` — Pembuka/penutup blok kode.
+- **Baris 176**: `` — Baris kosong untuk kerapian.
+- **Baris 177**: `    if (!formValid \|\| tanggalKosong) return;` — Pengecekan kondisi.
+- **Baris 178**: `` — Baris kosong untuk kerapian.
+- **Baris 179**: `    final tanggalLengkap = DateTime(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 180**: `      _tanggal!.year,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `      _tanggal!.month,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `      _tanggal!.day,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `      _jam.hour,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `      _jam.minute,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `` — Baris kosong untuk kerapian.
+- **Baris 187**: `    if (!_modeEdit && !tanggalLengkap.isAfter(DateTime.now())) {` — Pengecekan kondisi.
+- **Baris 188**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 189**: `        _error = 'Tanggal dan jam event harus di masa depan.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `      return;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `    }` — Pembuka/penutup blok kode.
+- **Baris 193**: `` — Baris kosong untuk kerapian.
+- **Baris 194**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 195**: `      _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `      _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `` — Baris kosong untuk kerapian.
+- **Baris 199**: `    final fields = <String, String>{` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 200**: `      'title': _judulController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `      'description': _deskripsiController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `      'date': tanggalLengkap.toIso8601String(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `      'location': _lokasiController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `      'price': _hargaController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `      'quota': _kuotaController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `    };` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `` — Baris kosong untuk kerapian.
+- **Baris 208**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 209**: `      final response = _modeEdit` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 210**: `          ? await EventService.update(` — Menunggu proses asynchronous selesai.
+- **Baris 211**: `              id: widget.event!.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `              fields: fields,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `              bannerBytes: _bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `              bannerName: _bannerName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `            )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `          : await EventService.create(` — Menunggu proses asynchronous selesai.
+- **Baris 217**: `              fields: fields,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `              bannerBytes: _bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `              bannerName: _bannerName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `            );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `` — Baris kosong untuk kerapian.
+- **Baris 222**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 223**: `` — Baris kosong untuk kerapian.
+- **Baris 224**: `      final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 225**: `      final pesan = readText(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 226**: `        body['message'],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 227**: `        _modeEdit ? 'Event berhasil diperbarui.' : 'Event berhasil dibuat.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 228**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `` — Baris kosong untuk kerapian.
+- **Baris 230**: `      _snack(pesan);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `      Navigator.pop(context, true);` — Berpindah halaman atau mengatur route.
+- **Baris 232**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 233**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 234**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 235**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 237**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 238**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 239**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 240**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 241**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `        _error = 'Gagal menyimpan event. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `    }` — Pembuka/penutup blok kode.
+- **Baris 245**: `  }` — Pembuka/penutup blok kode.
+- **Baris 246**: `` — Baris kosong untuk kerapian.
+- **Baris 247**: `  void _snack(String pesan) {` — Fungsi/method `_snack` untuk menjalankan bagian logika ini.
+- **Baris 248**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 249**: `    ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 250**: `      SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 251**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `  }` — Pembuka/penutup blok kode.
+- **Baris 253**: `` — Baris kosong untuk kerapian.
+- **Baris 254**: `  String get _tanggalTeks {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 255**: `    if (_tanggal == null) return 'Pilih tanggal';` — Pengecekan kondisi.
+- **Baris 256**: `    final bulan = [` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 257**: `      'Jan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 258**: `      'Feb',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `      'Mar',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `      'Apr',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `      'Mei',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `      'Jun',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `      'Jul',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `      'Agu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 265**: `      'Sep',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 266**: `      'Okt',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 267**: `      'Nov',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `      'Des',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `    ][_tanggal!.month - 1];` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `    return '${_tanggal!.day} $bulan ${_tanggal!.year}';` — Mengembalikan nilai dari fungsi.
+- **Baris 271**: `  }` — Pembuka/penutup blok kode.
+- **Baris 272**: `` — Baris kosong untuk kerapian.
+- **Baris 273**: `  String get _jamTeks {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 274**: `    final jam = _jam.hour.toString().padLeft(2, '0');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 275**: `    final menit = _jam.minute.toString().padLeft(2, '0');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 276**: `    return '$jam.$menit';` — Mengembalikan nilai dari fungsi.
+- **Baris 277**: `  }` — Pembuka/penutup blok kode.
+- **Baris 278**: `` — Baris kosong untuk kerapian.
+- **Baris 279**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 281**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 282**: `` — Baris kosong untuk kerapian.
+- **Baris 283**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 284**: `      appBar: AppBar(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `        title: Text(_modeEdit ? 'Edit event' : 'Buat event'),` — Menampilkan teks di UI.
+- **Baris 286**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 287**: `      body: Form(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 288**: `        key: _formKey,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 289**: `        child: ListView(` — Menyusun layout tampilan.
+- **Baris 290**: `          padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 291**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `            Text('Banner event', style: tema.textTheme.titleMedium),` — Menampilkan teks di UI.
+- **Baris 293**: `            const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 294**: `            Text(` — Menampilkan teks di UI.
+- **Baris 295**: `              'Opsional. Gunakan gambar JPG atau PNG maksimal 5 MB.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 296**: `              style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 297**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 298**: `            const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 299**: `            _PratinjauBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 300**: `              bytes: _bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 301**: `              url: widget.event?.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 303**: `            const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 304**: `            Row(` — Menyusun layout tampilan.
+- **Baris 305**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 306**: `                OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 307**: `                  onPressed: _loading ? null : _pilihBanner,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 308**: `                  icon: const Icon(Icons.photo_library_outlined, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 309**: `                  label: Text(` — Menampilkan teks di UI.
+- **Baris 310**: `                    _bannerBytes == null ? 'Pilih dari galeri' : 'Ganti gambar',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 311**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 312**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 313**: `                if (_bannerBytes != null) ...[` — Pengecekan kondisi.
+- **Baris 314**: `                  const SizedBox(width: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 315**: `                  TextButton(` — Membuat tombol aksi.
+- **Baris 316**: `                    onPressed: _loading` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `                        ? null` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 318**: `                        : () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `                            setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 320**: `                              _bannerBytes = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 321**: `                              _bannerName = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 322**: `                            });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 323**: `                          },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 324**: `                    child: const Text('Batalkan pilihan'),` — Menampilkan teks di UI.
+- **Baris 325**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 326**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 327**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 328**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 329**: `            const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 330**: `            const _LabelBagian('Informasi event'),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 331**: `            const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 332**: `            TextFormField(` — Membuat input form.
+- **Baris 333**: `              controller: _judulController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 334**: `              textInputAction: TextInputAction.next,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `              textCapitalization: TextCapitalization.words,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 336**: `              validator: _validasiJudul,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 337**: `              maxLength: 150,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 338**: `              decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 339**: `                labelText: 'Judul event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 340**: `                hintText: 'Contoh: Jakarta Music Fest 2026',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 341**: `                prefixIcon: Icon(Icons.local_activity_outlined, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 342**: `                counterText: '',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 344**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 346**: `            TextFormField(` — Membuat input form.
+- **Baris 347**: `              controller: _deskripsiController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `              minLines: 4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `              maxLines: 8,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 350**: `              textCapitalization: TextCapitalization.sentences,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 351**: `              validator: _validasiDeskripsi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 352**: `              decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 353**: `                labelText: 'Deskripsi',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 354**: `                hintText: 'Ceritakan konsep, lineup, atau informasi penting.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 355**: `                alignLabelWithHint: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 356**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 357**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 358**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 359**: `            TextFormField(` — Membuat input form.
+- **Baris 360**: `              controller: _lokasiController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 361**: `              textInputAction: TextInputAction.next,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 362**: `              textCapitalization: TextCapitalization.words,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 363**: `              validator: _validasiLokasi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 364**: `              maxLength: 255,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 365**: `              decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 366**: `                labelText: 'Lokasi',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 367**: `                hintText: 'Contoh: Gelora Bung Karno, Jakarta',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 368**: `                prefixIcon: Icon(Icons.place_outlined, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 369**: `                counterText: '',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 370**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 371**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 372**: `            const SizedBox(height: 20),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 373**: `            const _LabelBagian('Jadwal & tiket'),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 374**: `            const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 375**: `            Row(` — Menyusun layout tampilan.
+- **Baris 376**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 377**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 379**: `                  child: _Pemilih(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 380**: `                    label: 'Tanggal',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 381**: `                    nilai: _tanggalTeks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 382**: `                    ikon: Icons.calendar_today_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 383**: `                    onTap: _loading ? null : _pilihTanggal,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 384**: `                    error: _errorTanggal,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 385**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 386**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 387**: `                const SizedBox(width: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 388**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 389**: `                  child: _Pemilih(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 390**: `                    label: 'Jam mulai',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 391**: `                    nilai: _jamTeks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 392**: `                    ikon: Icons.schedule_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 393**: `                    onTap: _loading ? null : _pilihJam,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 394**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 396**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 399**: `            Row(` — Menyusun layout tampilan.
+- **Baris 400**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 401**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 402**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `                  child: TextFormField(` — Membuat input form.
+- **Baris 404**: `                    controller: _hargaController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 405**: `                    keyboardType: TextInputType.number,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 407**: `                    validator: _validasiHarga,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 408**: `                    decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 409**: `                      labelText: 'Harga (Rp)',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 410**: `                      hintText: '0',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 412**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 413**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 414**: `                const SizedBox(width: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 415**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 416**: `                  child: TextFormField(` — Membuat input form.
+- **Baris 417**: `                    controller: _kuotaController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 418**: `                    keyboardType: TextInputType.number,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 419**: `                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 420**: `                    validator: _validasiKuota,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 421**: `                    decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 422**: `                      labelText: 'Kuota',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 423**: `                      hintText: '100',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 424**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 425**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 426**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 427**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 428**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 429**: `            const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 430**: `            Text(` — Menampilkan teks di UI.
+- **Baris 431**: `              'Isi harga 0 untuk event gratis. Kuota minimal 1 tiket.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 432**: `              style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 433**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 434**: `            if (_error != null) ...[` — Pengecekan kondisi.
+- **Baris 435**: `              const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 436**: `              InfoBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 437**: `                icon: Icons.error_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 438**: `                message: _error!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 439**: `                color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 440**: `                background: AppColors.dangerSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 441**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 442**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 443**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 444**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 445**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 446**: `      bottomNavigationBar: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 447**: `        padding: EdgeInsets.fromLTRB(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 448**: `          20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 449**: `          12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 450**: `          20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 451**: `          12 + MediaQuery.paddingOf(context).bottom,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 452**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 453**: `        decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 454**: `          color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 455**: `          border: Border(top: BorderSide(color: AppColors.line)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 456**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 457**: `        child: SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 458**: `          width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 459**: `          child: ElevatedButton(` — Membuat tombol aksi.
+- **Baris 460**: `            onPressed: _loading ? null : _simpan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 461**: `            child: _loading` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 462**: `                ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 463**: `                    width: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 464**: `                    height: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 465**: `                    child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 466**: `                      strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 467**: `                      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 468**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 469**: `                  )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 470**: `                : Text(_modeEdit ? 'Simpan perubahan' : 'Buat event'),` — Menampilkan teks di UI.
+- **Baris 471**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 472**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 473**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 474**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 475**: `  }` — Pembuka/penutup blok kode.
+- **Baris 476**: `}` — Pembuka/penutup blok kode.
+- **Baris 477**: `` — Baris kosong untuk kerapian.
+- **Baris 478**: `class _PratinjauBanner extends StatelessWidget {` — Mendefinisikan class bernama _PratinjauBanner.
+- **Baris 479**: `  final Uint8List? bytes;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 480**: `  final String? url;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 481**: `` — Baris kosong untuk kerapian.
+- **Baris 482**: `  const _PratinjauBanner({this.bytes, this.url});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 483**: `` — Baris kosong untuk kerapian.
+- **Baris 484**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 485**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 486**: `    Widget isi;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 487**: `` — Baris kosong untuk kerapian.
+- **Baris 488**: `    if (bytes != null) {` — Pengecekan kondisi.
+- **Baris 489**: `      isi = Image.memory(` — Menampilkan gambar.
+- **Baris 490**: `        bytes!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 491**: `        fit: BoxFit.cover,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 492**: `        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 493**: `        height: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 494**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 495**: `    } else if (url != null && url!.isNotEmpty) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 496**: `      isi = Image.network(` — Menampilkan gambar.
+- **Baris 497**: `        url!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 498**: `        fit: BoxFit.cover,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 499**: `        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 500**: `        height: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 501**: `        errorBuilder: (context, error, stackTrace) => const _KosongBanner(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 502**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 503**: `    } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 504**: `      isi = const _KosongBanner();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 505**: `    }` — Pembuka/penutup blok kode.
+- **Baris 506**: `` — Baris kosong untuk kerapian.
+- **Baris 507**: `    return ClipRRect(` — Mengembalikan nilai dari fungsi.
+- **Baris 508**: `      borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 509**: `      child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 510**: `        height: 168,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 511**: `        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 512**: `        decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 513**: `          color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 514**: `          border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 515**: `          borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 516**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 517**: `        child: isi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 518**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 519**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 520**: `  }` — Pembuka/penutup blok kode.
+- **Baris 521**: `}` — Pembuka/penutup blok kode.
+- **Baris 522**: `` — Baris kosong untuk kerapian.
+- **Baris 523**: `class _KosongBanner extends StatelessWidget {` — Mendefinisikan class bernama _KosongBanner.
+- **Baris 524**: `  const _KosongBanner();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 525**: `` — Baris kosong untuk kerapian.
+- **Baris 526**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 527**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 528**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 529**: `      decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 530**: `        gradient: LinearGradient(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 531**: `          begin: Alignment.topLeft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 532**: `          end: Alignment.bottomRight,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 533**: `          colors: [AppColors.brandSoft, Color(0xFFF4E7E7)],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 534**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 535**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 536**: `      child: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 537**: `        child: Column(` — Menyusun layout tampilan.
+- **Baris 538**: `          mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 539**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 540**: `            Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 541**: `              Icons.image_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 542**: `              size: 34,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 543**: `              color: AppColors.brand.withValues(alpha: 0.35),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 544**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 545**: `            const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 546**: `            Text(` — Menampilkan teks di UI.
+- **Baris 547**: `              'Belum ada banner',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 548**: `              style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 549**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 550**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 551**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 552**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 553**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 554**: `  }` — Pembuka/penutup blok kode.
+- **Baris 555**: `}` — Pembuka/penutup blok kode.
+- **Baris 556**: `` — Baris kosong untuk kerapian.
+- **Baris 557**: `class _LabelBagian extends StatelessWidget {` — Mendefinisikan class bernama _LabelBagian.
+- **Baris 558**: `  final String teks;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 559**: `` — Baris kosong untuk kerapian.
+- **Baris 560**: `  const _LabelBagian(this.teks);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 561**: `` — Baris kosong untuk kerapian.
+- **Baris 562**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 563**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 564**: `    return Text(` — Mengembalikan nilai dari fungsi.
+- **Baris 565**: `      teks.toUpperCase(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 566**: `      style: Theme.of(context).textTheme.labelSmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 567**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 568**: `  }` — Pembuka/penutup blok kode.
+- **Baris 569**: `}` — Pembuka/penutup blok kode.
+- **Baris 570**: `` — Baris kosong untuk kerapian.
+- **Baris 571**: `class _Pemilih extends StatelessWidget {` — Mendefinisikan class bernama _Pemilih.
+- **Baris 572**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 573**: `  final String nilai;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 574**: `  final IconData ikon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 575**: `  final VoidCallback? onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 576**: `  final String? error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 577**: `` — Baris kosong untuk kerapian.
+- **Baris 578**: `  const _Pemilih({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 579**: `    required this.label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 580**: `    required this.nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 581**: `    required this.ikon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 582**: `    required this.onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 583**: `    this.error,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 584**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 585**: `` — Baris kosong untuk kerapian.
+- **Baris 586**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 587**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 588**: `    return Column(` — Mengembalikan nilai dari fungsi.
+- **Baris 589**: `      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 590**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 591**: `        Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 592**: `          color: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 593**: `          clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 594**: `          shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 595**: `            borderRadius: BorderRadius.circular(AppRadius.field),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 596**: `            side: BorderSide(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 597**: `              color: error == null ? AppColors.line : AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 598**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 599**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 600**: `          child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 601**: `            onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 602**: `            child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 603**: `              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 604**: `              child: Row(` — Menyusun layout tampilan.
+- **Baris 605**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 606**: `                  Icon(ikon, size: 18, color: AppColors.brand),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 607**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 608**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 609**: `                    child: Column(` — Menyusun layout tampilan.
+- **Baris 610**: `                      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 611**: `                      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 612**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 613**: `                          label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 614**: `                          style: Theme.of(context)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 615**: `                              .textTheme` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 616**: `                              .bodySmall` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 617**: `                              ?.copyWith(fontSize: 10.5),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 618**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 619**: `                        const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 620**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 621**: `                          nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 622**: `                          maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 623**: `                          overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 624**: `                          style: Theme.of(context)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 625**: `                              .textTheme` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 626**: `                              .bodyMedium` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 627**: `                              ?.copyWith(fontWeight: FontWeight.w600),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 628**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 629**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 630**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 631**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 632**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 633**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 634**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 635**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 636**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 637**: `        if (error != null) ...[` — Pengecekan kondisi.
+- **Baris 638**: `          const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 639**: `          Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 640**: `            padding: const EdgeInsets.only(left: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 641**: `            child: Text(` — Menampilkan teks di UI.
+- **Baris 642**: `              error!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 643**: `              style: const TextStyle(color: AppColors.danger, fontSize: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 644**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 645**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 646**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 647**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 648**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 649**: `  }` — Pembuka/penutup blok kode.
+- **Baris 650**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/home_page.dart
+
+Jumlah baris: 651
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:async';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../model/event_item.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import '../service/event_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import '../widgets/event_card.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import '../widgets/initials_avatar.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `import '../widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 13**: `import 'event_detail_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `class HomePage extends StatefulWidget {` — Mendefinisikan class bernama HomePage.
+- **Baris 16**: `  final AppUser user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `  const HomePage({super.key, required this.user});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `` — Baris kosong untuk kerapian.
+- **Baris 20**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `  State<HomePage> createState() => _HomePageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 22**: `}` — Pembuka/penutup blok kode.
+- **Baris 23**: `` — Baris kosong untuk kerapian.
+- **Baris 24**: `class _HomePageState extends State<HomePage> {` — Mendefinisikan class bernama _HomePageState.
+- **Baris 25**: `  final _searchController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 26**: `  Timer? _debounce;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `` — Baris kosong untuk kerapian.
+- **Baris 28**: `  final List<EventItem> _events = [];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `  bool _loading = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 30**: `  bool _loadingMore = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 31**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `` — Baris kosong untuk kerapian.
+- **Baris 33**: `  String _search = '';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `  String _location = '';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 35**: `  String _sortBy = 'date';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 36**: `  String _order = 'asc';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 37**: `` — Baris kosong untuk kerapian.
+- **Baris 38**: `  int _page = 1;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 39**: `  int _totalPages = 1;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 40**: `` — Baris kosong untuk kerapian.
+- **Baris 41**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 43**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `    _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `  }` — Pembuka/penutup blok kode.
+- **Baris 46**: `` — Baris kosong untuk kerapian.
+- **Baris 47**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `  void dispose() {` — Fungsi/method `dispose` untuk menjalankan bagian logika ini.
+- **Baris 49**: `    _debounce?.cancel();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `    _searchController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `    super.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `  }` — Pembuka/penutup blok kode.
+- **Baris 53**: `` — Baris kosong untuk kerapian.
+- **Baris 54**: `  String get _labelUrutan {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 55**: `    if (_sortBy == 'price') {` — Pengecekan kondisi.
+- **Baris 56**: `      return _order == 'asc' ? 'Harga termurah' : 'Harga termahal';` — Mengembalikan nilai dari fungsi.
+- **Baris 57**: `    }` — Pembuka/penutup blok kode.
+- **Baris 58**: `    return _order == 'asc' ? 'Terdekat' : 'Terbaru';` — Mengembalikan nilai dari fungsi.
+- **Baris 59**: `  }` — Pembuka/penutup blok kode.
+- **Baris 60**: `` — Baris kosong untuk kerapian.
+- **Baris 61**: `  bool get _adaFilter =>` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 62**: `      _search.isNotEmpty \|\| _location.isNotEmpty \|\| _sortBy != 'date' \|\| _order != 'asc';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `` — Baris kosong untuk kerapian.
+- **Baris 64**: `  Future<void> _load({bool reset = false}) async {` — Fungsi/method `_load` untuk menjalankan bagian logika ini.
+- **Baris 65**: `    if (reset) {` — Pengecekan kondisi.
+- **Baris 66**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 67**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 68**: `        _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `        _page = 1;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `        _events.clear();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `    } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `      if (_loadingMore \|\| _page >= _totalPages) return;` — Pengecekan kondisi.
+- **Baris 75**: `      setState(() => _loadingMore = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 76**: `    }` — Pembuka/penutup blok kode.
+- **Baris 77**: `` — Baris kosong untuk kerapian.
+- **Baris 78**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 79**: `      final hasil = await EventService.list(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 80**: `        search: _search,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `        location: _location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `        sortBy: _sortBy,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `        order: _order,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `        page: reset ? 1 : _page + 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `        limit: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `` — Baris kosong untuk kerapian.
+- **Baris 88**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 89**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 90**: `        if (reset) _events.clear();` — Pengecekan kondisi.
+- **Baris 91**: `        _events.addAll(hasil.items);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `        _page = hasil.page;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `        _totalPages = hasil.totalPages;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 94**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 95**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 96**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 97**: `      if (reset) {` — Pengecekan kondisi.
+- **Baris 98**: `        setState(() => _error = error.message);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 99**: `      } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `        _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `      }` — Pembuka/penutup blok kode.
+- **Baris 102**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 103**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 104**: `      if (reset) {` — Pengecekan kondisi.
+- **Baris 105**: `        setState(() => _error = 'Gagal memuat event.');` — Memperbarui state dan me-refresh tampilan.
+- **Baris 106**: `      } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `        _snack('Gagal memuat event.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `      }` — Pembuka/penutup blok kode.
+- **Baris 109**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `      if (mounted) {` — Pengecekan kondisi.
+- **Baris 111**: `        setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 112**: `          _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `          _loadingMore = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `        });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `      }` — Pembuka/penutup blok kode.
+- **Baris 116**: `    }` — Pembuka/penutup blok kode.
+- **Baris 117**: `  }` — Pembuka/penutup blok kode.
+- **Baris 118**: `` — Baris kosong untuk kerapian.
+- **Baris 119**: `  void _onSearchChanged(String value) {` — Fungsi/method `_onSearchChanged` untuk menjalankan bagian logika ini.
+- **Baris 120**: `    setState(() => _search = value.trim());` — Memperbarui state dan me-refresh tampilan.
+- **Baris 121**: `    _debounce?.cancel();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `    _debounce = Timer(const Duration(milliseconds: 450), () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `      _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `  }` — Pembuka/penutup blok kode.
+- **Baris 126**: `` — Baris kosong untuk kerapian.
+- **Baris 127**: `  void _cariSekarang() {` — Fungsi/method `_cariSekarang` untuk menjalankan bagian logika ini.
+- **Baris 128**: `    _debounce?.cancel();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `    _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `  }` — Pembuka/penutup blok kode.
+- **Baris 131**: `` — Baris kosong untuk kerapian.
+- **Baris 132**: `  void _hapusPencarian() {` — Fungsi/method `_hapusPencarian` untuk menjalankan bagian logika ini.
+- **Baris 133**: `    _searchController.clear();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `    setState(() => _search = '');` — Memperbarui state dan me-refresh tampilan.
+- **Baris 135**: `    _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `  }` — Pembuka/penutup blok kode.
+- **Baris 137**: `` — Baris kosong untuk kerapian.
+- **Baris 138**: `  Future<void> _pilihLokasi() async {` — Fungsi/method `_pilihLokasi` untuk menjalankan bagian logika ini.
+- **Baris 139**: `    var nilai = _location;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 140**: `    final hasil = await showModalBottomSheet<String>(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 141**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `      isScrollControlled: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `        return Padding(` — Mengembalikan nilai dari fungsi.
+- **Baris 145**: `          padding: EdgeInsets.fromLTRB(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 146**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `            20 + MediaQuery.viewInsetsOf(context).bottom,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 151**: `          child: Column(` — Menyusun layout tampilan.
+- **Baris 152**: `            mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `            crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `              Text(` — Menampilkan teks di UI.
+- **Baris 156**: `                'Filter lokasi',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `                style: Theme.of(context).textTheme.titleLarge,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `              const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 160**: `              Text(` — Menampilkan teks di UI.
+- **Baris 161**: `                'Masukkan nama kota atau lokasi event.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `                style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `              const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 165**: `              TextField(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `                autofocus: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `                textInputAction: TextInputAction.search,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `                onChanged: (value) => nilai = value,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `                onSubmitted: (value) => Navigator.pop(context, value.trim()),` — Berpindah halaman atau mengatur route.
+- **Baris 170**: `                decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `                  labelText: 'Lokasi',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `                  hintText: 'Contoh: Jakarta',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `                  prefixIcon: Icon(Icons.place_outlined, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `              const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 177**: `              Row(` — Menyusun layout tampilan.
+- **Baris 178**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `                    child: OutlinedButton(` — Membuat tombol aksi.
+- **Baris 181**: `                      onPressed: () => Navigator.pop(context, ''),` — Berpindah halaman atau mengatur route.
+- **Baris 182**: `                      child: const Text('Reset'),` — Menampilkan teks di UI.
+- **Baris 183**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `                  const SizedBox(width: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 186**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `                    child: ElevatedButton(` — Membuat tombol aksi.
+- **Baris 188**: `                      onPressed: () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `                        Navigator.pop(context, nilai.trim());` — Berpindah halaman atau mengatur route.
+- **Baris 190**: `                      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `                      child: const Text('Terapkan'),` — Menampilkan teks di UI.
+- **Baris 192**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `` — Baris kosong untuk kerapian.
+- **Baris 202**: `    if (hasil == null \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 203**: `` — Baris kosong untuk kerapian.
+- **Baris 204**: `    setState(() => _location = hasil);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 205**: `    _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `  }` — Pembuka/penutup blok kode.
+- **Baris 207**: `` — Baris kosong untuk kerapian.
+- **Baris 208**: `  Future<void> _pilihUrutan() async {` — Fungsi/method `_pilihUrutan` untuk menjalankan bagian logika ini.
+- **Baris 209**: `    final hasil = await showModalBottomSheet<String>(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 210**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `        final opsi = <_OpsiUrutan>[` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 213**: `          const _OpsiUrutan('date', 'asc', 'Terdekat', 'Tanggal paling dekat'),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 214**: `          const _OpsiUrutan('date', 'desc', 'Terbaru', 'Tanggal paling akhir'),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 215**: `          const _OpsiUrutan('price', 'asc', 'Harga termurah', 'Harga kecil ke besar'),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 216**: `          const _OpsiUrutan('price', 'desc', 'Harga termahal', 'Harga besar ke kecil'),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 217**: `        ];` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `        final terpilih = '${_sortBy}_$_order';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 219**: `` — Baris kosong untuk kerapian.
+- **Baris 220**: `        return SafeArea(` — Mengembalikan nilai dari fungsi.
+- **Baris 221**: `          child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `            child: Column(` — Menyusun layout tampilan.
+- **Baris 224**: `              mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 227**: `                Text(` — Menampilkan teks di UI.
+- **Baris 228**: `                  'Urutkan event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `                  style: Theme.of(context).textTheme.titleLarge,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `                const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 232**: `                for (final opsi in opsi)` — Perulangan untuk memproses beberapa data.
+- **Baris 233**: `                  ListTile(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `                    contentPadding: EdgeInsets.zero,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `                    title: Text(opsi.label),` — Menampilkan teks di UI.
+- **Baris 236**: `                    subtitle: Text(opsi.keterangan),` — Menampilkan teks di UI.
+- **Baris 237**: `                    trailing: terpilih == '${opsi.sortBy}_${opsi.order}'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 238**: `                        ? const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `                            Icons.check_circle_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `                            color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `                          )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `                        : const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `                            Icons.circle_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `                            color: AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `                    onTap: () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `                      Navigator.pop(context, '${opsi.sortBy}_${opsi.order}');` — Berpindah halaman atau mengatur route.
+- **Baris 248**: `                    },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `` — Baris kosong untuk kerapian.
+- **Baris 257**: `    if (hasil == null \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 258**: `    final bagian = hasil.split('_');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 259**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 260**: `      _sortBy = bagian.first;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `      _order = bagian.last;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `    _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `  }` — Pembuka/penutup blok kode.
+- **Baris 265**: `` — Baris kosong untuk kerapian.
+- **Baris 266**: `  void _resetFilter() {` — Fungsi/method `_resetFilter` untuk menjalankan bagian logika ini.
+- **Baris 267**: `    _debounce?.cancel();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `    _searchController.clear();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 270**: `      _search = '';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 271**: `      _location = '';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 272**: `      _sortBy = 'date';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 273**: `      _order = 'asc';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 274**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `    _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 276**: `  }` — Pembuka/penutup blok kode.
+- **Baris 277**: `` — Baris kosong untuk kerapian.
+- **Baris 278**: `  void _snack(String pesan) {` — Fungsi/method `_snack` untuk menjalankan bagian logika ini.
+- **Baris 279**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 280**: `    ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 281**: `      SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 282**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 283**: `  }` — Pembuka/penutup blok kode.
+- **Baris 284**: `` — Baris kosong untuk kerapian.
+- **Baris 285**: `  Future<void> _bukaDetail(EventItem event) async {` — Fungsi/method `_bukaDetail` untuk menjalankan bagian logika ini.
+- **Baris 286**: `    await Navigator.push<bool>(` — Berpindah halaman atau mengatur route.
+- **Baris 287**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 288**: `      MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 289**: `        builder: (_) => EventDetailPage(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 290**: `          eventId: event.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 291**: `          user: widget.user,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 293**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 294**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 295**: `` — Baris kosong untuk kerapian.
+- **Baris 296**: `    if (mounted) {` — Pengecekan kondisi.
+- **Baris 297**: `      _load(reset: true);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 298**: `    }` — Pembuka/penutup blok kode.
+- **Baris 299**: `  }` — Pembuka/penutup blok kode.
+- **Baris 300**: `` — Baris kosong untuk kerapian.
+- **Baris 301**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 303**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 304**: `    final namaDepan = widget.user.name.trim().split(RegExp(r'\s+')).first;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 305**: `` — Baris kosong untuk kerapian.
+- **Baris 306**: `    return SafeArea(` — Mengembalikan nilai dari fungsi.
+- **Baris 307**: `      bottom: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 308**: `      child: RefreshIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 309**: `        onRefresh: () => _load(reset: true),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 310**: `        child: ListView(` — Menyusun layout tampilan.
+- **Baris 311**: `          physics: const AlwaysScrollableScrollPhysics(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 312**: `          padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 313**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 314**: `            Row(` — Menyusun layout tampilan.
+- **Baris 315**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 316**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `                  child: Column(` — Menyusun layout tampilan.
+- **Baris 318**: `                    crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 320**: `                      Text('Halo, $namaDepan', style: tema.textTheme.bodySmall),` — Menampilkan teks di UI.
+- **Baris 321**: `                      const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 322**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 323**: `                        'Mau ke event apa hari ini?',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 324**: `                        style: tema.textTheme.headlineSmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 325**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 326**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 327**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 328**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 329**: `                const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 330**: `                InitialsAvatar(name: widget.user.name, size: 44),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 331**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 332**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 333**: `            const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 334**: `            _HeroPencarian(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `              controller: _searchController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 336**: `              onChanged: _onSearchChanged,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 337**: `              onSubmitted: (_) => _cariSekarang(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 338**: `              onClear: _search.isEmpty ? null : _hapusPencarian,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 339**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 340**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 341**: `            Row(` — Menyusun layout tampilan.
+- **Baris 342**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 344**: `                  child: _TombolFilter(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `                    icon: Icons.place_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 346**: `                    label: _location.isEmpty ? 'Semua lokasi' : _location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 347**: `                    active: _location.isNotEmpty,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `                    onTap: _pilihLokasi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 350**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 351**: `                const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 352**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 353**: `                  child: _TombolFilter(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 354**: `                    icon: Icons.swap_vert_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 355**: `                    label: _labelUrutan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 356**: `                    active: _sortBy != 'date' \|\| _order != 'asc',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 357**: `                    onTap: _pilihUrutan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 358**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 359**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 360**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 361**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 362**: `            if (_adaFilter) ...[` — Pengecekan kondisi.
+- **Baris 363**: `              const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 364**: `              Align(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 365**: `                alignment: Alignment.centerRight,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 366**: `                child: TextButton.icon(` — Membuat tombol aksi.
+- **Baris 367**: `                  onPressed: _resetFilter,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 368**: `                  icon: const Icon(Icons.close_rounded, size: 16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 369**: `                  label: const Text('Reset filter'),` — Menampilkan teks di UI.
+- **Baris 370**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 371**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 372**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 373**: `            const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 374**: `            Row(` — Menyusun layout tampilan.
+- **Baris 375**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 376**: `                Text(` — Menampilkan teks di UI.
+- **Baris 377**: `                  _adaFilter ? 'Hasil pencarian' : 'Event mendatang',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `                  style: tema.textTheme.titleLarge,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 379**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 380**: `                const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 381**: `                if (!_loading && _error == null)` — Pengecekan kondisi.
+- **Baris 382**: `                  Text(` — Menampilkan teks di UI.
+- **Baris 383**: `                    '${_events.length} event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 384**: `                    style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 385**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 386**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 387**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 388**: `            const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 389**: `            if (_loading)` — Pengecekan kondisi.
+- **Baris 390**: `              const SizedBox(height: 300, child: LoadingState())` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 391**: `            else if (_error != null)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 392**: `              ErrorState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 393**: `                message: _error!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 394**: `                onRetry: () => _load(reset: true),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 396**: `            else if (_events.isEmpty)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `              EmptyState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `                icon: Icons.event_busy_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 399**: `                title: 'Belum ada event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 400**: `                message: _adaFilter` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 401**: `                    ? 'Coba ubah kata kunci atau filter yang kamu pakai.'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 402**: `                    : 'Event yang tersedia akan muncul di sini.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `                actionLabel: _adaFilter ? 'Reset filter' : 'Muat ulang',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 404**: `                onAction: _adaFilter` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 405**: `                    ? _resetFilter` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `                    : () => _load(reset: true),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 407**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 408**: `            else ...[` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 409**: `              for (final event in _events)` — Perulangan untuk memproses beberapa data.
+- **Baris 410**: `                Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `                  padding: const EdgeInsets.only(bottom: 14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 412**: `                  child: EventCard(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 413**: `                    event: event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 414**: `                    onTap: () => _bukaDetail(event),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 415**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 416**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 417**: `              const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 418**: `              if (_page < _totalPages)` — Pengecekan kondisi.
+- **Baris 419**: `                SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 420**: `                  width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 421**: `                  child: OutlinedButton(` — Membuat tombol aksi.
+- **Baris 422**: `                    onPressed: _loadingMore ? null : () => _load(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 423**: `                    child: _loadingMore` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 424**: `                        ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 425**: `                            width: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 426**: `                            height: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 427**: `                            child: CircularProgressIndicator(strokeWidth: 2),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 428**: `                          )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 429**: `                        : const Text('Muat lebih banyak'),` — Menampilkan teks di UI.
+- **Baris 430**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 431**: `                )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 432**: `              else` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 433**: `                Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 434**: `                  child: Text(` — Menampilkan teks di UI.
+- **Baris 435**: `                    'Semua event sudah ditampilkan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 436**: `                    style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 437**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 438**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 439**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 440**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 441**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 442**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 443**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 444**: `  }` — Pembuka/penutup blok kode.
+- **Baris 445**: `}` — Pembuka/penutup blok kode.
+- **Baris 446**: `` — Baris kosong untuk kerapian.
+- **Baris 447**: `class _HeroPencarian extends StatelessWidget {` — Mendefinisikan class bernama _HeroPencarian.
+- **Baris 448**: `  final TextEditingController controller;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 449**: `  final ValueChanged<String> onChanged;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 450**: `  final ValueChanged<String> onSubmitted;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 451**: `  final VoidCallback? onClear;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 452**: `` — Baris kosong untuk kerapian.
+- **Baris 453**: `  const _HeroPencarian({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 454**: `    required this.controller,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 455**: `    required this.onChanged,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 456**: `    required this.onSubmitted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 457**: `    required this.onClear,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 458**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 459**: `` — Baris kosong untuk kerapian.
+- **Baris 460**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 461**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 462**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 463**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 464**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 465**: `        borderRadius: BorderRadius.circular(24),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 466**: `        gradient: const LinearGradient(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 467**: `          begin: Alignment.topLeft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 468**: `          end: Alignment.bottomRight,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 469**: `          colors: [AppColors.brandDark, AppColors.brand],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 470**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 471**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 472**: `      child: Stack(` — Menyusun layout tampilan.
+- **Baris 473**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 474**: `          Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 475**: `            right: -50,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 476**: `            top: -60,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 477**: `            child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 478**: `              width: 160,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 479**: `              height: 160,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 480**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 481**: `                shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 482**: `                border: Border.all(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 483**: `                  color: Colors.white.withValues(alpha: 0.10),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 484**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 485**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 486**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 487**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 488**: `          Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 489**: `            padding: const EdgeInsets.all(20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 490**: `            child: Column(` — Menyusun layout tampilan.
+- **Baris 491**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 492**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 493**: `                Text(` — Menampilkan teks di UI.
+- **Baris 494**: `                  'EVENT TICKETING',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 495**: `                  style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 496**: `                    fontSize: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 497**: `                    letterSpacing: 1.6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 498**: `                    fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 499**: `                    color: Colors.white.withValues(alpha: 0.62),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 500**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 501**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 502**: `                const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 503**: `                const Text(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 504**: `                  'Temukan event\nfavoritmu.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 505**: `                  style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 506**: `                    color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 507**: `                    fontSize: 25,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 508**: `                    height: 1.15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 509**: `                    fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 510**: `                    letterSpacing: -0.6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 511**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 512**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 513**: `                const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 514**: `                Text(` — Menampilkan teks di UI.
+- **Baris 515**: `                  'Cari event, pesan tiket, pantau status pembayaran.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 516**: `                  style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 517**: `                    color: Colors.white.withValues(alpha: 0.70),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 518**: `                    fontSize: 12.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 519**: `                    height: 1.45,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 520**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 521**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 522**: `                const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 523**: `                TextField(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 524**: `                  controller: controller,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 525**: `                  onChanged: onChanged,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 526**: `                  onSubmitted: onSubmitted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 527**: `                  textInputAction: TextInputAction.search,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 528**: `                  style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 529**: `                    color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 530**: `                    fontSize: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 531**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 532**: `                  decoration: InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 533**: `                    hintText: 'Cari event atau lokasi...',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 534**: `                    hintStyle: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 535**: `                      color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 536**: `                      fontSize: 13.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 537**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 538**: `                    filled: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 539**: `                    fillColor: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 540**: `                    contentPadding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 541**: `                      horizontal: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 542**: `                      vertical: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 543**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 544**: `                    prefixIcon: const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 545**: `                      Icons.search_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 546**: `                      size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 547**: `                      color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 548**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 549**: `                    suffixIcon: onClear == null` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 550**: `                        ? null` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 551**: `                        : IconButton(` — Membuat tombol aksi.
+- **Baris 552**: `                            tooltip: 'Hapus pencarian',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 553**: `                            onPressed: onClear,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 554**: `                            icon: const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 555**: `                              Icons.close_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 556**: `                              size: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 557**: `                              color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 558**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 559**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 560**: `                    border: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 561**: `                      borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 562**: `                      borderSide: BorderSide.none,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 563**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 564**: `                    enabledBorder: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 565**: `                      borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 566**: `                      borderSide: BorderSide.none,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 567**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 568**: `                    focusedBorder: OutlineInputBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 569**: `                      borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 570**: `                      borderSide: BorderSide.none,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 571**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 572**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 573**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 574**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 575**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 576**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 577**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 578**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 579**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 580**: `  }` — Pembuka/penutup blok kode.
+- **Baris 581**: `}` — Pembuka/penutup blok kode.
+- **Baris 582**: `` — Baris kosong untuk kerapian.
+- **Baris 583**: `class _TombolFilter extends StatelessWidget {` — Mendefinisikan class bernama _TombolFilter.
+- **Baris 584**: `  final IconData icon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 585**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 586**: `  final bool active;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 587**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 588**: `` — Baris kosong untuk kerapian.
+- **Baris 589**: `  const _TombolFilter({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 590**: `    required this.icon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 591**: `    required this.label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 592**: `    required this.active,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 593**: `    required this.onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 594**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 595**: `` — Baris kosong untuk kerapian.
+- **Baris 596**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 597**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 598**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 599**: `      color: active ? AppColors.brandSoft : Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 600**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 601**: `      shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 602**: `        borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 603**: `        side: BorderSide(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 604**: `          color: active ? AppColors.brandLine : AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 605**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 606**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 607**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 608**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 609**: `        child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 610**: `          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 611**: `          child: Row(` — Menyusun layout tampilan.
+- **Baris 612**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 613**: `              Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 614**: `                icon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 615**: `                size: 17,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 616**: `                color: active ? AppColors.brand : AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 617**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 618**: `              const SizedBox(width: 7),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 619**: `              Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 620**: `                child: Text(` — Menampilkan teks di UI.
+- **Baris 621**: `                  label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 622**: `                  maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 623**: `                  overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 624**: `                  style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 625**: `                    fontSize: 12.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 626**: `                    fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 627**: `                    color: active ? AppColors.brand : AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 628**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 629**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 630**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 631**: `              const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 632**: `                Icons.keyboard_arrow_down_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 633**: `                size: 17,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 634**: `                color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 635**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 636**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 637**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 638**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 639**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 640**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 641**: `  }` — Pembuka/penutup blok kode.
+- **Baris 642**: `}` — Pembuka/penutup blok kode.
+- **Baris 643**: `` — Baris kosong untuk kerapian.
+- **Baris 644**: `class _OpsiUrutan {` — Mendefinisikan class bernama _OpsiUrutan.
+- **Baris 645**: `  final String sortBy;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 646**: `  final String order;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 647**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 648**: `  final String keterangan;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 649**: `` — Baris kosong untuk kerapian.
+- **Baris 650**: `  const _OpsiUrutan(this.sortBy, this.order, this.label, this.keterangan);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 651**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/login_page.dart
+
+Jumlah baris: 249
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../service/auth_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../widgets/auth_header.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../widgets/info_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `` — Baris kosong untuk kerapian.
+- **Baris 10**: `class LoginPage extends StatefulWidget {` — Mendefinisikan class bernama LoginPage.
+- **Baris 11**: `  final ValueChanged<AppUser> onLoggedIn;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final VoidCallback onOpenRegister;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `  final bool sessionExpired;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `  const LoginPage({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `    required this.onLoggedIn,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `    required this.onOpenRegister,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `    this.sessionExpired = false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `  State<LoginPage> createState() => _LoginPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 24**: `}` — Pembuka/penutup blok kode.
+- **Baris 25**: `` — Baris kosong untuk kerapian.
+- **Baris 26**: `class _LoginPageState extends State<LoginPage> {` — Mendefinisikan class bernama _LoginPageState.
+- **Baris 27**: `  final _formKey = GlobalKey<FormState>();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `  final _emailController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `  final _passwordController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 30**: `` — Baris kosong untuk kerapian.
+- **Baris 31**: `  bool _hidePassword = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `  bool _loading = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 33**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `` — Baris kosong untuk kerapian.
+- **Baris 35**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `  void dispose() {` — Fungsi/method `dispose` untuk menjalankan bagian logika ini.
+- **Baris 37**: `    _emailController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `    _passwordController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `    super.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `  }` — Pembuka/penutup blok kode.
+- **Baris 41**: `` — Baris kosong untuk kerapian.
+- **Baris 42**: `  String? _validasiEmail(String? value) {` — Fungsi/method `_validasiEmail` untuk menjalankan bagian logika ini.
+- **Baris 43**: `    final email = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 44**: `    if (email.isEmpty) return 'Email wajib diisi';` — Pengecekan kondisi.
+- **Baris 45**: `    final pola = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 46**: `    if (!pola.hasMatch(email)) return 'Format email tidak valid';` — Pengecekan kondisi.
+- **Baris 47**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 48**: `  }` — Pembuka/penutup blok kode.
+- **Baris 49**: `` — Baris kosong untuk kerapian.
+- **Baris 50**: `  String? _validasiPassword(String? value) {` — Fungsi/method `_validasiPassword` untuk menjalankan bagian logika ini.
+- **Baris 51**: `    final password = value ?? '';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 52**: `    if (password.isEmpty) return 'Password wajib diisi';` — Pengecekan kondisi.
+- **Baris 53**: `    if (password.length < 6) return 'Password minimal 6 karakter';` — Pengecekan kondisi.
+- **Baris 54**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 55**: `  }` — Pembuka/penutup blok kode.
+- **Baris 56**: `` — Baris kosong untuk kerapian.
+- **Baris 57**: `  Future<void> _login() async {` — Fungsi/method `_login` untuk menjalankan bagian logika ini.
+- **Baris 58**: `    if (_loading) return;` — Pengecekan kondisi.
+- **Baris 59**: `    if (!(_formKey.currentState?.validate() ?? false)) return;` — Pengecekan kondisi.
+- **Baris 60**: `` — Baris kosong untuk kerapian.
+- **Baris 61**: `    FocusScope.of(context).unfocus();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 63**: `      _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `      _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `` — Baris kosong untuk kerapian.
+- **Baris 67**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 68**: `      final hasil = await AuthService.login(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 69**: `        _emailController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `        _passwordController.text,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `      await ApiService.saveToken(hasil.token);` — Menunggu proses asynchronous selesai.
+- **Baris 73**: `` — Baris kosong untuk kerapian.
+- **Baris 74**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 75**: `      setState(() => _loading = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 76**: `      widget.onLoggedIn(hasil.user);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 78**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 79**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 80**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 84**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 85**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 86**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `        _error = 'Login gagal. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `    }` — Pembuka/penutup blok kode.
+- **Baris 90**: `  }` — Pembuka/penutup blok kode.
+- **Baris 91**: `` — Baris kosong untuk kerapian.
+- **Baris 92**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 94**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 95**: `` — Baris kosong untuk kerapian.
+- **Baris 96**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 97**: `      body: SafeArea(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `        child: SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 99**: `          padding: EdgeInsets.fromLTRB(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `            16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `            24 + MediaQuery.viewInsetsOf(context).bottom,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 105**: `          child: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `            child: ConstrainedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `              constraints: const BoxConstraints(maxWidth: 440),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `              child: AutofillGroup(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `                child: Form(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `                  key: _formKey,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `                  child: Column(` — Menyusun layout tampilan.
+- **Baris 112**: `                    crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `                      const AuthHeader(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 115**: `                        title: 'Masuk dan amankan tiketmu.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `                        subtitle:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `                            'Pantau status pembayaran dan kelola semua tiket event dalam satu akun.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `                      const SizedBox(height: 26),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 120**: `                      Text('Masuk ke akun', style: tema.textTheme.headlineSmall),` — Menampilkan teks di UI.
+- **Baris 121**: `                      const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 122**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 123**: `                        'Gunakan email dan password yang sudah terdaftar.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `                      if (widget.sessionExpired) ...[` — Pengecekan kondisi.
+- **Baris 127**: `                        const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 128**: `                        const InfoBanner(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 129**: `                          icon: Icons.info_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `                          message:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 131**: `                              'Sesi kamu sudah berakhir. Silakan login kembali.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `                          color: AppColors.warning,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `                          background: AppColors.warningSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `                      if (_error != null) ...[` — Pengecekan kondisi.
+- **Baris 137**: `                        const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 138**: `                        InfoBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `                          icon: Icons.error_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `                          message: _error!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `                          color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `                          background: AppColors.dangerSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `                      const SizedBox(height: 20),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 146**: `                      TextFormField(` — Membuat input form.
+- **Baris 147**: `                        controller: _emailController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `                        keyboardType: TextInputType.emailAddress,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `                        textInputAction: TextInputAction.next,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `                        autofillHints: const [AutofillHints.email],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 151**: `                        validator: _validasiEmail,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 152**: `                        decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `                          labelText: 'Email',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `                          hintText: 'nama@email.com',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `                          prefixIcon: Icon(Icons.mail_outline_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `                      const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 159**: `                      TextFormField(` — Membuat input form.
+- **Baris 160**: `                        controller: _passwordController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 161**: `                        obscureText: _hidePassword,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `                        textInputAction: TextInputAction.done,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `                        autofillHints: const [AutofillHints.password],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `                        validator: _validasiPassword,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 165**: `                        onFieldSubmitted: (_) => _login(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `                        decoration: InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `                          labelText: 'Password',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `                          hintText: 'Minimal 6 karakter',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `                          prefixIcon: const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `                            Icons.lock_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `                            size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `                          suffixIcon: IconButton(` — Membuat tombol aksi.
+- **Baris 174**: `                            tooltip: _hidePassword` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `                                ? 'Tampilkan password'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `                                : 'Sembunyikan password',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 177**: `                            onPressed: () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 178**: `                              setState(() => _hidePassword = !_hidePassword);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 179**: `                            },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `                            icon: Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `                              _hidePassword` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `                                  ? Icons.visibility_off_outlined` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `                                  : Icons.visibility_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `                              size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 188**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `                      const SizedBox(height: 20),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 190**: `                      SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `                        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `                        child: ElevatedButton(` — Membuat tombol aksi.
+- **Baris 193**: `                          onPressed: _loading ? null : _login,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `                          child: _loading` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `                              ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `                                  width: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `                                  height: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `                                  child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `                                    strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `                                    color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `                                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `                                )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `                              : const Text('Masuk'),` — Menampilkan teks di UI.
+- **Baris 204**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `                      const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 207**: `                      Row(` — Menyusun layout tampilan.
+- **Baris 208**: `                        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `                          const Expanded(child: Divider()),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 210**: `                          Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `                            padding: const EdgeInsets.symmetric(horizontal: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `                            child: Text(` — Menampilkan teks di UI.
+- **Baris 213**: `                              'atau',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `                              style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `                          const Expanded(child: Divider()),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 218**: `                        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `                      const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 221**: `                      SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `                        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `                        child: OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 224**: `                          onPressed: _loading ? null : widget.onOpenRegister,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `                          icon: const Icon(Icons.person_add_alt_1_outlined),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `                          label: const Text('Buat akun baru'),` — Menampilkan teks di UI.
+- **Baris 227**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 228**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `                      const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 230**: `                      Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `                        child: Text(` — Menampilkan teks di UI.
+- **Baris 232**: `                          'GATIX • Event Ticketing',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `                          style: tema.textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `                            fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `                            color: AppColors.muted.withValues(alpha: 0.8),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 237**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 238**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `  }` — Pembuka/penutup blok kode.
+- **Baris 249**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/main_shell.dart
+
+Jumlah baris: 94
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import 'home_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import 'manage_events_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import 'my_tickets_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import 'profile_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `class MainShell extends StatefulWidget {` — Mendefinisikan class bernama MainShell.
+- **Baris 10**: `  final AppUser user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `  final ValueChanged<AppUser> onUserChanged;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final VoidCallback onLogout;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `` — Baris kosong untuk kerapian.
+- **Baris 14**: `  const MainShell({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `    required this.user,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `    required this.onUserChanged,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `    required this.onLogout,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `` — Baris kosong untuk kerapian.
+- **Baris 21**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `  State<MainShell> createState() => _MainShellState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 23**: `}` — Pembuka/penutup blok kode.
+- **Baris 24**: `` — Baris kosong untuk kerapian.
+- **Baris 25**: `class _MainShellState extends State<MainShell> {` — Mendefinisikan class bernama _MainShellState.
+- **Baris 26**: `  int _index = 0;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 27**: `` — Baris kosong untuk kerapian.
+- **Baris 28**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `  void didUpdateWidget(covariant MainShell oldWidget) {` — Fungsi/method `didUpdateWidget` untuk menjalankan bagian logika ini.
+- **Baris 30**: `    super.didUpdateWidget(oldWidget);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `` — Baris kosong untuk kerapian.
+- **Baris 32**: `    if (!oldWidget.user.isOrganizer &&` — Pengecekan kondisi.
+- **Baris 33**: `        widget.user.isOrganizer &&` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `        _index == 2) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `      _index = 3;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `    }` — Pembuka/penutup blok kode.
+- **Baris 37**: `  }` — Pembuka/penutup blok kode.
+- **Baris 38**: `` — Baris kosong untuk kerapian.
+- **Baris 39**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 41**: `    final halaman = <Widget>[` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 42**: `      HomePage(user: widget.user),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `      MyTicketsPage(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `        onExplore: () => setState(() => _index = 0),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 45**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `      if (widget.user.isOrganizer) ManageEventsPage(user: widget.user),` — Pengecekan kondisi.
+- **Baris 47**: `      ProfilePage(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `        user: widget.user,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `        onUserChanged: widget.onUserChanged,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `        onLogout: widget.onLogout,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `    ];` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `` — Baris kosong untuk kerapian.
+- **Baris 54**: `    final tujuan = <NavigationDestination>[` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 55**: `      const NavigationDestination(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 56**: `        icon: Icon(Icons.explore_outlined),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `        selectedIcon: Icon(Icons.explore),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `        label: 'Beranda',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `      const NavigationDestination(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 61**: `        icon: Icon(Icons.confirmation_number_outlined),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `        selectedIcon: Icon(Icons.confirmation_number),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `        label: 'Tiket',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `      if (widget.user.isOrganizer)` — Pengecekan kondisi.
+- **Baris 66**: `        const NavigationDestination(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 67**: `          icon: Icon(Icons.dashboard_outlined),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `          selectedIcon: Icon(Icons.dashboard),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `          label: 'Kelola',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `      const NavigationDestination(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 72**: `        icon: Icon(Icons.person_outline),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `        selectedIcon: Icon(Icons.person),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `        label: 'Profil',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `    ];` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `` — Baris kosong untuk kerapian.
+- **Baris 78**: `    final indexAman = _index.clamp(0, halaman.length - 1);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 79**: `` — Baris kosong untuk kerapian.
+- **Baris 80**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 81**: `      body: halaman[indexAman],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `      bottomNavigationBar: DecoratedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `        decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `          border: Border(top: BorderSide(color: Color(0xFFE8E0E0))),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `        child: NavigationBar(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `          selectedIndex: indexAman,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `          onDestinationSelected: (value) => setState(() => _index = value),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 89**: `          destinations: tujuan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `  }` — Pembuka/penutup blok kode.
+- **Baris 94**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/manage_events_page.dart
+
+Jumlah baris: 414
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../model/event_item.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../service/event_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import '../widgets/network_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import '../widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import 'event_detail_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `import 'event_form_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 13**: `import 'participants_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `class ManageEventsPage extends StatefulWidget {` — Mendefinisikan class bernama ManageEventsPage.
+- **Baris 16**: `  final AppUser user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `  const ManageEventsPage({super.key, required this.user});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `` — Baris kosong untuk kerapian.
+- **Baris 20**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `  State<ManageEventsPage> createState() => _ManageEventsPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 22**: `}` — Pembuka/penutup blok kode.
+- **Baris 23**: `` — Baris kosong untuk kerapian.
+- **Baris 24**: `class _ManageEventsPageState extends State<ManageEventsPage> {` — Mendefinisikan class bernama _ManageEventsPageState.
+- **Baris 25**: `  final List<EventItem> _events = [];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 26**: `  bool _loading = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 27**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `` — Baris kosong untuk kerapian.
+- **Baris 29**: `  int get _totalPendaftar =>` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 30**: `      _events.fold(0, (jumlah, event) => jumlah + event.taken);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `` — Baris kosong untuk kerapian.
+- **Baris 32**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 34**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `    _load();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `  }` — Pembuka/penutup blok kode.
+- **Baris 37**: `` — Baris kosong untuk kerapian.
+- **Baris 38**: `  Future<void> _load() async {` — Fungsi/method `_load` untuk menjalankan bagian logika ini.
+- **Baris 39**: `    if (mounted) {` — Pengecekan kondisi.
+- **Baris 40**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 41**: `        _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `    }` — Pembuka/penutup blok kode.
+- **Baris 45**: `` — Baris kosong untuk kerapian.
+- **Baris 46**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 47**: `      final hasil = await EventService.mine(widget.user.id);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 48**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 49**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 50**: `        _events` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `          ..clear()` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `          ..addAll(hasil);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 56**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 57**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 58**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 62**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 63**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 64**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `        _error = 'Gagal memuat daftar event. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `    }` — Pembuka/penutup blok kode.
+- **Baris 68**: `  }` — Pembuka/penutup blok kode.
+- **Baris 69**: `` — Baris kosong untuk kerapian.
+- **Baris 70**: `  Future<void> _buatEvent() async {` — Fungsi/method `_buatEvent` untuk menjalankan bagian logika ini.
+- **Baris 71**: `    final berhasil = await Navigator.push<bool>(` — Berpindah halaman atau mengatur route.
+- **Baris 72**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `      MaterialPageRoute(builder: (_) => const EventFormPage()),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `` — Baris kosong untuk kerapian.
+- **Baris 76**: `    if (berhasil == true && mounted) await _load();` — Pengecekan kondisi.
+- **Baris 77**: `  }` — Pembuka/penutup blok kode.
+- **Baris 78**: `` — Baris kosong untuk kerapian.
+- **Baris 79**: `  Future<void> _bukaDetail(EventItem event) async {` — Fungsi/method `_bukaDetail` untuk menjalankan bagian logika ini.
+- **Baris 80**: `    await Navigator.push(` — Berpindah halaman atau mengatur route.
+- **Baris 81**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `      MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `        builder: (_) => EventDetailPage(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `          eventId: event.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `          user: widget.user,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `` — Baris kosong untuk kerapian.
+- **Baris 90**: `    if (mounted) await _load();` — Pengecekan kondisi.
+- **Baris 91**: `  }` — Pembuka/penutup blok kode.
+- **Baris 92**: `` — Baris kosong untuk kerapian.
+- **Baris 93**: `  Future<void> _kelolaPeserta(EventItem event) async {` — Fungsi/method `_kelolaPeserta` untuk menjalankan bagian logika ini.
+- **Baris 94**: `    await Navigator.push(` — Berpindah halaman atau mengatur route.
+- **Baris 95**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `      MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `        builder: (_) => ParticipantsPage(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `          eventId: event.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 99**: `          eventTitle: event.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `` — Baris kosong untuk kerapian.
+- **Baris 104**: `    if (mounted) await _load();` — Pengecekan kondisi.
+- **Baris 105**: `  }` — Pembuka/penutup blok kode.
+- **Baris 106**: `` — Baris kosong untuk kerapian.
+- **Baris 107**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 109**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 110**: `` — Baris kosong untuk kerapian.
+- **Baris 111**: `    return SafeArea(` — Mengembalikan nilai dari fungsi.
+- **Baris 112**: `      bottom: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `      child: RefreshIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `        onRefresh: _load,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `        child: ListView(` — Menyusun layout tampilan.
+- **Baris 116**: `          physics: const AlwaysScrollableScrollPhysics(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `          padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `            Row(` — Menyusun layout tampilan.
+- **Baris 120**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `                  child: Column(` — Menyusun layout tampilan.
+- **Baris 123**: `                    crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `                      Text('Kelola event', style: tema.textTheme.headlineSmall),` — Menampilkan teks di UI.
+- **Baris 126**: `                      const SizedBox(height: 3),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 127**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 128**: `                        'Buat event, atur peserta, dan perbarui informasi.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 131**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `                const SizedBox(width: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 135**: `                Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `                  padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `                    horizontal: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `                    vertical: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `                  decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `                    color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `                    borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `                    border: Border.all(color: AppColors.brandLine),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `                  child: Text(` — Menampilkan teks di UI.
+- **Baris 146**: `                    '${_events.length} event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `                    style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `                      color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `                      fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `                      fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 151**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 152**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 157**: `            Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `              padding: const EdgeInsets.all(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `                color: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 161**: `                borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `                border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `              child: Row(` — Menyusun layout tampilan.
+- **Baris 165**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `                    child: _Statistik(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `                      label: 'Event dikelola',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `                      nilai: '${_events.length}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `                  Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `                    width: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `                    height: 38,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `                    color: AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 177**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 178**: `                    child: _Statistik(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `                      label: 'Total pendaftar',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `                      nilai: '$_totalPendaftar',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 187**: `            SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 188**: `              width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `              child: ElevatedButton.icon(` — Membuat tombol aksi.
+- **Baris 190**: `                onPressed: _buatEvent,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `                icon: const Icon(Icons.add_rounded),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `                label: const Text('Buat event baru'),` — Menampilkan teks di UI.
+- **Baris 193**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `            const SizedBox(height: 20),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 196**: `            if (_loading && _events.isEmpty)` — Pengecekan kondisi.
+- **Baris 197**: `              const SizedBox(height: 300, child: LoadingState())` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 198**: `            else if (_error != null)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `              ErrorState(message: _error!, onRetry: _load)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `            else if (_events.isEmpty)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `              EmptyState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `                icon: Icons.dashboard_customize_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `                title: 'Belum ada event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `                message:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `                    'Buat event pertamamu agar bisa mulai menerima pendaftaran.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `                actionLabel: 'Buat event',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `                onAction: _buatEvent,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 208**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `            else ...[` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `              Text('Event milikmu', style: tema.textTheme.titleLarge),` — Menampilkan teks di UI.
+- **Baris 211**: `              const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 212**: `              for (final event in _events)` — Perulangan untuk memproses beberapa data.
+- **Baris 213**: `                Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `                  padding: const EdgeInsets.only(bottom: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `                  child: _KartuKelola(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `                    event: event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `                    onTap: () => _bukaDetail(event),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `                    onPeserta: () => _kelolaPeserta(event),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 224**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `  }` — Pembuka/penutup blok kode.
+- **Baris 227**: `}` — Pembuka/penutup blok kode.
+- **Baris 228**: `` — Baris kosong untuk kerapian.
+- **Baris 229**: `class _Statistik extends StatelessWidget {` — Mendefinisikan class bernama _Statistik.
+- **Baris 230**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 231**: `  final String nilai;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 232**: `` — Baris kosong untuk kerapian.
+- **Baris 233**: `  const _Statistik({required this.label, required this.nilai});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 234**: `` — Baris kosong untuk kerapian.
+- **Baris 235**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 237**: `    return Column(` — Mengembalikan nilai dari fungsi.
+- **Baris 238**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `        Text(` — Menampilkan teks di UI.
+- **Baris 240**: `          nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `          style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `            fontSize: 22,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `            fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `            color: AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `            letterSpacing: -0.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `        const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 249**: `        Text(` — Menampilkan teks di UI.
+- **Baris 250**: `          label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `  }` — Pembuka/penutup blok kode.
+- **Baris 256**: `}` — Pembuka/penutup blok kode.
+- **Baris 257**: `` — Baris kosong untuk kerapian.
+- **Baris 258**: `class _KartuKelola extends StatelessWidget {` — Mendefinisikan class bernama _KartuKelola.
+- **Baris 259**: `  final EventItem event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 260**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 261**: `  final VoidCallback onPeserta;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 262**: `` — Baris kosong untuk kerapian.
+- **Baris 263**: `  const _KartuKelola({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 264**: `    required this.event,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 265**: `    required this.onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 266**: `    required this.onPeserta,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 267**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `` — Baris kosong untuk kerapian.
+- **Baris 269**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 271**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 272**: `    final rasio = event.quota <= 0` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 273**: `        ? 0.0` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 274**: `        : (event.taken / event.quota).clamp(0.0, 1.0);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `` — Baris kosong untuk kerapian.
+- **Baris 276**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 277**: `      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 278**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 279**: `      shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `        borderRadius: BorderRadius.circular(18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 281**: `        side: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 282**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 283**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 284**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `        child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 286**: `          padding: const EdgeInsets.all(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 287**: `          child: Column(` — Menyusun layout tampilan.
+- **Baris 288**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 289**: `              Row(` — Menyusun layout tampilan.
+- **Baris 290**: `                crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 291**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `                  ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 293**: `                    borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 294**: `                    child: SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 295**: `                      width: 86,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 296**: `                      height: 86,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 297**: `                      child: NetworkBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 298**: `                        url: event.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 299**: `                        fallbackIcon: Icons.local_activity_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 300**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 301**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 303**: `                  const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 304**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 305**: `                    child: Column(` — Menyusun layout tampilan.
+- **Baris 306**: `                      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 307**: `                      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 308**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 309**: `                          event.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 310**: `                          maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 311**: `                          overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 312**: `                          style: tema.textTheme.titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 313**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 314**: `                        const SizedBox(height: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 315**: `                        Row(` — Menyusun layout tampilan.
+- **Baris 316**: `                          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `                            const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 318**: `                              Icons.calendar_today_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `                              size: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 320**: `                              color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 321**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 322**: `                            const SizedBox(width: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 323**: `                            Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 324**: `                              child: Text(` — Menampilkan teks di UI.
+- **Baris 325**: `                                formatTanggal(event.date),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 326**: `                                maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 327**: `                                overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 328**: `                                style: tema.textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 329**: `                                  fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 330**: `                                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 331**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 332**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 333**: `                          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 334**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `                        const SizedBox(height: 3),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 336**: `                        Row(` — Menyusun layout tampilan.
+- **Baris 337**: `                          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 338**: `                            const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 339**: `                              Icons.place_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 340**: `                              size: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 341**: `                              color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 342**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `                            const SizedBox(width: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 344**: `                            Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `                              child: Text(` — Menampilkan teks di UI.
+- **Baris 346**: `                                event.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 347**: `                                maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `                                overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `                                style: tema.textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 350**: `                                  fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 351**: `                                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 352**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 353**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 354**: `                          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 355**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 356**: `                        const SizedBox(height: 7),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 357**: `                        Row(` — Menyusun layout tampilan.
+- **Baris 358**: `                          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 359**: `                            Text(` — Menampilkan teks di UI.
+- **Baris 360**: `                              formatRupiah(event.price),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 361**: `                              style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 362**: `                                color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 363**: `                                fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 364**: `                                fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 365**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 366**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 367**: `                            const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 368**: `                            Text(` — Menampilkan teks di UI.
+- **Baris 369**: `                              '${event.taken}/${event.quota}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 370**: `                              style: tema.textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 371**: `                                fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 372**: `                                fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 373**: `                              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 374**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 375**: `                          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 376**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 377**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 379**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 380**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 381**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 382**: `              const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 383**: `              ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 384**: `                borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 385**: `                child: LinearProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 386**: `                  value: rasio,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 387**: `                  minHeight: 4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 388**: `                  backgroundColor: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 389**: `                  color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 390**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 391**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 392**: `              const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 393**: `              Row(` — Menyusun layout tampilan.
+- **Baris 394**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `                  TextButton.icon(` — Membuat tombol aksi.
+- **Baris 396**: `                    onPressed: onPeserta,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `                    icon: const Icon(Icons.people_alt_outlined, size: 16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `                    label: const Text('Kelola peserta'),` — Menampilkan teks di UI.
+- **Baris 399**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 400**: `                  const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 401**: `                  const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 402**: `                    Icons.chevron_right_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `                    size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 404**: `                    color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 405**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 407**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 408**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 409**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 410**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 412**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 413**: `  }` — Pembuka/penutup blok kode.
+- **Baris 414**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/my_tickets_page.dart
+
+Jumlah baris: 288
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../service/registration_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../widgets/ticket_card.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import 'ticket_detail_page.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `` — Baris kosong untuk kerapian.
+- **Baris 11**: `class MyTicketsPage extends StatefulWidget {` — Mendefinisikan class bernama MyTicketsPage.
+- **Baris 12**: `  final VoidCallback onExplore;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `` — Baris kosong untuk kerapian.
+- **Baris 14**: `  const MyTicketsPage({super.key, required this.onExplore});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `  State<MyTicketsPage> createState() => _MyTicketsPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 18**: `}` — Pembuka/penutup blok kode.
+- **Baris 19**: `` — Baris kosong untuk kerapian.
+- **Baris 20**: `class _MyTicketsPageState extends State<MyTicketsPage> {` — Mendefinisikan class bernama _MyTicketsPageState.
+- **Baris 21**: `  final List<Ticket> _tickets = [];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 22**: `  bool _loading = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 23**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 24**: `  String _filter = 'all';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 25**: `` — Baris kosong untuk kerapian.
+- **Baris 26**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 28**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `    _load();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `  }` — Pembuka/penutup blok kode.
+- **Baris 31**: `` — Baris kosong untuk kerapian.
+- **Baris 32**: `  Future<void> _load() async {` — Fungsi/method `_load` untuk menjalankan bagian logika ini.
+- **Baris 33**: `    if (mounted) {` — Pengecekan kondisi.
+- **Baris 34**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 35**: `        _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `    }` — Pembuka/penutup blok kode.
+- **Baris 39**: `` — Baris kosong untuk kerapian.
+- **Baris 40**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 41**: `      final hasil = await RegistrationService.myTickets();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 42**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 43**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 44**: `        _tickets` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `          ..clear()` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `          ..addAll(hasil);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 50**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 51**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 52**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 56**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 57**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 58**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `        _error = 'Gagal memuat tiket. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `    }` — Pembuka/penutup blok kode.
+- **Baris 62**: `  }` — Pembuka/penutup blok kode.
+- **Baris 63**: `` — Baris kosong untuk kerapian.
+- **Baris 64**: `  int _jumlah(String status) {` — Fungsi/method `_jumlah` untuk menjalankan bagian logika ini.
+- **Baris 65**: `    if (status == 'all') return _tickets.length;` — Pengecekan kondisi.
+- **Baris 66**: `    return _tickets.where((ticket) => ticket.status == status).length;` — Mengembalikan nilai dari fungsi.
+- **Baris 67**: `  }` — Pembuka/penutup blok kode.
+- **Baris 68**: `` — Baris kosong untuk kerapian.
+- **Baris 69**: `  List<Ticket> get _tampil {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 70**: `    if (_filter == 'all') return _tickets;` — Pengecekan kondisi.
+- **Baris 71**: `    return _tickets.where((ticket) => ticket.status == _filter).toList();` — Mengembalikan nilai dari fungsi.
+- **Baris 72**: `  }` — Pembuka/penutup blok kode.
+- **Baris 73**: `` — Baris kosong untuk kerapian.
+- **Baris 74**: `  String get _pesanKosong {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 75**: `    switch (_filter) {` — Memilih aksi berdasarkan nilai.
+- **Baris 76**: `      case 'pending':` — Salah satu cabang dari switch.
+- **Baris 77**: `        return 'Tidak ada tiket yang menunggu pembayaran.';` — Mengembalikan nilai dari fungsi.
+- **Baris 78**: `      case 'approved':` — Salah satu cabang dari switch.
+- **Baris 79**: `        return 'Belum ada tiket yang disetujui.';` — Mengembalikan nilai dari fungsi.
+- **Baris 80**: `      case 'cancelled':` — Salah satu cabang dari switch.
+- **Baris 81**: `        return 'Tidak ada tiket yang dibatalkan.';` — Mengembalikan nilai dari fungsi.
+- **Baris 82**: `      default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `        return 'Kamu belum mendaftar event apa pun.';` — Mengembalikan nilai dari fungsi.
+- **Baris 84**: `    }` — Pembuka/penutup blok kode.
+- **Baris 85**: `  }` — Pembuka/penutup blok kode.
+- **Baris 86**: `` — Baris kosong untuk kerapian.
+- **Baris 87**: `  Future<void> _bukaTiket(Ticket ticket) async {` — Fungsi/method `_bukaTiket` untuk menjalankan bagian logika ini.
+- **Baris 88**: `    await Navigator.push(` — Berpindah halaman atau mengatur route.
+- **Baris 89**: `      context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `      MaterialPageRoute(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `        builder: (_) => TicketDetailPage(registrationId: ticket.id),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 94**: `` — Baris kosong untuk kerapian.
+- **Baris 95**: `    if (mounted) await _load();` — Pengecekan kondisi.
+- **Baris 96**: `  }` — Pembuka/penutup blok kode.
+- **Baris 97**: `` — Baris kosong untuk kerapian.
+- **Baris 98**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 99**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 100**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 101**: `    final daftar = _tampil;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 102**: `` — Baris kosong untuk kerapian.
+- **Baris 103**: `    return SafeArea(` — Mengembalikan nilai dari fungsi.
+- **Baris 104**: `      bottom: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 105**: `      child: RefreshIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `        onRefresh: _load,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `        child: ListView(` — Menyusun layout tampilan.
+- **Baris 108**: `          physics: const AlwaysScrollableScrollPhysics(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `          padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `            Row(` — Menyusun layout tampilan.
+- **Baris 112**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `                  child: Column(` — Menyusun layout tampilan.
+- **Baris 115**: `                    crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `                      Text('Tiket saya', style: tema.textTheme.headlineSmall),` — Menampilkan teks di UI.
+- **Baris 118**: `                      const SizedBox(height: 3),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 119**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 120**: `                        'Pantau status pembayaran dan tiket aktifmu.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `                Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 127**: `                  padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `                    horizontal: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `                    vertical: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 131**: `                  decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `                    color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `                    borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `                    border: Border.all(color: AppColors.brandLine),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `                  child: Text(` — Menampilkan teks di UI.
+- **Baris 137**: `                    '${_tickets.length} tiket',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `                    style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `                      color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `                      fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `                      fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 146**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `            const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 148**: `            SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `              scrollDirection: Axis.horizontal,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `              child: Row(` — Menyusun layout tampilan.
+- **Baris 151**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 152**: `                  _FilterChip(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `                    label: 'Semua',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `                    jumlah: _jumlah('all'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `                    selected: _filter == 'all',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `                    onTap: () => setState(() => _filter = 'all'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 157**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 159**: `                  _FilterChip(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `                    label: 'Menunggu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 161**: `                    jumlah: _jumlah('pending'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `                    selected: _filter == 'pending',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `                    onTap: () => setState(() => _filter = 'pending'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 164**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 165**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 166**: `                  _FilterChip(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `                    label: 'Disetujui',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `                    jumlah: _jumlah('approved'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `                    selected: _filter == 'approved',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `                    onTap: () => setState(() => _filter = 'approved'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 171**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 173**: `                  _FilterChip(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `                    label: 'Dibatalkan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `                    jumlah: _jumlah('cancelled'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `                    selected: _filter == 'cancelled',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 177**: `                    onTap: () => setState(() => _filter = 'cancelled'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 178**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `            const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 183**: `            if (_loading && _tickets.isEmpty)` — Pengecekan kondisi.
+- **Baris 184**: `              const SizedBox(height: 320, child: LoadingState())` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 185**: `            else if (_error != null)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `              ErrorState(message: _error!, onRetry: _load)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `            else if (daftar.isEmpty)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 188**: `              EmptyState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `                icon: Icons.confirmation_number_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `                title: _filter == 'all'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `                    ? 'Belum ada tiket'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `                    : 'Tiket tidak ditemukan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `                message: _pesanKosong,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `                actionLabel: _filter == 'all' ? 'Jelajah event' : null,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `                onAction: _filter == 'all' ? widget.onExplore : null,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `            else ...[` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `              for (final ticket in daftar)` — Perulangan untuk memproses beberapa data.
+- **Baris 199**: `                Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `                  padding: const EdgeInsets.only(bottom: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `                  child: TicketCard(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `                    ticket: ticket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `                    onTap: () => _bukaTiket(ticket),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `              const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 207**: `              Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 208**: `                child: Text(` — Menampilkan teks di UI.
+- **Baris 209**: `                  'Tiket diperbarui saat halaman ini dibuka ulang.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `                  style: tema.textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `                  textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `  }` — Pembuka/penutup blok kode.
+- **Baris 220**: `}` — Pembuka/penutup blok kode.
+- **Baris 221**: `` — Baris kosong untuk kerapian.
+- **Baris 222**: `class _FilterChip extends StatelessWidget {` — Mendefinisikan class bernama _FilterChip.
+- **Baris 223**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 224**: `  final int jumlah;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 225**: `  final bool selected;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 226**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 227**: `` — Baris kosong untuk kerapian.
+- **Baris 228**: `  const _FilterChip({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 229**: `    required this.label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `    required this.jumlah,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `    required this.selected,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 232**: `    required this.onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `` — Baris kosong untuk kerapian.
+- **Baris 235**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 237**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 238**: `      color: selected ? AppColors.brand : Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `      shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `        borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `        side: BorderSide(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `          color: selected ? AppColors.brand : AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `        child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `          child: Row(` — Menyusun layout tampilan.
+- **Baris 251**: `            mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `              Text(` — Menampilkan teks di UI.
+- **Baris 254**: `                label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `                style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `                  fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 257**: `                  fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 258**: `                  color: selected ? Colors.white : AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `              const SizedBox(width: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 262**: `              Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `                padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `                  horizontal: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 265**: `                  vertical: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 266**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 267**: `                decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `                  color: selected` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `                      ? Colors.white.withValues(alpha: 0.18)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `                      : AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 271**: `                  borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 272**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 273**: `                child: Text(` — Menampilkan teks di UI.
+- **Baris 274**: `                  '$jumlah',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `                  style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 276**: `                    fontSize: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 277**: `                    fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 278**: `                    color: selected ? Colors.white : AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 279**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 281**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 282**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 283**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 284**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 286**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 287**: `  }` — Pembuka/penutup blok kode.
+- **Baris 288**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/participants_page.dart
+
+Jumlah baris: 541
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../model/model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../service/event_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import '../service/registration_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import '../widgets/initials_avatar.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import '../widgets/proof_viewer.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `import '../widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 13**: `import '../widgets/status_badge.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `class ParticipantsPage extends StatefulWidget {` — Mendefinisikan class bernama ParticipantsPage.
+- **Baris 16**: `  final int eventId;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `  final String eventTitle;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 18**: `` — Baris kosong untuk kerapian.
+- **Baris 19**: `  const ParticipantsPage({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 20**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `    required this.eventId,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `    required this.eventTitle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `` — Baris kosong untuk kerapian.
+- **Baris 25**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `  State<ParticipantsPage> createState() => _ParticipantsPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 27**: `}` — Pembuka/penutup blok kode.
+- **Baris 28**: `` — Baris kosong untuk kerapian.
+- **Baris 29**: `class _ParticipantsPageState extends State<ParticipantsPage> {` — Mendefinisikan class bernama _ParticipantsPageState.
+- **Baris 30**: `  final List<Ticket> _peserta = [];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 31**: `  bool _loading = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 33**: `  String _filter = 'all';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `` — Baris kosong untuk kerapian.
+- **Baris 35**: `  int? _prosesId;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 36**: `  String? _prosesAksi;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 37**: `` — Baris kosong untuk kerapian.
+- **Baris 38**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 40**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `    _load();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `  }` — Pembuka/penutup blok kode.
+- **Baris 43**: `` — Baris kosong untuk kerapian.
+- **Baris 44**: `  Future<void> _load({bool diam = false}) async {` — Fungsi/method `_load` untuk menjalankan bagian logika ini.
+- **Baris 45**: `    if (!diam) {` — Pengecekan kondisi.
+- **Baris 46**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 47**: `        _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `    }` — Pembuka/penutup blok kode.
+- **Baris 51**: `` — Baris kosong untuk kerapian.
+- **Baris 52**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 53**: `      final hasil = await EventService.participants(widget.eventId);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 54**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 55**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 56**: `        _peserta` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `          ..clear()` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `          ..addAll(hasil);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 63**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 64**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 65**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 69**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 70**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 71**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `        _error = 'Gagal memuat peserta. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `    }` — Pembuka/penutup blok kode.
+- **Baris 75**: `  }` — Pembuka/penutup blok kode.
+- **Baris 76**: `` — Baris kosong untuk kerapian.
+- **Baris 77**: `  int _jumlah(String status) {` — Fungsi/method `_jumlah` untuk menjalankan bagian logika ini.
+- **Baris 78**: `    if (status == 'all') return _peserta.length;` — Pengecekan kondisi.
+- **Baris 79**: `    return _peserta.where((tiket) => tiket.status == status).length;` — Mengembalikan nilai dari fungsi.
+- **Baris 80**: `  }` — Pembuka/penutup blok kode.
+- **Baris 81**: `` — Baris kosong untuk kerapian.
+- **Baris 82**: `  List<Ticket> get _tampil {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 83**: `    if (_filter == 'all') return _peserta;` — Pengecekan kondisi.
+- **Baris 84**: `    return _peserta.where((tiket) => tiket.status == _filter).toList();` — Mengembalikan nilai dari fungsi.
+- **Baris 85**: `  }` — Pembuka/penutup blok kode.
+- **Baris 86**: `` — Baris kosong untuk kerapian.
+- **Baris 87**: `  String get _pesanKosong {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 88**: `    switch (_filter) {` — Memilih aksi berdasarkan nilai.
+- **Baris 89**: `      case 'pending':` — Salah satu cabang dari switch.
+- **Baris 90**: `        return 'Tidak ada peserta yang menunggu verifikasi.';` — Mengembalikan nilai dari fungsi.
+- **Baris 91**: `      case 'approved':` — Salah satu cabang dari switch.
+- **Baris 92**: `        return 'Belum ada peserta yang disetujui.';` — Mengembalikan nilai dari fungsi.
+- **Baris 93**: `      case 'cancelled':` — Salah satu cabang dari switch.
+- **Baris 94**: `        return 'Tidak ada peserta yang dibatalkan.';` — Mengembalikan nilai dari fungsi.
+- **Baris 95**: `      default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `        return 'Event ini belum menerima pendaftaran.';` — Mengembalikan nilai dari fungsi.
+- **Baris 97**: `    }` — Pembuka/penutup blok kode.
+- **Baris 98**: `  }` — Pembuka/penutup blok kode.
+- **Baris 99**: `` — Baris kosong untuk kerapian.
+- **Baris 100**: `  Future<void> _ubahStatus(Ticket tiket, String status) async {` — Fungsi/method `_ubahStatus` untuk menjalankan bagian logika ini.
+- **Baris 101**: `    if (_prosesId != null) return;` — Pengecekan kondisi.
+- **Baris 102**: `` — Baris kosong untuk kerapian.
+- **Baris 103**: `    final menyetujui = status == 'approved';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 104**: `    final setuju = await showDialog<bool>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 105**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 108**: `          title: Text(menyetujui ? 'Setujui tiket?' : 'Batalkan tiket?'),` — Menampilkan teks di UI.
+- **Baris 109**: `          content: Text(` — Menampilkan teks di UI.
+- **Baris 110**: `            menyetujui` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `                ? (tiket.paymentProofUrl == null` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `                    ? 'Peserta belum mengunggah bukti pembayaran. '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `                        'Tetap setujui tiket ${tiket.userName}?'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `                    : 'Pastikan bukti pembayaran ${tiket.userName} sudah '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `                        'sesuai. Tiket akan berstatus disetujui.')` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `                : 'Tiket ${tiket.userName} akan dibatalkan dan tidak bisa '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `                    'dipakai lagi.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 121**: `              onPressed: () => Navigator.pop(context, false),` — Berpindah halaman atau mengatur route.
+- **Baris 122**: `              child: const Text('Batal'),` — Menampilkan teks di UI.
+- **Baris 123**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `            ElevatedButton(` — Membuat tombol aksi.
+- **Baris 125**: `              style: menyetujui` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `                  ? null` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 127**: `                  : ElevatedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 128**: `                      backgroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `              onPressed: () => Navigator.pop(context, true),` — Berpindah halaman atau mengatur route.
+- **Baris 131**: `              child: Text(menyetujui ? 'Setujui' : 'Batalkan'),` — Menampilkan teks di UI.
+- **Baris 132**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `` — Baris kosong untuk kerapian.
+- **Baris 138**: `    if (setuju != true \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 139**: `` — Baris kosong untuk kerapian.
+- **Baris 140**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 141**: `      _prosesId = tiket.id;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `      _prosesAksi = status;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `` — Baris kosong untuk kerapian.
+- **Baris 145**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 146**: `      final response = await RegistrationService.updateStatus(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 147**: `        tiket.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `        status,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 151**: `` — Baris kosong untuk kerapian.
+- **Baris 152**: `      final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 153**: `      _snack(readText(` — Menampilkan teks di UI.
+- **Baris 154**: `        body['message'],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 155**: `        menyetujui` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `            ? 'Tiket peserta berhasil disetujui.'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `            : 'Tiket peserta berhasil dibatalkan.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `      ));` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `      await _load(diam: true);` — Menunggu proses asynchronous selesai.
+- **Baris 160**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 161**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 162**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 164**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 165**: `      _snack('Gagal mengubah status peserta.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `      if (mounted) {` — Pengecekan kondisi.
+- **Baris 168**: `        setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 169**: `          _prosesId = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `          _prosesAksi = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `        });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `      }` — Pembuka/penutup blok kode.
+- **Baris 173**: `    }` — Pembuka/penutup blok kode.
+- **Baris 174**: `  }` — Pembuka/penutup blok kode.
+- **Baris 175**: `` — Baris kosong untuk kerapian.
+- **Baris 176**: `  void _snack(String pesan) {` — Fungsi/method `_snack` untuk menjalankan bagian logika ini.
+- **Baris 177**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 178**: `    ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 179**: `      SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 180**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `  }` — Pembuka/penutup blok kode.
+- **Baris 182**: `` — Baris kosong untuk kerapian.
+- **Baris 183**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 185**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 186**: `    final daftar = _tampil;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 187**: `` — Baris kosong untuk kerapian.
+- **Baris 188**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 189**: `      appBar: AppBar(title: const Text('Peserta event')),` — Menampilkan teks di UI.
+- **Baris 190**: `      body: RefreshIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `        onRefresh: _load,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `        child: ListView(` — Menyusun layout tampilan.
+- **Baris 193**: `          physics: const AlwaysScrollableScrollPhysics(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `          padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `            Text(` — Menampilkan teks di UI.
+- **Baris 197**: `              widget.eventTitle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `              style: tema.textTheme.titleLarge,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `              maxLines: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `              overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `            const SizedBox(height: 3),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 203**: `            Text(` — Menampilkan teks di UI.
+- **Baris 204**: `              'Verifikasi pembayaran dan kelola status peserta.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `              style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 208**: `            Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `              padding: const EdgeInsets.symmetric(vertical: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `                color: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `                borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `                border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `              child: Row(` — Menyusun layout tampilan.
+- **Baris 216**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `                    child: _Ringkasan(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `                      label: 'Menunggu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `                      nilai: _jumlah('pending'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `                      warna: AppColors.warning,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 224**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `                    child: _Ringkasan(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `                      label: 'Disetujui',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 227**: `                      nilai: _jumlah('approved'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 228**: `                      warna: AppColors.success,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 232**: `                    child: _Ringkasan(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `                      label: 'Dibatalkan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `                      nilai: _jumlah('cancelled'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `                      warna: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 237**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 238**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 242**: `            SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `              scrollDirection: Axis.horizontal,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `              child: Row(` — Menyusun layout tampilan.
+- **Baris 245**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `                  _FilterPeserta(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `                    label: 'Semua',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `                    jumlah: _jumlah('all'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `                    selected: _filter == 'all',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `                    onTap: () => setState(() => _filter = 'all'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 251**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 253**: `                  _FilterPeserta(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `                    label: 'Menunggu',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `                    jumlah: _jumlah('pending'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `                    selected: _filter == 'pending',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 257**: `                    onTap: () => setState(() => _filter = 'pending'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 258**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 260**: `                  _FilterPeserta(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `                    label: 'Disetujui',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `                    jumlah: _jumlah('approved'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `                    selected: _filter == 'approved',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `                    onTap: () => setState(() => _filter = 'approved'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 265**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 266**: `                  const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 267**: `                  _FilterPeserta(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `                    label: 'Dibatalkan',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `                    jumlah: _jumlah('cancelled'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `                    selected: _filter == 'cancelled',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 271**: `                    onTap: () => setState(() => _filter = 'cancelled'),` — Memperbarui state dan me-refresh tampilan.
+- **Baris 272**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 273**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 274**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 276**: `            const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 277**: `            if (_loading && _peserta.isEmpty)` — Pengecekan kondisi.
+- **Baris 278**: `              const SizedBox(height: 280, child: LoadingState())` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 279**: `            else if (_error != null)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `              ErrorState(message: _error!, onRetry: _load)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 281**: `            else if (daftar.isEmpty)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 282**: `              EmptyState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 283**: `                icon: Icons.people_alt_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 284**: `                title: 'Belum ada peserta',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `                message: _pesanKosong,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 286**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 287**: `            else` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 288**: `              for (final tiket in daftar)` — Perulangan untuk memproses beberapa data.
+- **Baris 289**: `                Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 290**: `                  padding: const EdgeInsets.only(bottom: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 291**: `                  child: _KartuPeserta(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `                    tiket: tiket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 293**: `                    diproses: _prosesId == tiket.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 294**: `                    aksi: _prosesAksi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 295**: `                    nonaktif: _prosesId != null && _prosesId != tiket.id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 296**: `                    onSetujui: () => _ubahStatus(tiket, 'approved'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 297**: `                    onBatalkan: () => _ubahStatus(tiket, 'cancelled'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 298**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 299**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 300**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 301**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 303**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 304**: `  }` — Pembuka/penutup blok kode.
+- **Baris 305**: `}` — Pembuka/penutup blok kode.
+- **Baris 306**: `` — Baris kosong untuk kerapian.
+- **Baris 307**: `class _KartuPeserta extends StatelessWidget {` — Mendefinisikan class bernama _KartuPeserta.
+- **Baris 308**: `  final Ticket tiket;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 309**: `  final bool diproses;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 310**: `  final String? aksi;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 311**: `  final bool nonaktif;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 312**: `  final VoidCallback onSetujui;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 313**: `  final VoidCallback onBatalkan;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 314**: `` — Baris kosong untuk kerapian.
+- **Baris 315**: `  const _KartuPeserta({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 316**: `    required this.tiket,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `    required this.diproses,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 318**: `    required this.aksi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `    required this.nonaktif,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 320**: `    required this.onSetujui,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 321**: `    required this.onBatalkan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 322**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 323**: `` — Baris kosong untuk kerapian.
+- **Baris 324**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 325**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 326**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 327**: `` — Baris kosong untuk kerapian.
+- **Baris 328**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 329**: `      padding: const EdgeInsets.all(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 330**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 331**: `        color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 332**: `        borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 333**: `        border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 334**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `      child: Column(` — Menyusun layout tampilan.
+- **Baris 336**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 337**: `          Row(` — Menyusun layout tampilan.
+- **Baris 338**: `            crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 339**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 340**: `              InitialsAvatar(name: tiket.userName, size: 44),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 341**: `              const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 342**: `              Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `                child: Column(` — Menyusun layout tampilan.
+- **Baris 344**: `                  crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 346**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 347**: `                      tiket.userName.isEmpty ? 'Peserta' : tiket.userName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `                      style: tema.textTheme.titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 350**: `                    const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 351**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 352**: `                      tiket.userEmail,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 353**: `                      style: tema.textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 354**: `                      maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 355**: `                      overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 356**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 357**: `                    const SizedBox(height: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 358**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 359**: `                      '${formatRupiah(tiket.price)} • Tiket #${tiket.id}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 360**: `                      style: tema.textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 361**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 362**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 363**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 364**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 365**: `              const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 366**: `              StatusBadge(status: tiket.status),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 367**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 368**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 369**: `          const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 370**: `          if (tiket.paymentProofUrl != null)` — Pengecekan kondisi.
+- **Baris 371**: `            Align(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 372**: `              alignment: Alignment.centerLeft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 373**: `              child: TextButton.icon(` — Membuat tombol aksi.
+- **Baris 374**: `                onPressed: () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 375**: `                  tampilkanBuktiPembayaran(context, tiket.paymentProofUrl!);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 376**: `                },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 377**: `                icon: const Icon(Icons.receipt_long_outlined, size: 17),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `                label: const Text('Lihat bukti pembayaran'),` — Menampilkan teks di UI.
+- **Baris 379**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 380**: `            )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 381**: `          else if (tiket.pending)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 382**: `            Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 383**: `              width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 384**: `              padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 385**: `                horizontal: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 386**: `                vertical: 8,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 387**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 388**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 389**: `                color: AppColors.warningSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 390**: `                borderRadius: BorderRadius.circular(10),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 391**: `                border: Border.all(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 392**: `                  color: AppColors.warning.withValues(alpha: 0.18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 393**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 394**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `              child: const Row(` — Menyusun layout tampilan.
+- **Baris 396**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `                  Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `                    Icons.info_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 399**: `                    size: 15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 400**: `                    color: AppColors.warning,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 401**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 402**: `                  SizedBox(width: 6),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 404**: `                    child: Text(` — Menampilkan teks di UI.
+- **Baris 405**: `                      'Peserta belum mengunggah bukti pembayaran.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `                      style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 407**: `                        color: AppColors.warning,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 408**: `                        fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 409**: `                        fontWeight: FontWeight.w500,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 410**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 412**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 413**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 414**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 415**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 416**: `          if (tiket.pending) ...[` — Pengecekan kondisi.
+- **Baris 417**: `            const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 418**: `            Row(` — Menyusun layout tampilan.
+- **Baris 419**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 420**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 421**: `                  child: OutlinedButton(` — Membuat tombol aksi.
+- **Baris 422**: `                    onPressed: diproses \|\| nonaktif ? null : onBatalkan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 423**: `                    style: OutlinedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 424**: `                      minimumSize: const Size(0, 44),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 425**: `                      foregroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 426**: `                      side: const BorderSide(color: AppColors.danger),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 427**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 428**: `                    child: diproses && aksi == 'cancelled'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 429**: `                        ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 430**: `                            width: 16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 431**: `                            height: 16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 432**: `                            child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 433**: `                              strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 434**: `                              color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 435**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 436**: `                          )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 437**: `                        : const Text('Batalkan'),` — Menampilkan teks di UI.
+- **Baris 438**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 439**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 440**: `                const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 441**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 442**: `                  child: ElevatedButton(` — Membuat tombol aksi.
+- **Baris 443**: `                    onPressed: diproses \|\| nonaktif ? null : onSetujui,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 444**: `                    style: ElevatedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 445**: `                      minimumSize: const Size(0, 44),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 446**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 447**: `                    child: diproses && aksi == 'approved'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 448**: `                        ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 449**: `                            width: 16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 450**: `                            height: 16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 451**: `                            child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 452**: `                              strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 453**: `                              color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 454**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 455**: `                          )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 456**: `                        : const Text('Setujui'),` — Menampilkan teks di UI.
+- **Baris 457**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 458**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 459**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 460**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 461**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 462**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 463**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 464**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 465**: `  }` — Pembuka/penutup blok kode.
+- **Baris 466**: `}` — Pembuka/penutup blok kode.
+- **Baris 467**: `` — Baris kosong untuk kerapian.
+- **Baris 468**: `class _Ringkasan extends StatelessWidget {` — Mendefinisikan class bernama _Ringkasan.
+- **Baris 469**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 470**: `  final int nilai;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 471**: `  final Color warna;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 472**: `` — Baris kosong untuk kerapian.
+- **Baris 473**: `  const _Ringkasan({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 474**: `    required this.label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 475**: `    required this.nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 476**: `    required this.warna,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 477**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 478**: `` — Baris kosong untuk kerapian.
+- **Baris 479**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 480**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 481**: `    return Column(` — Mengembalikan nilai dari fungsi.
+- **Baris 482**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 483**: `        Text(` — Menampilkan teks di UI.
+- **Baris 484**: `          '$nilai',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 485**: `          style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 486**: `            fontSize: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 487**: `            fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 488**: `            color: warna,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 489**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 490**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 491**: `        const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 492**: `        Text(` — Menampilkan teks di UI.
+- **Baris 493**: `          label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 494**: `          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10.5),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 495**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 496**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 497**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 498**: `  }` — Pembuka/penutup blok kode.
+- **Baris 499**: `}` — Pembuka/penutup blok kode.
+- **Baris 500**: `` — Baris kosong untuk kerapian.
+- **Baris 501**: `class _FilterPeserta extends StatelessWidget {` — Mendefinisikan class bernama _FilterPeserta.
+- **Baris 502**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 503**: `  final int jumlah;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 504**: `  final bool selected;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 505**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 506**: `` — Baris kosong untuk kerapian.
+- **Baris 507**: `  const _FilterPeserta({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 508**: `    required this.label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 509**: `    required this.jumlah,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 510**: `    required this.selected,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 511**: `    required this.onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 512**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 513**: `` — Baris kosong untuk kerapian.
+- **Baris 514**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 515**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 516**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 517**: `      color: selected ? AppColors.brand : Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 518**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 519**: `      shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 520**: `        borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 521**: `        side: BorderSide(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 522**: `          color: selected ? AppColors.brand : AppColors.line,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 523**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 524**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 525**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 526**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 527**: `        child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 528**: `          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 529**: `          child: Text(` — Menampilkan teks di UI.
+- **Baris 530**: `            '$label ($jumlah)',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 531**: `            style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 532**: `              fontSize: 11.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 533**: `              fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 534**: `              color: selected ? Colors.white : AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 535**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 536**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 537**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 538**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 539**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 540**: `  }` — Pembuka/penutup blok kode.
+- **Baris 541**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/profile_page.dart
+
+Jumlah baris: 420
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../service/auth_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../widgets/brand_mark.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../widgets/initials_avatar.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `` — Baris kosong untuk kerapian.
+- **Baris 10**: `class ProfilePage extends StatefulWidget {` — Mendefinisikan class bernama ProfilePage.
+- **Baris 11**: `  final AppUser user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final ValueChanged<AppUser> onUserChanged;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `  final VoidCallback onLogout;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `  const ProfilePage({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `    required this.user,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `    required this.onUserChanged,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `    required this.onLogout,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `  State<ProfilePage> createState() => _ProfilePageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 24**: `}` — Pembuka/penutup blok kode.
+- **Baris 25**: `` — Baris kosong untuk kerapian.
+- **Baris 26**: `class _ProfilePageState extends State<ProfilePage> {` — Mendefinisikan class bernama _ProfilePageState.
+- **Baris 27**: `  bool _loadingEdit = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `  bool _loadingOrganizer = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `` — Baris kosong untuk kerapian.
+- **Baris 30**: `  Future<void> _editNama() async {` — Fungsi/method `_editNama` untuk menjalankan bagian logika ini.
+- **Baris 31**: `    if (_loadingEdit) return;` — Pengecekan kondisi.
+- **Baris 32**: `` — Baris kosong untuk kerapian.
+- **Baris 33**: `    final formKey = GlobalKey<FormState>();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `    var nama = widget.user.name;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 35**: `` — Baris kosong untuk kerapian.
+- **Baris 36**: `    final hasil = await showDialog<String>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 37**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 40**: `          title: const Text('Edit nama'),` — Menampilkan teks di UI.
+- **Baris 41**: `          content: Form(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `            key: formKey,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `            child: TextFormField(` — Membuat input form.
+- **Baris 44**: `              initialValue: widget.user.name,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `              autofocus: true,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `              textCapitalization: TextCapitalization.words,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `              textInputAction: TextInputAction.done,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `              onChanged: (value) => nama = value,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `              validator: (value) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `                final teks = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 51**: `                if (teks.isEmpty) return 'Nama wajib diisi';` — Pengecekan kondisi.
+- **Baris 52**: `                if (teks.length < 3) return 'Nama minimal 3 karakter';` — Pengecekan kondisi.
+- **Baris 53**: `                if (teks.length > 100) return 'Nama maksimal 100 karakter';` — Pengecekan kondisi.
+- **Baris 54**: `                return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 55**: `              },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `              decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `                labelText: 'Nama lengkap',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `                prefixIcon: Icon(Icons.person_outline_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 64**: `              onPressed: () => Navigator.pop(context),` — Berpindah halaman atau mengatur route.
+- **Baris 65**: `              child: const Text('Batal'),` — Menampilkan teks di UI.
+- **Baris 66**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `            ElevatedButton(` — Membuat tombol aksi.
+- **Baris 68**: `              onPressed: () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `                if (formKey.currentState?.validate() ?? false) {` — Pengecekan kondisi.
+- **Baris 70**: `                  Navigator.pop(context, nama.trim());` — Berpindah halaman atau mengatur route.
+- **Baris 71**: `                }` — Pembuka/penutup blok kode.
+- **Baris 72**: `              },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `              child: const Text('Simpan'),` — Menampilkan teks di UI.
+- **Baris 74**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `` — Baris kosong untuk kerapian.
+- **Baris 80**: `    if (hasil == null \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 81**: `    if (hasil == widget.user.name) return;` — Pengecekan kondisi.
+- **Baris 82**: `` — Baris kosong untuk kerapian.
+- **Baris 83**: `    setState(() => _loadingEdit = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 84**: `` — Baris kosong untuk kerapian.
+- **Baris 85**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 86**: `      final user = await AuthService.updateName(hasil);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 87**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 88**: `      widget.onUserChanged(user);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `      _snack('Nama berhasil diperbarui.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 91**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 92**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 94**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 95**: `      _snack('Gagal memperbarui nama.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `      if (mounted) setState(() => _loadingEdit = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 98**: `    }` — Pembuka/penutup blok kode.
+- **Baris 99**: `  }` — Pembuka/penutup blok kode.
+- **Baris 100**: `` — Baris kosong untuk kerapian.
+- **Baris 101**: `  Future<void> _jadiOrganizer() async {` — Fungsi/method `_jadiOrganizer` untuk menjalankan bagian logika ini.
+- **Baris 102**: `    if (_loadingOrganizer) return;` — Pengecekan kondisi.
+- **Baris 103**: `` — Baris kosong untuk kerapian.
+- **Baris 104**: `    final setuju = await showDialog<bool>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 105**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 108**: `          title: const Text('Jadi organizer?'),` — Menampilkan teks di UI.
+- **Baris 109**: `          content: const Text(` — Menampilkan teks di UI.
+- **Baris 110**: `            'Akunmu akan diubah menjadi organizer. Kamu bisa membuat event, '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `            'mengunggah banner, dan mengelola peserta. Tindakan ini tidak '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `            'mengubah tiket yang sudah kamu miliki.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 116**: `              onPressed: () => Navigator.pop(context, false),` — Berpindah halaman atau mengatur route.
+- **Baris 117**: `              child: const Text('Batal'),` — Menampilkan teks di UI.
+- **Baris 118**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `            ElevatedButton(` — Membuat tombol aksi.
+- **Baris 120**: `              onPressed: () => Navigator.pop(context, true),` — Berpindah halaman atau mengatur route.
+- **Baris 121**: `              child: const Text('Jadi organizer'),` — Menampilkan teks di UI.
+- **Baris 122**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 127**: `` — Baris kosong untuk kerapian.
+- **Baris 128**: `    if (setuju != true \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 129**: `` — Baris kosong untuk kerapian.
+- **Baris 130**: `    setState(() => _loadingOrganizer = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 131**: `` — Baris kosong untuk kerapian.
+- **Baris 132**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 133**: `      final hasil = await AuthService.becomeOrganizer();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 134**: `      await ApiService.saveToken(hasil.token);` — Menunggu proses asynchronous selesai.
+- **Baris 135**: `` — Baris kosong untuk kerapian.
+- **Baris 136**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 137**: `      widget.onUserChanged(hasil.user);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `      _snack('Akunmu sekarang organizer. Menu Kelola sudah tersedia.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 140**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 141**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 143**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 144**: `      _snack('Gagal mengubah akun menjadi organizer.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 146**: `      if (mounted) setState(() => _loadingOrganizer = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 147**: `    }` — Pembuka/penutup blok kode.
+- **Baris 148**: `  }` — Pembuka/penutup blok kode.
+- **Baris 149**: `` — Baris kosong untuk kerapian.
+- **Baris 150**: `  Future<void> _logout() async {` — Fungsi/method `_logout` untuk menjalankan bagian logika ini.
+- **Baris 151**: `    final setuju = await showDialog<bool>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 152**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 155**: `          title: const Text('Keluar dari akun?'),` — Menampilkan teks di UI.
+- **Baris 156**: `          content: const Text(` — Menampilkan teks di UI.
+- **Baris 157**: `            'Kamu perlu login kembali untuk mengakses tiket dan event.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 161**: `              onPressed: () => Navigator.pop(context, false),` — Berpindah halaman atau mengatur route.
+- **Baris 162**: `              child: const Text('Batal'),` — Menampilkan teks di UI.
+- **Baris 163**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `            ElevatedButton(` — Membuat tombol aksi.
+- **Baris 165**: `              style: ElevatedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 166**: `                backgroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `              onPressed: () => Navigator.pop(context, true),` — Berpindah halaman atau mengatur route.
+- **Baris 169**: `              child: const Text('Keluar'),` — Menampilkan teks di UI.
+- **Baris 170**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `` — Baris kosong untuk kerapian.
+- **Baris 176**: `    if (setuju == true) widget.onLogout();` — Pengecekan kondisi.
+- **Baris 177**: `  }` — Pembuka/penutup blok kode.
+- **Baris 178**: `` — Baris kosong untuk kerapian.
+- **Baris 179**: `  void _tentang() {` — Fungsi/method `_tentang` untuk menjalankan bagian logika ini.
+- **Baris 180**: `    showDialog(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 181**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 184**: `          title: const Row(` — Menyusun layout tampilan.
+- **Baris 185**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `              BrandMark(size: 30),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `              SizedBox(width: 10),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 188**: `              Text('Tentang'),` — Menampilkan teks di UI.
+- **Baris 189**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `          content: Column(` — Menyusun layout tampilan.
+- **Baris 192**: `            mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `            crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `              const Text(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 196**: `                'GATIX adalah aplikasi mobile event ticketing untuk menjelajah '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `                'event, memesan tiket, mengunggah bukti pembayaran, dan '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `                'mengelola event sebagai organizer.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `              const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 201**: `              Text(` — Menampilkan teks di UI.
+- **Baris 202**: `                'Versi 1.0.0',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `                style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `              const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 206**: `              Text(` — Menampilkan teks di UI.
+- **Baris 207**: `                'API: ${ApiService.resolvedBaseUrl}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 208**: `                style: Theme.of(context).textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `                      fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 216**: `              onPressed: () => Navigator.pop(context),` — Berpindah halaman atau mengatur route.
+- **Baris 217**: `              child: const Text('Tutup'),` — Menampilkan teks di UI.
+- **Baris 218**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `  }` — Pembuka/penutup blok kode.
+- **Baris 224**: `` — Baris kosong untuk kerapian.
+- **Baris 225**: `  void _snack(String pesan) {` — Fungsi/method `_snack` untuk menjalankan bagian logika ini.
+- **Baris 226**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 227**: `    ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 228**: `      SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 229**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `  }` — Pembuka/penutup blok kode.
+- **Baris 231**: `` — Baris kosong untuk kerapian.
+- **Baris 232**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 234**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 235**: `    final user = widget.user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 236**: `` — Baris kosong untuk kerapian.
+- **Baris 237**: `    return SafeArea(` — Mengembalikan nilai dari fungsi.
+- **Baris 238**: `      bottom: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `      child: ListView(` — Menyusun layout tampilan.
+- **Baris 240**: `        padding: const EdgeInsets.fromLTRB(16, 16, 16, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `          Text('Profil', style: tema.textTheme.headlineSmall),` — Menampilkan teks di UI.
+- **Baris 243**: `          const SizedBox(height: 3),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 244**: `          Text(` — Menampilkan teks di UI.
+- **Baris 245**: `            'Atur akun dan akses organizer-mu.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `            style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `          const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 249**: `          Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `            padding: const EdgeInsets.all(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `            decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 252**: `              color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `              borderRadius: BorderRadius.circular(20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `              border: Border.all(color: AppColors.brandLine),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `            child: Row(` — Menyusun layout tampilan.
+- **Baris 257**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 258**: `                InitialsAvatar(name: user.name, size: 62),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `                const SizedBox(width: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 260**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `                  child: Column(` — Menyusun layout tampilan.
+- **Baris 262**: `                    crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `                      Text(user.name, style: tema.textTheme.titleLarge),` — Menampilkan teks di UI.
+- **Baris 265**: `                      const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 266**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 267**: `                        user.email,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 269**: `                        maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `                        overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 271**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 272**: `                      const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 273**: `                      _BadgeRole(organizer: user.isOrganizer),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 274**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 276**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 277**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 278**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 279**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `          const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 281**: `          Text('Pengaturan akun', style: tema.textTheme.titleMedium),` — Menampilkan teks di UI.
+- **Baris 282**: `          const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 283**: `          Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 284**: `            color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `            clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 286**: `            shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 287**: `              borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 288**: `              side: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 289**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 290**: `            child: Column(` — Menyusun layout tampilan.
+- **Baris 291**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `                ListTile(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 293**: `                  leading: const Icon(Icons.person_outline_rounded),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 294**: `                  title: const Text('Edit nama'),` — Menampilkan teks di UI.
+- **Baris 295**: `                  subtitle: Text(` — Menampilkan teks di UI.
+- **Baris 296**: `                    user.name,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 297**: `                    maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 298**: `                    overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 299**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 300**: `                  trailing: _loadingEdit` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 301**: `                      ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `                          width: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 303**: `                          height: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 304**: `                          child: CircularProgressIndicator(strokeWidth: 2),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 305**: `                        )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 306**: `                      : const Icon(Icons.chevron_right_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 307**: `                  onTap: _loadingEdit ? null : _editNama,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 308**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 309**: `                const Divider(height: 1, indent: 16, endIndent: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 310**: `                if (!user.isOrganizer)` — Pengecekan kondisi.
+- **Baris 311**: `                  ListTile(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 312**: `                    leading: const Icon(Icons.storefront_outlined),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 313**: `                    title: const Text('Jadi organizer'),` — Menampilkan teks di UI.
+- **Baris 314**: `                    subtitle: const Text('Buat dan kelola event sendiri'),` — Menampilkan teks di UI.
+- **Baris 315**: `                    trailing: _loadingOrganizer` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 316**: `                        ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `                            width: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 318**: `                            height: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `                            child: CircularProgressIndicator(strokeWidth: 2),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 320**: `                          )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 321**: `                        : const Icon(Icons.chevron_right_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 322**: `                    onTap: _loadingOrganizer ? null : _jadiOrganizer,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 323**: `                  )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 324**: `                else` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 325**: `                  const ListTile(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 326**: `                    leading: Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 327**: `                      Icons.verified_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 328**: `                      color: AppColors.success,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 329**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 330**: `                    title: Text('Organizer aktif'),` — Menampilkan teks di UI.
+- **Baris 331**: `                    subtitle: Text(` — Menampilkan teks di UI.
+- **Baris 332**: `                      'Kamu bisa membuat event dan mengelola peserta.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 333**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 334**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 336**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 337**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 338**: `          const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 339**: `          Text('Lainnya', style: tema.textTheme.titleMedium),` — Menampilkan teks di UI.
+- **Baris 340**: `          const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 341**: `          Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 342**: `            color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `            clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 344**: `            shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `              borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 346**: `              side: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 347**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `            child: ListTile(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `              leading: const Icon(Icons.info_outline_rounded),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 350**: `              title: const Text('Tentang GATIX'),` — Menampilkan teks di UI.
+- **Baris 351**: `              subtitle: const Text('Informasi aplikasi dan alamat API'),` — Menampilkan teks di UI.
+- **Baris 352**: `              trailing: const Icon(Icons.chevron_right_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 353**: `              onTap: _tentang,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 354**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 355**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 356**: `          const SizedBox(height: 24),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 357**: `          SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 358**: `            width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 359**: `            child: OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 360**: `              onPressed: _logout,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 361**: `              style: OutlinedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 362**: `                foregroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 363**: `                side: const BorderSide(color: AppColors.danger),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 364**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 365**: `              icon: const Icon(Icons.logout_rounded, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 366**: `              label: const Text('Keluar dari akun'),` — Menampilkan teks di UI.
+- **Baris 367**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 368**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 369**: `          const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 370**: `          Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 371**: `            child: Text(` — Menampilkan teks di UI.
+- **Baris 372**: `              'GATIX • Versi 1.0.0',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 373**: `              style: tema.textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 374**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 375**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 376**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 377**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 379**: `  }` — Pembuka/penutup blok kode.
+- **Baris 380**: `}` — Pembuka/penutup blok kode.
+- **Baris 381**: `` — Baris kosong untuk kerapian.
+- **Baris 382**: `class _BadgeRole extends StatelessWidget {` — Mendefinisikan class bernama _BadgeRole.
+- **Baris 383**: `  final bool organizer;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 384**: `` — Baris kosong untuk kerapian.
+- **Baris 385**: `  const _BadgeRole({required this.organizer});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 386**: `` — Baris kosong untuk kerapian.
+- **Baris 387**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 388**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 389**: `    final warna = organizer ? AppColors.success : AppColors.brand;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 390**: `    final latar = organizer ? AppColors.successSoft : Colors.white;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 391**: `` — Baris kosong untuk kerapian.
+- **Baris 392**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 393**: `      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 394**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `        color: latar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 396**: `        borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `        border: Border.all(color: warna.withValues(alpha: 0.22)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 399**: `      child: Row(` — Menyusun layout tampilan.
+- **Baris 400**: `        mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 401**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 402**: `          Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `            organizer ? Icons.verified_rounded : Icons.person_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 404**: `            size: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 405**: `            color: warna,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 407**: `          const SizedBox(width: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 408**: `          Text(` — Menampilkan teks di UI.
+- **Baris 409**: `            organizer ? 'Organizer' : 'Peserta',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 410**: `            style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `              color: warna,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 412**: `              fontSize: 10.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 413**: `              fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 414**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 415**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 416**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 417**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 418**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 419**: `  }` — Pembuka/penutup blok kode.
+- **Baris 420**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/register_page.dart
+
+Jumlah baris: 269
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../service/auth_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../widgets/auth_header.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../widgets/info_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `` — Baris kosong untuk kerapian.
+- **Baris 10**: `class RegisterPage extends StatefulWidget {` — Mendefinisikan class bernama RegisterPage.
+- **Baris 11**: `  final ValueChanged<AppUser> onRegistered;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final VoidCallback onBackToLogin;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `` — Baris kosong untuk kerapian.
+- **Baris 14**: `  const RegisterPage({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `    required this.onRegistered,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `    required this.onBackToLogin,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `` — Baris kosong untuk kerapian.
+- **Baris 20**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `  State<RegisterPage> createState() => _RegisterPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 22**: `}` — Pembuka/penutup blok kode.
+- **Baris 23**: `` — Baris kosong untuk kerapian.
+- **Baris 24**: `class _RegisterPageState extends State<RegisterPage> {` — Mendefinisikan class bernama _RegisterPageState.
+- **Baris 25**: `  final _formKey = GlobalKey<FormState>();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 26**: `  final _nameController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 27**: `  final _emailController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `  final _passwordController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `  final _confirmController = TextEditingController();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 30**: `` — Baris kosong untuk kerapian.
+- **Baris 31**: `  bool _hidePassword = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `  bool _loading = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 33**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `` — Baris kosong untuk kerapian.
+- **Baris 35**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `  void dispose() {` — Fungsi/method `dispose` untuk menjalankan bagian logika ini.
+- **Baris 37**: `    _nameController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `    _emailController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `    _passwordController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `    _confirmController.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `    super.dispose();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `  }` — Pembuka/penutup blok kode.
+- **Baris 43**: `` — Baris kosong untuk kerapian.
+- **Baris 44**: `  String? _validasiNama(String? value) {` — Fungsi/method `_validasiNama` untuk menjalankan bagian logika ini.
+- **Baris 45**: `    final nama = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 46**: `    if (nama.isEmpty) return 'Nama wajib diisi';` — Pengecekan kondisi.
+- **Baris 47**: `    if (nama.length < 3) return 'Nama minimal 3 karakter';` — Pengecekan kondisi.
+- **Baris 48**: `    if (nama.length > 100) return 'Nama maksimal 100 karakter';` — Pengecekan kondisi.
+- **Baris 49**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 50**: `  }` — Pembuka/penutup blok kode.
+- **Baris 51**: `` — Baris kosong untuk kerapian.
+- **Baris 52**: `  String? _validasiEmail(String? value) {` — Fungsi/method `_validasiEmail` untuk menjalankan bagian logika ini.
+- **Baris 53**: `    final email = (value ?? '').trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 54**: `    if (email.isEmpty) return 'Email wajib diisi';` — Pengecekan kondisi.
+- **Baris 55**: `    final pola = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 56**: `    if (!pola.hasMatch(email)) return 'Format email tidak valid';` — Pengecekan kondisi.
+- **Baris 57**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 58**: `  }` — Pembuka/penutup blok kode.
+- **Baris 59**: `` — Baris kosong untuk kerapian.
+- **Baris 60**: `  String? _validasiPassword(String? value) {` — Fungsi/method `_validasiPassword` untuk menjalankan bagian logika ini.
+- **Baris 61**: `    final password = value ?? '';` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 62**: `    if (password.isEmpty) return 'Password wajib diisi';` — Pengecekan kondisi.
+- **Baris 63**: `    if (password.length < 6) return 'Password minimal 6 karakter';` — Pengecekan kondisi.
+- **Baris 64**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 65**: `  }` — Pembuka/penutup blok kode.
+- **Baris 66**: `` — Baris kosong untuk kerapian.
+- **Baris 67**: `  String? _validasiKonfirmasi(String? value) {` — Fungsi/method `_validasiKonfirmasi` untuk menjalankan bagian logika ini.
+- **Baris 68**: `    if ((value ?? '').isEmpty) return 'Konfirmasi password wajib diisi';` — Pengecekan kondisi.
+- **Baris 69**: `    if (value != _passwordController.text) {` — Pengecekan kondisi.
+- **Baris 70**: `      return 'Konfirmasi password tidak sama';` — Mengembalikan nilai dari fungsi.
+- **Baris 71**: `    }` — Pembuka/penutup blok kode.
+- **Baris 72**: `    return null;` — Mengembalikan nilai dari fungsi.
+- **Baris 73**: `  }` — Pembuka/penutup blok kode.
+- **Baris 74**: `` — Baris kosong untuk kerapian.
+- **Baris 75**: `  Future<void> _register() async {` — Fungsi/method `_register` untuk menjalankan bagian logika ini.
+- **Baris 76**: `    if (_loading) return;` — Pengecekan kondisi.
+- **Baris 77**: `    if (!(_formKey.currentState?.validate() ?? false)) return;` — Pengecekan kondisi.
+- **Baris 78**: `` — Baris kosong untuk kerapian.
+- **Baris 79**: `    FocusScope.of(context).unfocus();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `    setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 81**: `      _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `      _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `` — Baris kosong untuk kerapian.
+- **Baris 85**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 86**: `      final hasil = await AuthService.register(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 87**: `        name: _nameController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `        email: _emailController.text.trim(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `        password: _passwordController.text,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `      await ApiService.saveToken(hasil.token);` — Menunggu proses asynchronous selesai.
+- **Baris 92**: `` — Baris kosong untuk kerapian.
+- **Baris 93**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 94**: `      setState(() => _loading = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 95**: `      widget.onRegistered(hasil.user);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 97**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 98**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 99**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 103**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 104**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 105**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `        _error = 'Pendaftaran gagal. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `    }` — Pembuka/penutup blok kode.
+- **Baris 109**: `  }` — Pembuka/penutup blok kode.
+- **Baris 110**: `` — Baris kosong untuk kerapian.
+- **Baris 111**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 113**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 114**: `` — Baris kosong untuk kerapian.
+- **Baris 115**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 116**: `      body: SafeArea(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `        child: SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `          padding: EdgeInsets.fromLTRB(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `            16,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `            20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `            24 + MediaQuery.viewInsetsOf(context).bottom,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `          child: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `            child: ConstrainedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `              constraints: const BoxConstraints(maxWidth: 440),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 127**: `              child: AutofillGroup(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `                child: Form(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `                  key: _formKey,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `                  child: Column(` — Menyusun layout tampilan.
+- **Baris 131**: `                    crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `                      const AuthHeader(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 134**: `                        title: 'Buat akun dan mulai jelajah.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `                        subtitle:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `                            'Satu akun untuk memesan tiket, memantau pembayaran, dan mengelola event.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `                      const SizedBox(height: 26),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 139**: `                      Text('Daftar akun', style: tema.textTheme.headlineSmall),` — Menampilkan teks di UI.
+- **Baris 140**: `                      const SizedBox(height: 4),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 141**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 142**: `                        'Isi data berikut sesuai identitasmu.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `                      if (_error != null) ...[` — Pengecekan kondisi.
+- **Baris 146**: `                        const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 147**: `                        InfoBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `                          icon: Icons.error_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `                          message: _error!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `                          color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 151**: `                          background: AppColors.dangerSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 152**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 153**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `                      const SizedBox(height: 20),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 155**: `                      TextFormField(` — Membuat input form.
+- **Baris 156**: `                        controller: _nameController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `                        textInputAction: TextInputAction.next,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `                        textCapitalization: TextCapitalization.words,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `                        autofillHints: const [AutofillHints.name],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `                        validator: _validasiNama,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 161**: `                        decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `                          labelText: 'Nama lengkap',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `                          hintText: 'Nama sesuai identitas',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `                          prefixIcon: Icon(Icons.person_outline_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 165**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `                      const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 168**: `                      TextFormField(` — Membuat input form.
+- **Baris 169**: `                        controller: _emailController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `                        keyboardType: TextInputType.emailAddress,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `                        textInputAction: TextInputAction.next,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `                        autofillHints: const [AutofillHints.email],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `                        validator: _validasiEmail,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `                        decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `                          labelText: 'Email',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `                          hintText: 'nama@email.com',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 177**: `                          prefixIcon: Icon(Icons.mail_outline_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 178**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `                      const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 181**: `                      TextFormField(` — Membuat input form.
+- **Baris 182**: `                        controller: _passwordController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `                        obscureText: _hidePassword,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `                        textInputAction: TextInputAction.next,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `                        autofillHints: const [AutofillHints.newPassword],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 186**: `                        validator: _validasiPassword,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `                        decoration: InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 188**: `                          labelText: 'Password',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `                          hintText: 'Minimal 6 karakter',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `                          prefixIcon: const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `                            Icons.lock_outline_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 192**: `                            size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `                          suffixIcon: IconButton(` — Membuat tombol aksi.
+- **Baris 195**: `                            tooltip: _hidePassword` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 196**: `                                ? 'Tampilkan password'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `                                : 'Sembunyikan password',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `                            onPressed: () {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `                              setState(() => _hidePassword = !_hidePassword);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 200**: `                            },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `                            icon: Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `                              _hidePassword` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `                                  ? Icons.visibility_off_outlined` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `                                  : Icons.visibility_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `                              size: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 208**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `                      const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 211**: `                      TextFormField(` — Membuat input form.
+- **Baris 212**: `                        controller: _confirmController,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `                        obscureText: _hidePassword,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `                        textInputAction: TextInputAction.done,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `                        validator: _validasiKonfirmasi,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `                        onFieldSubmitted: (_) => _register(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `                        decoration: const InputDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `                          labelText: 'Konfirmasi password',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `                          hintText: 'Ulangi password',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `                          prefixIcon: Icon(Icons.lock_reset_rounded, size: 20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 222**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `                      const SizedBox(height: 20),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 224**: `                      SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `                        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `                        child: ElevatedButton(` — Membuat tombol aksi.
+- **Baris 227**: `                          onPressed: _loading ? null : _register,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 228**: `                          child: _loading` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `                              ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `                                  width: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `                                  height: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 232**: `                                  child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `                                    strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `                                    color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `                                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 236**: `                                )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 237**: `                              : const Text('Daftar'),` — Menampilkan teks di UI.
+- **Baris 238**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 239**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `                      const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 241**: `                      SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `                        width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `                        child: OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 244**: `                          onPressed: _loading ? null : widget.onBackToLogin,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 245**: `                          icon: const Icon(Icons.login_rounded),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 246**: `                          label: const Text('Sudah punya akun? Masuk'),` — Menampilkan teks di UI.
+- **Baris 247**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 248**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `                      const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 250**: `                      Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 251**: `                        child: Text(` — Menampilkan teks di UI.
+- **Baris 252**: `                          'GATIX • Event Ticketing',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `                          style: tema.textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `                            fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 255**: `                            color: AppColors.muted.withValues(alpha: 0.8),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 257**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 258**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 265**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 266**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 267**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 268**: `  }` — Pembuka/penutup blok kode.
+- **Baris 269**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/splash_page.dart
+
+Jumlah baris: 87
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../widgets/brand_mark.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `` — Baris kosong untuk kerapian.
+- **Baris 6**: `class SplashPage extends StatelessWidget {` — Mendefinisikan class bernama SplashPage.
+- **Baris 7**: `  const SplashPage({super.key});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 10**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 11**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 12**: `      backgroundColor: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `      body: Stack(` — Menyusun layout tampilan.
+- **Baris 14**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `          Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `            right: -70,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `            top: -60,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `            child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `              width: 260,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `              height: 260,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `                shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `                border: Border.all(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `                  color: Colors.white.withValues(alpha: 0.08),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `          Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `            left: -90,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `            bottom: -80,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `            child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `              width: 280,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `              height: 280,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `                shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `                color: Colors.white.withValues(alpha: 0.04),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `          SafeArea(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `            child: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `              child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `                padding: const EdgeInsets.all(32),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `                child: Column(` — Menyusun layout tampilan.
+- **Baris 46**: `                  mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `                    const BrandMark(light: true, size: 54),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 49**: `                    const SizedBox(height: 26),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 50**: `                    const Text(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 51**: `                      'Tiket event favoritmu,\ndalam satu akun.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `                      textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `                      style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `                        color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `                        fontSize: 20,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `                        height: 1.4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `                        fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `                        letterSpacing: -0.2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `                    const SizedBox(height: 34),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 62**: `                    SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `                      width: 22,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `                      height: 22,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `                      child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `                        strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `                        color: Colors.white.withValues(alpha: 0.85),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `                    const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 71**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 72**: `                      'Menyiapkan aplikasi...',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `                      style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `                        color: Colors.white.withValues(alpha: 0.58),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `                        fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `  }` — Pembuka/penutup blok kode.
+- **Baris 87**: `}` — Pembuka/penutup blok kode.
+
+## lib/pages/ticket_detail_page.dart
+
+Jumlah baris: 689
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:typed_data';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `import '../service/api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 9**: `import '../service/registration_service.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `import '../utils/pilih_gambar.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 11**: `import '../widgets/info_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 12**: `import '../widgets/network_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 13**: `import '../widgets/state_view.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 14**: `import '../widgets/status_badge.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `class TicketDetailPage extends StatefulWidget {` — Mendefinisikan class bernama TicketDetailPage.
+- **Baris 17**: `  final int registrationId;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 18**: `` — Baris kosong untuk kerapian.
+- **Baris 19**: `  const TicketDetailPage({super.key, required this.registrationId});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 20**: `` — Baris kosong untuk kerapian.
+- **Baris 21**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `  State<TicketDetailPage> createState() => _TicketDetailPageState();` — Fungsi/method `createState` untuk menjalankan bagian logika ini.
+- **Baris 23**: `}` — Pembuka/penutup blok kode.
+- **Baris 24**: `` — Baris kosong untuk kerapian.
+- **Baris 25**: `class _TicketDetailPageState extends State<TicketDetailPage> {` — Mendefinisikan class bernama _TicketDetailPageState.
+- **Baris 26**: `  Ticket? _ticket;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `  bool _loading = true;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `  String? _error;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `` — Baris kosong untuk kerapian.
+- **Baris 30**: `  Uint8List? _buktiBytes;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `  String? _buktiName;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `  bool _uploading = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 33**: `  bool _membatalkan = false;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `` — Baris kosong untuk kerapian.
+- **Baris 35**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `  void initState() {` — Fungsi/method `initState` untuk menjalankan bagian logika ini.
+- **Baris 37**: `    super.initState();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `    _load();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `  }` — Pembuka/penutup blok kode.
+- **Baris 40**: `` — Baris kosong untuk kerapian.
+- **Baris 41**: `  Future<void> _load({bool diam = false}) async {` — Fungsi/method `_load` untuk menjalankan bagian logika ini.
+- **Baris 42**: `    if (!diam) {` — Pengecekan kondisi.
+- **Baris 43**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 44**: `        _loading = true;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `    }` — Pembuka/penutup blok kode.
+- **Baris 48**: `` — Baris kosong untuk kerapian.
+- **Baris 49**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 50**: `      final tiket = await RegistrationService.detail(widget.registrationId);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 51**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 52**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 53**: `        _ticket = tiket;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `        _error = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 58**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 59**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 60**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `        _error = error.message;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 64**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 65**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 66**: `        _loading = false;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `        _error = 'Gagal memuat tiket. Silakan coba lagi.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `    }` — Pembuka/penutup blok kode.
+- **Baris 70**: `  }` — Pembuka/penutup blok kode.
+- **Baris 71**: `` — Baris kosong untuk kerapian.
+- **Baris 72**: `  Future<void> _pilihBukti() async {` — Fungsi/method `_pilihBukti` untuk menjalankan bagian logika ini.
+- **Baris 73**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 74**: `      final gambar = await pilihGambarDariGaleri();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 75**: `      if (gambar == null \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 76**: `` — Baris kosong untuk kerapian.
+- **Baris 77**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 78**: `        _buktiBytes = gambar.bytes;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `        _buktiName = gambar.nama;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `    } on PilihGambarException catch (error) {` — Menangkap error dari blok try.
+- **Baris 82**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 83**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 85**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 86**: `      _snack('Gagal memilih gambar. Coba lagi.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `    }` — Pembuka/penutup blok kode.
+- **Baris 88**: `  }` — Pembuka/penutup blok kode.
+- **Baris 89**: `` — Baris kosong untuk kerapian.
+- **Baris 90**: `  Future<void> _unggahBukti() async {` — Fungsi/method `_unggahBukti` untuk menjalankan bagian logika ini.
+- **Baris 91**: `    final bytes = _buktiBytes;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 92**: `    final nama = _buktiName;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 93**: `` — Baris kosong untuk kerapian.
+- **Baris 94**: `    if (bytes == null \|\| nama == null \|\| _uploading) return;` — Pengecekan kondisi.
+- **Baris 95**: `` — Baris kosong untuk kerapian.
+- **Baris 96**: `    setState(() => _uploading = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 97**: `` — Baris kosong untuk kerapian.
+- **Baris 98**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 99**: `      await RegistrationService.uploadPaymentProof(` — Menunggu proses asynchronous selesai.
+- **Baris 100**: `        registrationId: widget.registrationId,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `        bytes: bytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `        fileName: nama,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 105**: `` — Baris kosong untuk kerapian.
+- **Baris 106**: `      _snack('Bukti pembayaran berhasil diunggah.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `      setState(() {` — Memperbarui state dan me-refresh tampilan.
+- **Baris 108**: `        _buktiBytes = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `        _buktiName = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `      });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `      await _load(diam: true);` — Menunggu proses asynchronous selesai.
+- **Baris 112**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 113**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 114**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 116**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 117**: `      _snack('Gagal mengunggah bukti pembayaran.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `      if (mounted) setState(() => _uploading = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 120**: `    }` — Pembuka/penutup blok kode.
+- **Baris 121**: `  }` — Pembuka/penutup blok kode.
+- **Baris 122**: `` — Baris kosong untuk kerapian.
+- **Baris 123**: `  Future<void> _batalkan() async {` — Fungsi/method `_batalkan` untuk menjalankan bagian logika ini.
+- **Baris 124**: `    if (_membatalkan) return;` — Pengecekan kondisi.
+- **Baris 125**: `` — Baris kosong untuk kerapian.
+- **Baris 126**: `    final setuju = await showDialog<bool>(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 127**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `        return AlertDialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 130**: `          title: const Text('Batalkan tiket?'),` — Menampilkan teks di UI.
+- **Baris 131**: `          content: const Text(` — Menampilkan teks di UI.
+- **Baris 132**: `            'Tiket yang dibatalkan tidak bisa dipakai lagi. '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `            'Kamu dapat mendaftar ulang selama kuota masih tersedia.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `          actions: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `            TextButton(` — Membuat tombol aksi.
+- **Baris 137**: `              onPressed: () => Navigator.pop(context, false),` — Berpindah halaman atau mengatur route.
+- **Baris 138**: `              child: const Text('Tidak'),` — Menampilkan teks di UI.
+- **Baris 139**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `            ElevatedButton(` — Membuat tombol aksi.
+- **Baris 141**: `              style: ElevatedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 142**: `                backgroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `              onPressed: () => Navigator.pop(context, true),` — Berpindah halaman atau mengatur route.
+- **Baris 145**: `              child: const Text('Batalkan tiket'),` — Menampilkan teks di UI.
+- **Baris 146**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 148**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 150**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 151**: `` — Baris kosong untuk kerapian.
+- **Baris 152**: `    if (setuju != true \|\| !mounted) return;` — Pengecekan kondisi.
+- **Baris 153**: `` — Baris kosong untuk kerapian.
+- **Baris 154**: `    setState(() => _membatalkan = true);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 155**: `` — Baris kosong untuk kerapian.
+- **Baris 156**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 157**: `      await RegistrationService.cancel(widget.registrationId);` — Menunggu proses asynchronous selesai.
+- **Baris 158**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 159**: `      _snack('Tiket berhasil dibatalkan.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `      await _load(diam: true);` — Menunggu proses asynchronous selesai.
+- **Baris 161**: `    } on ApiException catch (error) {` — Menangkap error dari blok try.
+- **Baris 162**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 163**: `      _snack(error.message);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 164**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 165**: `      if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 166**: `      _snack('Gagal membatalkan tiket.');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `    } finally {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `      if (mounted) setState(() => _membatalkan = false);` — Memperbarui state dan me-refresh tampilan.
+- **Baris 169**: `    }` — Pembuka/penutup blok kode.
+- **Baris 170**: `  }` — Pembuka/penutup blok kode.
+- **Baris 171**: `` — Baris kosong untuk kerapian.
+- **Baris 172**: `  void _lihatBukti(String url) {` — Fungsi/method `_lihatBukti` untuk menjalankan bagian logika ini.
+- **Baris 173**: `    showDialog(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 174**: `      context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `      builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `        return Dialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 177**: `          backgroundColor: Colors.black,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 178**: `          insetPadding: const EdgeInsets.all(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `          shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `            borderRadius: BorderRadius.circular(18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `          clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `          child: SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `            height: MediaQuery.sizeOf(context).height * 0.72,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `            child: Stack(` — Menyusun layout tampilan.
+- **Baris 186**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `                Positioned.fill(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 188**: `                  child: InteractiveViewer(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 189**: `                    minScale: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `                    maxScale: 4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 191**: `                    child: Image.network(` — Menampilkan gambar.
+- **Baris 192**: `                      url,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 193**: `                      fit: BoxFit.contain,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 194**: `                      loadingBuilder: (context, child, progress) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `                        if (progress == null) return child;` — Pengecekan kondisi.
+- **Baris 196**: `                        return const Center(` — Mengembalikan nilai dari fungsi.
+- **Baris 197**: `                          child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 198**: `                            color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 199**: `                            strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 200**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 201**: `                        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 202**: `                      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 203**: `                      errorBuilder: (context, error, stackTrace) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 204**: `                        return const Center(` — Mengembalikan nilai dari fungsi.
+- **Baris 205**: `                          child: Text(` — Menampilkan teks di UI.
+- **Baris 206**: `                            'Gagal memuat bukti pembayaran.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `                            style: TextStyle(color: Colors.white70),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 208**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `                        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `                      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 213**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 214**: `                Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 215**: `                  top: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 216**: `                  right: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `                  child: Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 218**: `                    color: Colors.black.withValues(alpha: 0.45),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 219**: `                    shape: const CircleBorder(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `                    clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 221**: `                    child: IconButton(` — Membuat tombol aksi.
+- **Baris 222**: `                      tooltip: 'Tutup',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 223**: `                      onPressed: () => Navigator.pop(context),` — Berpindah halaman atau mengatur route.
+- **Baris 224**: `                      icon: const Icon(Icons.close_rounded, color: Colors.white),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 225**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 227**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 228**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 230**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 231**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 232**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `  }` — Pembuka/penutup blok kode.
+- **Baris 235**: `` — Baris kosong untuk kerapian.
+- **Baris 236**: `  void _snack(String pesan) {` — Fungsi/method `_snack` untuk menjalankan bagian logika ini.
+- **Baris 237**: `    if (!mounted) return;` — Pengecekan kondisi.
+- **Baris 238**: `    ScaffoldMessenger.of(context).showSnackBar(` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 239**: `      SnackBar(content: Text(pesan)),` — Menampilkan pesan singkat (snackbar) ke pengguna.
+- **Baris 240**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 241**: `  }` — Pembuka/penutup blok kode.
+- **Baris 242**: `` — Baris kosong untuk kerapian.
+- **Baris 243**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 245**: `    if (_loading) {` — Pengecekan kondisi.
+- **Baris 246**: `      return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 247**: `        appBar: AppBar(title: const Text('Detail tiket')),` — Menampilkan teks di UI.
+- **Baris 248**: `        body: const LoadingState(message: 'Memuat tiket...'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 249**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `    }` — Pembuka/penutup blok kode.
+- **Baris 251**: `` — Baris kosong untuk kerapian.
+- **Baris 252**: `    if (_error != null \|\| _ticket == null) {` — Pengecekan kondisi.
+- **Baris 253**: `      return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 254**: `        appBar: AppBar(title: const Text('Detail tiket')),` — Menampilkan teks di UI.
+- **Baris 255**: `        body: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 256**: `          child: SingleChildScrollView(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 257**: `            child: ErrorState(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 258**: `              message: _error ?? 'Tiket tidak ditemukan.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 259**: `              onRetry: _load,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 264**: `    }` — Pembuka/penutup blok kode.
+- **Baris 265**: `` — Baris kosong untuk kerapian.
+- **Baris 266**: `    final tiket = _ticket!;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 267**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 268**: `` — Baris kosong untuk kerapian.
+- **Baris 269**: `    return Scaffold(` — Mengembalikan nilai dari fungsi.
+- **Baris 270**: `      appBar: AppBar(title: const Text('Detail tiket')),` — Menampilkan teks di UI.
+- **Baris 271**: `      body: RefreshIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 272**: `        onRefresh: _load,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 273**: `        child: ListView(` — Menyusun layout tampilan.
+- **Baris 274**: `          physics: const AlwaysScrollableScrollPhysics(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 275**: `          padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 276**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 277**: `            _KartuTiket(tiket: tiket),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 278**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 279**: `            _PesanStatus(tiket: tiket),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 280**: `            const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 281**: `            Text('Informasi tiket', style: tema.textTheme.titleMedium),` — Menampilkan teks di UI.
+- **Baris 282**: `            const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 283**: `            Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 284**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `                color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 286**: `                borderRadius: BorderRadius.circular(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 287**: `                border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 288**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 289**: `              child: Column(` — Menyusun layout tampilan.
+- **Baris 290**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 291**: `                  _BarisInfo(label: 'Harga', nilai: formatRupiah(tiket.price)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 292**: `                  const Divider(height: 1, indent: 14, endIndent: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 293**: `                  _BarisInfo(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 294**: `                    label: 'Tanggal',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 295**: `                    nilai: formatTanggal(tiket.date),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 296**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 297**: `                  const Divider(height: 1, indent: 14, endIndent: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 298**: `                  _BarisInfo(label: 'Lokasi', nilai: tiket.location),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 299**: `                  const Divider(height: 1, indent: 14, endIndent: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 300**: `                  _BarisInfo(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 301**: `                    label: 'ID pendaftaran',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 302**: `                    nilai: '#${tiket.id}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 303**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 304**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 305**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 306**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 307**: `            if (!tiket.cancelled) ...[` — Pengecekan kondisi.
+- **Baris 308**: `              const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 309**: `              Text('Bukti pembayaran', style: tema.textTheme.titleMedium),` — Menampilkan teks di UI.
+- **Baris 310**: `              const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 311**: `              _bagianPembayaran(tiket),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 312**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 313**: `            if (!tiket.cancelled) ...[` — Pengecekan kondisi.
+- **Baris 314**: `              const SizedBox(height: 22),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 315**: `              SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 316**: `                width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 317**: `                child: OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 318**: `                  onPressed: _membatalkan ? null : _batalkan,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 319**: `                  style: OutlinedButton.styleFrom(` — Membuat tombol aksi.
+- **Baris 320**: `                    foregroundColor: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 321**: `                    side: const BorderSide(color: AppColors.danger),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 322**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 323**: `                  icon: _membatalkan` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 324**: `                      ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 325**: `                          width: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 326**: `                          height: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 327**: `                          child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 328**: `                            strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 329**: `                            color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 330**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 331**: `                        )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 332**: `                      : const Icon(Icons.cancel_outlined, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 333**: `                  label: Text(` — Menampilkan teks di UI.
+- **Baris 334**: `                    _membatalkan ? 'Membatalkan...' : 'Batalkan tiket',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 335**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 336**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 337**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 338**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 339**: `            const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 340**: `            Text(` — Menampilkan teks di UI.
+- **Baris 341**: `              'Status tiket hanya dapat diubah oleh organizer event.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 342**: `              style: tema.textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 343**: `              textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 344**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 345**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 346**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 347**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 348**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 349**: `  }` — Pembuka/penutup blok kode.
+- **Baris 350**: `` — Baris kosong untuk kerapian.
+- **Baris 351**: `  Widget _bagianPembayaran(Ticket tiket) {` — Fungsi/method `_bagianPembayaran` untuk menjalankan bagian logika ini.
+- **Baris 352**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 353**: `    final adaBukti = tiket.paymentProofUrl != null;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 354**: `    final pending = tiket.pending;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 355**: `` — Baris kosong untuk kerapian.
+- **Baris 356**: `    return Column(` — Mengembalikan nilai dari fungsi.
+- **Baris 357**: `      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 358**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 359**: `        if (adaBukti) ...[` — Pengecekan kondisi.
+- **Baris 360**: `          _GambarBukti(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 361**: `            url: tiket.paymentProofUrl!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 362**: `            onTap: () => _lihatBukti(tiket.paymentProofUrl!),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 363**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 364**: `          const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 365**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 366**: `        if (pending) ...[` — Pengecekan kondisi.
+- **Baris 367**: `          Text(` — Menampilkan teks di UI.
+- **Baris 368**: `            'Unggah bukti transfer agar organizer dapat memverifikasi '` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 369**: `            'pembayaranmu. Format JPG atau PNG, maksimal 5 MB.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 370**: `            style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 371**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 372**: `          const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 373**: `          if (_buktiBytes != null) ...[` — Pengecekan kondisi.
+- **Baris 374**: `            ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 375**: `              borderRadius: BorderRadius.circular(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 376**: `              child: Image.memory(` — Menampilkan gambar.
+- **Baris 377**: `                _buktiBytes!,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 378**: `                height: 180,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 379**: `                width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 380**: `                fit: BoxFit.cover,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 381**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 382**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 383**: `            const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 384**: `            Row(` — Menyusun layout tampilan.
+- **Baris 385**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 386**: `                OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 387**: `                  onPressed: _uploading ? null : _pilihBukti,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 388**: `                  icon: const Icon(Icons.photo_library_outlined, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 389**: `                  label: const Text('Ganti'),` — Menampilkan teks di UI.
+- **Baris 390**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 391**: `                const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 392**: `                Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 393**: `                  child: ElevatedButton(` — Membuat tombol aksi.
+- **Baris 394**: `                    onPressed: _uploading ? null : _unggahBukti,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 395**: `                    child: _uploading` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 396**: `                        ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 397**: `                            width: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 398**: `                            height: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 399**: `                            child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 400**: `                              strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 401**: `                              color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 402**: `                            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 403**: `                          )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 404**: `                        : const Text('Unggah bukti'),` — Menampilkan teks di UI.
+- **Baris 405**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 406**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 407**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 408**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 409**: `          ] else` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 410**: `            SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 411**: `              width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 412**: `              child: OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 413**: `                onPressed: _uploading ? null : _pilihBukti,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 414**: `                icon: const Icon(Icons.upload_file_outlined, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 415**: `                label: Text(` — Menampilkan teks di UI.
+- **Baris 416**: `                  adaBukti ? 'Ganti bukti pembayaran' : 'Pilih bukti pembayaran',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 417**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 418**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 419**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 420**: `        ] else if (tiket.approved && !adaBukti)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 421**: `          const InfoBanner(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 422**: `            icon: Icons.verified_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 423**: `            message:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 424**: `                'Tiket sudah disetujui. Tidak ada bukti pembayaran yang perlu diunggah.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 425**: `            color: AppColors.success,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 426**: `            background: AppColors.successSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 427**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 428**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 429**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 430**: `  }` — Pembuka/penutup blok kode.
+- **Baris 431**: `}` — Pembuka/penutup blok kode.
+- **Baris 432**: `` — Baris kosong untuk kerapian.
+- **Baris 433**: `class _KartuTiket extends StatelessWidget {` — Mendefinisikan class bernama _KartuTiket.
+- **Baris 434**: `  final Ticket tiket;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 435**: `` — Baris kosong untuk kerapian.
+- **Baris 436**: `  const _KartuTiket({required this.tiket});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 437**: `` — Baris kosong untuk kerapian.
+- **Baris 438**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 439**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 440**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 441**: `` — Baris kosong untuk kerapian.
+- **Baris 442**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 443**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 444**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 445**: `        color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 446**: `        borderRadius: BorderRadius.circular(20),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 447**: `        border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 448**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 449**: `      child: Column(` — Menyusun layout tampilan.
+- **Baris 450**: `        crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 451**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 452**: `          SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 453**: `            height: 146,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 454**: `            width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 455**: `            child: NetworkBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 456**: `              url: tiket.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 457**: `              fallbackIcon: Icons.local_activity_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 458**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 459**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 460**: `          Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 461**: `            padding: const EdgeInsets.all(16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 462**: `            child: Column(` — Menyusun layout tampilan.
+- **Baris 463**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 464**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 465**: `                Row(` — Menyusun layout tampilan.
+- **Baris 466**: `                  crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 467**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 468**: `                    Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 469**: `                      child: Text(` — Menampilkan teks di UI.
+- **Baris 470**: `                        tiket.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 471**: `                        style: tema.textTheme.titleLarge,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 472**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 473**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 474**: `                    const SizedBox(width: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 475**: `                    StatusBadge(status: tiket.status),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 476**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 477**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 478**: `                const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 479**: `                Row(` — Menyusun layout tampilan.
+- **Baris 480**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 481**: `                    const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 482**: `                      Icons.calendar_today_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 483**: `                      size: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 484**: `                      color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 485**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 486**: `                    const SizedBox(width: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 487**: `                    Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 488**: `                      child: Text(` — Menampilkan teks di UI.
+- **Baris 489**: `                        formatTanggal(tiket.date),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 490**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 491**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 492**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 493**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 494**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 495**: `                const SizedBox(height: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 496**: `                Row(` — Menyusun layout tampilan.
+- **Baris 497**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 498**: `                    const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 499**: `                      Icons.place_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 500**: `                      size: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 501**: `                      color: AppColors.muted,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 502**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 503**: `                    const SizedBox(width: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 504**: `                    Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 505**: `                      child: Text(` — Menampilkan teks di UI.
+- **Baris 506**: `                        tiket.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 507**: `                        style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 508**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 509**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 510**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 511**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 512**: `                const SizedBox(height: 14),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 513**: `                const Divider(height: 1),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 514**: `                const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 515**: `                Row(` — Menyusun layout tampilan.
+- **Baris 516**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 517**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 518**: `                      'Tiket #${tiket.id}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 519**: `                      style: tema.textTheme.bodySmall?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 520**: `                        fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 521**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 522**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 523**: `                    const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 524**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 525**: `                      formatRupiah(tiket.price),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 526**: `                      style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 527**: `                        color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 528**: `                        fontSize: 13,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 529**: `                        fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 530**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 531**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 532**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 533**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 534**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 535**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 536**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 537**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 538**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 539**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 540**: `  }` — Pembuka/penutup blok kode.
+- **Baris 541**: `}` — Pembuka/penutup blok kode.
+- **Baris 542**: `` — Baris kosong untuk kerapian.
+- **Baris 543**: `class _PesanStatus extends StatelessWidget {` — Mendefinisikan class bernama _PesanStatus.
+- **Baris 544**: `  final Ticket tiket;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 545**: `` — Baris kosong untuk kerapian.
+- **Baris 546**: `  const _PesanStatus({required this.tiket});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 547**: `` — Baris kosong untuk kerapian.
+- **Baris 548**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 549**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 550**: `    if (tiket.approved) {` — Pengecekan kondisi.
+- **Baris 551**: `      return InfoBanner(` — Mengembalikan nilai dari fungsi.
+- **Baris 552**: `        icon: Icons.verified_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 553**: `        message: 'Tiket aktif. ${pesanStatus(tiket.status)}',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 554**: `        color: AppColors.success,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 555**: `        background: AppColors.successSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 556**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 557**: `    }` — Pembuka/penutup blok kode.
+- **Baris 558**: `` — Baris kosong untuk kerapian.
+- **Baris 559**: `    if (tiket.cancelled) {` — Pengecekan kondisi.
+- **Baris 560**: `      return InfoBanner(` — Mengembalikan nilai dari fungsi.
+- **Baris 561**: `        icon: Icons.cancel_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 562**: `        message: pesanStatus(tiket.status),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 563**: `        color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 564**: `        background: AppColors.dangerSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 565**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 566**: `    }` — Pembuka/penutup blok kode.
+- **Baris 567**: `` — Baris kosong untuk kerapian.
+- **Baris 568**: `    return InfoBanner(` — Mengembalikan nilai dari fungsi.
+- **Baris 569**: `      icon: Icons.schedule_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 570**: `      message: pesanStatus(tiket.status),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 571**: `      color: AppColors.warning,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 572**: `      background: AppColors.warningSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 573**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 574**: `  }` — Pembuka/penutup blok kode.
+- **Baris 575**: `}` — Pembuka/penutup blok kode.
+- **Baris 576**: `` — Baris kosong untuk kerapian.
+- **Baris 577**: `class _GambarBukti extends StatelessWidget {` — Mendefinisikan class bernama _GambarBukti.
+- **Baris 578**: `  final String url;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 579**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 580**: `` — Baris kosong untuk kerapian.
+- **Baris 581**: `  const _GambarBukti({required this.url, required this.onTap});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 582**: `` — Baris kosong untuk kerapian.
+- **Baris 583**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 584**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 585**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 586**: `      color: AppColors.surfaceAlt,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 587**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 588**: `      borderRadius: BorderRadius.circular(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 589**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 590**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 591**: `        child: Stack(` — Menyusun layout tampilan.
+- **Baris 592**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 593**: `            Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 594**: `              height: 176,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 595**: `              width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 596**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 597**: `                borderRadius: BorderRadius.circular(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 598**: `                border: Border.all(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 599**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 600**: `              child: ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 601**: `                borderRadius: BorderRadius.circular(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 602**: `                child: Image.network(` — Menampilkan gambar.
+- **Baris 603**: `                  url,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 604**: `                  fit: BoxFit.cover,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 605**: `                  errorBuilder: (context, error, stackTrace) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 606**: `                    return const Center(` — Mengembalikan nilai dari fungsi.
+- **Baris 607**: `                      child: Text(` — Menampilkan teks di UI.
+- **Baris 608**: `                        'Gagal memuat gambar.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 609**: `                        style: TextStyle(color: AppColors.muted),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 610**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 611**: `                    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 612**: `                  },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 613**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 614**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 615**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 616**: `            Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 617**: `              right: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 618**: `              bottom: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 619**: `              child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 620**: `                padding: const EdgeInsets.symmetric(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 621**: `                  horizontal: 10,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 622**: `                  vertical: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 623**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 624**: `                decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 625**: `                  color: Colors.black.withValues(alpha: 0.62),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 626**: `                  borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 627**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 628**: `                child: const Row(` — Menyusun layout tampilan.
+- **Baris 629**: `                  mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 630**: `                  children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 631**: `                    Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 632**: `                      Icons.zoom_in_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 633**: `                      size: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 634**: `                      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 635**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 636**: `                    SizedBox(width: 4),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 637**: `                    Text(` — Menampilkan teks di UI.
+- **Baris 638**: `                      'Perbesar',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 639**: `                      style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 640**: `                        color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 641**: `                        fontSize: 10.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 642**: `                        fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 643**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 644**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 645**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 646**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 647**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 648**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 649**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 650**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 651**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 652**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 653**: `  }` — Pembuka/penutup blok kode.
+- **Baris 654**: `}` — Pembuka/penutup blok kode.
+- **Baris 655**: `` — Baris kosong untuk kerapian.
+- **Baris 656**: `class _BarisInfo extends StatelessWidget {` — Mendefinisikan class bernama _BarisInfo.
+- **Baris 657**: `  final String label;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 658**: `  final String nilai;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 659**: `` — Baris kosong untuk kerapian.
+- **Baris 660**: `  const _BarisInfo({required this.label, required this.nilai});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 661**: `` — Baris kosong untuk kerapian.
+- **Baris 662**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 663**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 664**: `    return Padding(` — Mengembalikan nilai dari fungsi.
+- **Baris 665**: `      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 666**: `      child: Row(` — Menyusun layout tampilan.
+- **Baris 667**: `        crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 668**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 669**: `          SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 670**: `            width: 112,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 671**: `            child: Text(` — Menampilkan teks di UI.
+- **Baris 672**: `              label,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 673**: `              style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 674**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 675**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 676**: `          Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 677**: `            child: Text(` — Menampilkan teks di UI.
+- **Baris 678**: `              nilai,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 679**: `              textAlign: TextAlign.right,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 680**: `              style: Theme.of(context).textTheme.bodyMedium?.copyWith(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 681**: `                    fontWeight: FontWeight.w600,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 682**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 683**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 684**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 685**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 686**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 687**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 688**: `  }` — Pembuka/penutup blok kode.
+- **Baris 689**: `}` — Pembuka/penutup blok kode.
+
+## lib/service/api.dart
+
+Jumlah baris: 334
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:async';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `import 'dart:convert';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 3**: `import 'package:http/http.dart' as http;` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import 'package:http_parser/http_parser.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import 'package:shared_preferences/shared_preferences.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `` — Baris kosong untuk kerapian.
+- **Baris 7**: `import 'package:flutter/foundation.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 10**: `` — Baris kosong untuk kerapian.
+- **Baris 11**: `class ApiException implements Exception {` — Mendefinisikan class bernama ApiException.
+- **Baris 12**: `  final int statusCode;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `  final String message;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `  const ApiException(this.statusCode, this.message);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `` — Baris kosong untuk kerapian.
+- **Baris 17**: `  bool get unauthorized => statusCode == 401;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 18**: `  bool get forbidden => statusCode == 403;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `` — Baris kosong untuk kerapian.
+- **Baris 20**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `  String toString() => message;` — Fungsi/method `toString` untuk menjalankan bagian logika ini.
+- **Baris 22**: `}` — Pembuka/penutup blok kode.
+- **Baris 23**: `` — Baris kosong untuk kerapian.
+- **Baris 24**: `class ApiService {` — Mendefinisikan class bernama ApiService.
+- **Baris 25**: `  static const String _tokenKey = 'gatix_token';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `` — Baris kosong untuk kerapian.
+- **Baris 27**: `  // Alamat backend yang berhasil dipakai. Diisi otomatis saat request pertama.` — Komentar: Alamat backend yang berhasil dipakai. Diisi otomatis saat request pertama.
+- **Baris 28**: `  static String? _resolvedBaseUrl;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `` — Baris kosong untuk kerapian.
+- **Baris 30**: `  // Alamat terakhir yang dicoba, untuk pesan error yang jelas.` — Komentar: Alamat terakhir yang dicoba, untuk pesan error yang jelas.
+- **Baris 31**: `  static String? _lastTriedBaseUrl;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `` — Baris kosong untuk kerapian.
+- **Baris 33**: `  // Alamat yang sedang dipakai, untuk ditampilkan di pesan error/profil.` — Komentar: Alamat yang sedang dipakai, untuk ditampilkan di pesan error/profil.
+- **Baris 34**: `  static String get resolvedBaseUrl =>` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `      _resolvedBaseUrl ?? _lastTriedBaseUrl ?? apiBaseUrl;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `` — Baris kosong untuk kerapian.
+- **Baris 37**: `  static void Function()? onUnauthorized;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `` — Baris kosong untuk kerapian.
+- **Baris 39**: `  static Future<void> saveToken(String token) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `    final prefs = await SharedPreferences.getInstance();` — Menyimpan atau membaca data lokal, terutama token.
+- **Baris 41**: `    await prefs.setString(_tokenKey, token);` — Menunggu proses asynchronous selesai.
+- **Baris 42**: `  }` — Pembuka/penutup blok kode.
+- **Baris 43**: `` — Baris kosong untuk kerapian.
+- **Baris 44**: `  static Future<String?> getToken() async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `    final prefs = await SharedPreferences.getInstance();` — Menyimpan atau membaca data lokal, terutama token.
+- **Baris 46**: `    return prefs.getString(_tokenKey);` — Mengembalikan nilai dari fungsi.
+- **Baris 47**: `  }` — Pembuka/penutup blok kode.
+- **Baris 48**: `` — Baris kosong untuk kerapian.
+- **Baris 49**: `  static Future<void> clearToken() async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `    final prefs = await SharedPreferences.getInstance();` — Menyimpan atau membaca data lokal, terutama token.
+- **Baris 51**: `    await prefs.remove(_tokenKey);` — Menunggu proses asynchronous selesai.
+- **Baris 52**: `  }` — Pembuka/penutup blok kode.
+- **Baris 53**: `` — Baris kosong untuk kerapian.
+- **Baris 54**: `  static Future<Map<String, String>> _headers({` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `    bool auth = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 56**: `    bool json = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 57**: `  }) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `    final token = auth ? await getToken() : null;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 59**: `` — Baris kosong untuk kerapian.
+- **Baris 60**: `    return {` — Mengembalikan nilai dari fungsi.
+- **Baris 61**: `      'Accept': 'application/json',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `      if (json) 'Content-Type': 'application/json',` — Pengecekan kondisi.
+- **Baris 63**: `      if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',` — Pengecekan kondisi.
+- **Baris 64**: `    };` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `  }` — Pembuka/penutup blok kode.
+- **Baris 66**: `` — Baris kosong untuk kerapian.
+- **Baris 67**: `  // Pilih alamat backend otomatis.` — Komentar: Pilih alamat backend otomatis.
+- **Baris 68**: `  // - Web/desktop: localhost.` — Komentar: - Web/desktop: localhost.
+- **Baris 69**: `  // - Android: coba 127.0.0.1 dulu (cocok untuk HP fisik via adb reverse),` — Komentar: - Android: coba 127.0.0.1 dulu (cocok untuk HP fisik via adb reverse),
+- **Baris 70**: `  //   lalu 10.0.2.2 (cocok untuk emulator Android).` — Komentar: lalu 10.0.2.2 (cocok untuk emulator Android).
+- **Baris 71**: `  static Future<String> _tentukanBaseUrl() async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `    if (_resolvedBaseUrl != null) return _resolvedBaseUrl!;` — Pengecekan kondisi.
+- **Baris 73**: `` — Baris kosong untuk kerapian.
+- **Baris 74**: `    const override = String.fromEnvironment('API_URL');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 75**: `    if (override.isNotEmpty) {` — Pengecekan kondisi.
+- **Baris 76**: `      _resolvedBaseUrl = override;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `      return override;` — Mengembalikan nilai dari fungsi.
+- **Baris 78**: `    }` — Pembuka/penutup blok kode.
+- **Baris 79**: `` — Baris kosong untuk kerapian.
+- **Baris 80**: `    final candidates = <String>[];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 81**: `    if (kIsWeb \|\| defaultTargetPlatform != TargetPlatform.android) {` — Pengecekan kondisi.
+- **Baris 82**: `      candidates.add('http://localhost:8000/api');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `    } else {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `      candidates.addAll([` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `        'http://127.0.0.1:8000/api',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `        'http://10.0.2.2:8000/api',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `      ]);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `    }` — Pembuka/penutup blok kode.
+- **Baris 89**: `` — Baris kosong untuk kerapian.
+- **Baris 90**: `    for (final candidate in candidates) {` — Perulangan untuk memproses beberapa data.
+- **Baris 91**: `      _lastTriedBaseUrl = candidate;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `      try {` — Memulai blok try untuk menangani error.
+- **Baris 93**: `        final response = await http` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 94**: `            .get(Uri.parse('$candidate/health'))` — Membuat alamat URL endpoint.
+- **Baris 95**: `            .timeout(const Duration(seconds: 2));` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `        if (response.statusCode == 200) {` — Pengecekan kondisi.
+- **Baris 97**: `          _resolvedBaseUrl = candidate;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `          return candidate;` — Mengembalikan nilai dari fungsi.
+- **Baris 99**: `        }` — Pembuka/penutup blok kode.
+- **Baris 100**: `      } catch (_) {` — Menangkap error dari blok try.
+- **Baris 101**: `        // Coba alamat berikutnya.` — Komentar: Coba alamat berikutnya.
+- **Baris 102**: `      }` — Pembuka/penutup blok kode.
+- **Baris 103**: `    }` — Pembuka/penutup blok kode.
+- **Baris 104**: `` — Baris kosong untuk kerapian.
+- **Baris 105**: `    // Jika semua gagal, jangan simpan cache agar request berikutnya` — Komentar: Jika semua gagal, jangan simpan cache agar request berikutnya
+- **Baris 106**: `    // bisa mencoba lagi (misalnya backend baru dinyalakan).` — Komentar: bisa mencoba lagi (misalnya backend baru dinyalakan).
+- **Baris 107**: `    return candidates.first;` — Mengembalikan nilai dari fungsi.
+- **Baris 108**: `  }` — Pembuka/penutup blok kode.
+- **Baris 109**: `` — Baris kosong untuk kerapian.
+- **Baris 110**: `  static Future<Uri> _uri(String endpoint, [Map<String, dynamic>? query]) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `    final base = await _tentukanBaseUrl();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 112**: `    final uri = Uri.parse('$base$endpoint');` — Membuat alamat URL endpoint.
+- **Baris 113**: `` — Baris kosong untuk kerapian.
+- **Baris 114**: `    if (query == null \|\| query.isEmpty) return uri;` — Pengecekan kondisi.
+- **Baris 115**: `` — Baris kosong untuk kerapian.
+- **Baris 116**: `    final params = <String, String>{};` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 117**: `    query.forEach((key, value) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `      if (value == null) return;` — Pengecekan kondisi.
+- **Baris 119**: `      final text = value.toString().trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 120**: `      if (text.isNotEmpty) params[key] = text;` — Pengecekan kondisi.
+- **Baris 121**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `` — Baris kosong untuk kerapian.
+- **Baris 123**: `    if (params.isEmpty) return uri;` — Pengecekan kondisi.
+- **Baris 124**: `    return uri.replace(queryParameters: params);` — Mengembalikan nilai dari fungsi.
+- **Baris 125**: `  }` — Pembuka/penutup blok kode.
+- **Baris 126**: `` — Baris kosong untuk kerapian.
+- **Baris 127**: `  static Future<dynamic> get(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `    String endpoint, {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 129**: `    Map<String, dynamic>? query,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 130**: `    bool auth = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 131**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `    return _send(() async {` — Mengembalikan nilai dari fungsi.
+- **Baris 133**: `      final response = await http.get(` — Memanggil REST API dengan metode GET.
+- **Baris 134**: `        await _uri(endpoint, query),` — Menunggu proses asynchronous selesai.
+- **Baris 135**: `        headers: await _headers(auth: auth),` — Menunggu proses asynchronous selesai.
+- **Baris 136**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 137**: `      return response;` — Mengembalikan nilai dari fungsi.
+- **Baris 138**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `  }` — Pembuka/penutup blok kode.
+- **Baris 140**: `` — Baris kosong untuk kerapian.
+- **Baris 141**: `  static Future<dynamic> post(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `    String endpoint, {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 143**: `    Object? body,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `    bool auth = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 145**: `    bool handleUnauthorized = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 146**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `    return _send(` — Mengembalikan nilai dari fungsi.
+- **Baris 148**: `      () async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `        final response = await http.post(` — Memanggil REST API dengan metode POST.
+- **Baris 150**: `          await _uri(endpoint),` — Menunggu proses asynchronous selesai.
+- **Baris 151**: `          headers: await _headers(auth: auth),` — Menunggu proses asynchronous selesai.
+- **Baris 152**: `          body: jsonEncode(body ?? <String, dynamic>{}),` — Mengubah data Dart menjadi teks JSON untuk dikirim ke server.
+- **Baris 153**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 154**: `        return response;` — Mengembalikan nilai dari fungsi.
+- **Baris 155**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 156**: `      handleUnauthorized: handleUnauthorized,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `  }` — Pembuka/penutup blok kode.
+- **Baris 159**: `` — Baris kosong untuk kerapian.
+- **Baris 160**: `  static Future<dynamic> patch(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 161**: `    String endpoint, {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 162**: `    Object? body,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 163**: `    bool auth = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 164**: `    bool handleUnauthorized = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 165**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `    return _send(` — Mengembalikan nilai dari fungsi.
+- **Baris 167**: `      () async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `        final response = await http.patch(` — Memanggil REST API dengan metode PATCH.
+- **Baris 169**: `          await _uri(endpoint),` — Menunggu proses asynchronous selesai.
+- **Baris 170**: `          headers: await _headers(auth: auth),` — Menunggu proses asynchronous selesai.
+- **Baris 171**: `          body: jsonEncode(body ?? <String, dynamic>{}),` — Mengubah data Dart menjadi teks JSON untuk dikirim ke server.
+- **Baris 172**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `        return response;` — Mengembalikan nilai dari fungsi.
+- **Baris 174**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `      handleUnauthorized: handleUnauthorized,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 177**: `  }` — Pembuka/penutup blok kode.
+- **Baris 178**: `` — Baris kosong untuk kerapian.
+- **Baris 179**: `  static Future<dynamic> delete(String endpoint, {bool auth = true}) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `    return _send(() async {` — Mengembalikan nilai dari fungsi.
+- **Baris 181**: `      final response = await http.delete(` — Memanggil REST API dengan metode DELETE.
+- **Baris 182**: `        await _uri(endpoint),` — Menunggu proses asynchronous selesai.
+- **Baris 183**: `        headers: await _headers(auth: auth),` — Menunggu proses asynchronous selesai.
+- **Baris 184**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `      return response;` — Mengembalikan nilai dari fungsi.
+- **Baris 186**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 187**: `  }` — Pembuka/penutup blok kode.
+- **Baris 188**: `` — Baris kosong untuk kerapian.
+- **Baris 189**: `  static Future<dynamic> multipart(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 190**: `    String method,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 191**: `    String endpoint, {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 192**: `    Map<String, String> fields = const {},` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 193**: `    String fileField = 'file',` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 194**: `    Uint8List? fileBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 195**: `    String? fileName,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 196**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 197**: `    return _send(() async {` — Mengembalikan nilai dari fungsi.
+- **Baris 198**: `      final request = http.MultipartRequest(method, await _uri(endpoint));` — Membuat request multipart untuk upload file/gambar.
+- **Baris 199**: `      request.headers.addAll(await _headers(json: false));` — Menunggu proses asynchronous selesai.
+- **Baris 200**: `` — Baris kosong untuk kerapian.
+- **Baris 201**: `      if (fields.isNotEmpty) request.fields.addAll(fields);` — Pengecekan kondisi.
+- **Baris 202**: `` — Baris kosong untuk kerapian.
+- **Baris 203**: `      if (fileBytes != null && fileName != null) {` — Pengecekan kondisi.
+- **Baris 204**: `        request.files.add(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 205**: `          http.MultipartFile.fromBytes(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 206**: `            fileField,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 207**: `            fileBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 208**: `            filename: fileName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 209**: `            contentType: _mediaType(fileName),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 210**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 211**: `        );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 212**: `      }` — Pembuka/penutup blok kode.
+- **Baris 213**: `` — Baris kosong untuk kerapian.
+- **Baris 214**: `      final streamed = await request.send();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 215**: `      return http.Response.fromStream(streamed);` — Mengembalikan nilai dari fungsi.
+- **Baris 216**: `    });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 217**: `  }` — Pembuka/penutup blok kode.
+- **Baris 218**: `` — Baris kosong untuk kerapian.
+- **Baris 219**: `  static MediaType _mediaType(String fileName) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 220**: `    final lower = fileName.toLowerCase();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 221**: `    if (lower.endsWith('.png')) return MediaType('image', 'png');` — Pengecekan kondisi.
+- **Baris 222**: `    return MediaType('image', 'jpeg');` — Mengembalikan nilai dari fungsi.
+- **Baris 223**: `  }` — Pembuka/penutup blok kode.
+- **Baris 224**: `` — Baris kosong untuk kerapian.
+- **Baris 225**: `  static Future<dynamic> _send(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 226**: `    Future<http.Response> Function() request, {` — Fungsi/method `Function` untuk menjalankan bagian logika ini.
+- **Baris 227**: `    bool handleUnauthorized = true,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 228**: `  }) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 229**: `    try {` — Memulai blok try untuk menangani error.
+- **Baris 230**: `      final response = await request().timeout(apiTimeout);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 231**: `      return _processResponse(` — Mengembalikan nilai dari fungsi.
+- **Baris 232**: `        response,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 233**: `        handleUnauthorized: handleUnauthorized,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 234**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 235**: `    } on ApiException {` — Menangkap error dari blok try.
+- **Baris 236**: `      rethrow;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 237**: `    } on TimeoutException {` — Menangkap error dari blok try.
+- **Baris 238**: `      final alamat = resolvedBaseUrl;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 239**: `      _resolvedBaseUrl = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 240**: `      throw ApiException(` — Melempar error agar ditangani pemanggil.
+- **Baris 241**: `        0,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 242**: `        'Koneksi ke server terlalu lama ($alamat). Periksa jaringan lalu coba lagi.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 243**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 244**: `    } catch (_) {` — Menangkap error dari blok try.
+- **Baris 245**: `      final alamat = resolvedBaseUrl;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 246**: `      _resolvedBaseUrl = null;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 247**: `` — Baris kosong untuk kerapian.
+- **Baris 248**: `      final pesanDasar =` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 249**: `          'Tidak dapat terhubung ke server ($alamat). Pastikan backend berjalan.';` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 250**: `` — Baris kosong untuk kerapian.
+- **Baris 251**: `      final pesan = (!kIsWeb && defaultTargetPlatform == TargetPlatform.android)` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 252**: `          ? '$pesanDasar Jika memakai HP fisik, jalankan: adb reverse tcp:8000 tcp:8000'` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 253**: `          : pesanDasar;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 254**: `` — Baris kosong untuk kerapian.
+- **Baris 255**: `      throw ApiException(0, pesan);` — Melempar error agar ditangani pemanggil.
+- **Baris 256**: `    }` — Pembuka/penutup blok kode.
+- **Baris 257**: `  }` — Pembuka/penutup blok kode.
+- **Baris 258**: `` — Baris kosong untuk kerapian.
+- **Baris 259**: `  static dynamic _processResponse(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 260**: `    http.Response response, {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 261**: `    required bool handleUnauthorized,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 262**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 263**: `    dynamic body;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 264**: `` — Baris kosong untuk kerapian.
+- **Baris 265**: `    if (response.body.isNotEmpty) {` — Pengecekan kondisi.
+- **Baris 266**: `      try {` — Memulai blok try untuk menangani error.
+- **Baris 267**: `        body = jsonDecode(response.body);` — Mengubah teks JSON dari server menjadi data Dart.
+- **Baris 268**: `      } catch (_) {` — Menangkap error dari blok try.
+- **Baris 269**: `        body = response.body;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 270**: `      }` — Pembuka/penutup blok kode.
+- **Baris 271**: `    }` — Pembuka/penutup blok kode.
+- **Baris 272**: `` — Baris kosong untuk kerapian.
+- **Baris 273**: `    final sukses = response.statusCode >= 200 && response.statusCode < 300;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 274**: `` — Baris kosong untuk kerapian.
+- **Baris 275**: `    if (sukses) return body;` — Pengecekan kondisi.
+- **Baris 276**: `` — Baris kosong untuk kerapian.
+- **Baris 277**: `    if (response.statusCode == 401 && handleUnauthorized) {` — Pengecekan kondisi.
+- **Baris 278**: `      onUnauthorized?.call();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 279**: `    }` — Pembuka/penutup blok kode.
+- **Baris 280**: `` — Baris kosong untuk kerapian.
+- **Baris 281**: `    throw ApiException(` — Melempar error agar ditangani pemanggil.
+- **Baris 282**: `      response.statusCode,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 283**: `      _pesanError(body, response.statusCode),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 284**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 285**: `  }` — Pembuka/penutup blok kode.
+- **Baris 286**: `` — Baris kosong untuk kerapian.
+- **Baris 287**: `  static String _pesanError(dynamic body, int statusCode) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 288**: `    if (body is Map) {` — Pengecekan kondisi.
+- **Baris 289**: `      final pesan = body['message']?.toString().trim();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 290**: `      final detail = _detailValidasi(body);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 291**: `` — Baris kosong untuk kerapian.
+- **Baris 292**: `      if (pesan != null && pesan.isNotEmpty) {` — Pengecekan kondisi.
+- **Baris 293**: `        if (detail != null && pesan == 'Data tidak valid') {` — Pengecekan kondisi.
+- **Baris 294**: `          return '$pesan: $detail';` — Mengembalikan nilai dari fungsi.
+- **Baris 295**: `        }` — Pembuka/penutup blok kode.
+- **Baris 296**: `        return pesan;` — Mengembalikan nilai dari fungsi.
+- **Baris 297**: `      }` — Pembuka/penutup blok kode.
+- **Baris 298**: `` — Baris kosong untuk kerapian.
+- **Baris 299**: `      if (detail != null) return detail;` — Pengecekan kondisi.
+- **Baris 300**: `    }` — Pembuka/penutup blok kode.
+- **Baris 301**: `` — Baris kosong untuk kerapian.
+- **Baris 302**: `    if (body is String && body.trim().isNotEmpty) return body.trim();` — Pengecekan kondisi.
+- **Baris 303**: `` — Baris kosong untuk kerapian.
+- **Baris 304**: `    switch (statusCode) {` — Memilih aksi berdasarkan nilai.
+- **Baris 305**: `      case 400:` — Salah satu cabang dari switch.
+- **Baris 306**: `        return 'Permintaan tidak valid.';` — Mengembalikan nilai dari fungsi.
+- **Baris 307**: `      case 401:` — Salah satu cabang dari switch.
+- **Baris 308**: `        return 'Sesi berakhir. Silakan login kembali.';` — Mengembalikan nilai dari fungsi.
+- **Baris 309**: `      case 403:` — Salah satu cabang dari switch.
+- **Baris 310**: `        return 'Kamu tidak memiliki akses untuk tindakan ini.';` — Mengembalikan nilai dari fungsi.
+- **Baris 311**: `      case 404:` — Salah satu cabang dari switch.
+- **Baris 312**: `        return 'Data tidak ditemukan.';` — Mengembalikan nilai dari fungsi.
+- **Baris 313**: `      case 429:` — Salah satu cabang dari switch.
+- **Baris 314**: `        return 'Terlalu banyak percobaan. Coba lagi nanti.';` — Mengembalikan nilai dari fungsi.
+- **Baris 315**: `      case 500:` — Salah satu cabang dari switch.
+- **Baris 316**: `        return 'Terjadi kesalahan pada server.';` — Mengembalikan nilai dari fungsi.
+- **Baris 317**: `      default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 318**: `        return 'Permintaan gagal (kode $statusCode).';` — Mengembalikan nilai dari fungsi.
+- **Baris 319**: `    }` — Pembuka/penutup blok kode.
+- **Baris 320**: `  }` — Pembuka/penutup blok kode.
+- **Baris 321**: `` — Baris kosong untuk kerapian.
+- **Baris 322**: `  static String? _detailValidasi(Map body) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 323**: `    final daftar = body['error'] ?? body['errors'];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 324**: `    if (daftar is! List \|\| daftar.isEmpty) return null;` — Pengecekan kondisi.
+- **Baris 325**: `` — Baris kosong untuk kerapian.
+- **Baris 326**: `    final pertama = daftar.first;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 327**: `    if (pertama is Map) {` — Pengecekan kondisi.
+- **Baris 328**: `      final pesan = pertama['message']?.toString();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 329**: `      if (pesan != null && pesan.isNotEmpty) return pesan;` — Pengecekan kondisi.
+- **Baris 330**: `    }` — Pembuka/penutup blok kode.
+- **Baris 331**: `` — Baris kosong untuk kerapian.
+- **Baris 332**: `    return pertama.toString();` — Mengembalikan nilai dari fungsi.
+- **Baris 333**: `  }` — Pembuka/penutup blok kode.
+- **Baris 334**: `}` — Pembuka/penutup blok kode.
+
+## lib/service/auth_service.dart
+
+Jumlah baris: 78
+
+### Penjelasan per baris
+
+- **Baris 1**: `import '../model/app_user.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `import '../model/model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 3**: `import 'api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `class AuthResult {` — Mendefinisikan class bernama AuthResult.
+- **Baris 6**: `  final AppUser user;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final String token;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const AuthResult({required this.user, required this.token});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `}` — Pembuka/penutup blok kode.
+- **Baris 11**: `` — Baris kosong untuk kerapian.
+- **Baris 12**: `class AuthService {` — Mendefinisikan class bernama AuthService.
+- **Baris 13**: `  static Future<AuthResult> login(String email, String password) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `    final response = await ApiService.post(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `      '/auth/login',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `      body: {'email': email, 'password': password},` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `      auth: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `      handleUnauthorized: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `` — Baris kosong untuk kerapian.
+- **Baris 21**: `    return _bacaHasilAuth(response);` — Mengembalikan nilai dari fungsi.
+- **Baris 22**: `  }` — Pembuka/penutup blok kode.
+- **Baris 23**: `` — Baris kosong untuk kerapian.
+- **Baris 24**: `  static Future<AuthResult> register({` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `    required String name,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `    required String email,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `    required String password,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `  }) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `    final response = await ApiService.post(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 30**: `      '/auth/register',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `      body: {'name': name, 'email': email, 'password': password},` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `      auth: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `      handleUnauthorized: false,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `` — Baris kosong untuk kerapian.
+- **Baris 36**: `    return _bacaHasilAuth(response);` — Mengembalikan nilai dari fungsi.
+- **Baris 37**: `  }` — Pembuka/penutup blok kode.
+- **Baris 38**: `` — Baris kosong untuk kerapian.
+- **Baris 39**: `  static Future<AppUser> me() async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `    final response = await ApiService.get('/auth/me');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 41**: `    return _bacaUser(response);` — Mengembalikan nilai dari fungsi.
+- **Baris 42**: `  }` — Pembuka/penutup blok kode.
+- **Baris 43**: `` — Baris kosong untuk kerapian.
+- **Baris 44**: `  static Future<AppUser> updateName(String name) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `    final response = await ApiService.patch(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 46**: `      '/auth/me',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `      body: {'name': name},` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `    return _bacaUser(response);` — Mengembalikan nilai dari fungsi.
+- **Baris 50**: `  }` — Pembuka/penutup blok kode.
+- **Baris 51**: `` — Baris kosong untuk kerapian.
+- **Baris 52**: `  static Future<AuthResult> becomeOrganizer() async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `    final response = await ApiService.post('/auth/become-organizer');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 54**: `    return _bacaHasilAuth(response);` — Mengembalikan nilai dari fungsi.
+- **Baris 55**: `  }` — Pembuka/penutup blok kode.
+- **Baris 56**: `` — Baris kosong untuk kerapian.
+- **Baris 57**: `  static AuthResult _bacaHasilAuth(dynamic response) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 59**: `    final token = readText(body['token']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 60**: `` — Baris kosong untuk kerapian.
+- **Baris 61**: `    if (token.isEmpty) {` — Pengecekan kondisi.
+- **Baris 62**: `      throw const ApiException(0, 'Token autentikasi tidak diterima dari server.');` — Melempar error agar ditangani pemanggil.
+- **Baris 63**: `    }` — Pembuka/penutup blok kode.
+- **Baris 64**: `` — Baris kosong untuk kerapian.
+- **Baris 65**: `    return AuthResult(user: _bacaUser(response), token: token);` — Mengembalikan nilai dari fungsi.
+- **Baris 66**: `  }` — Pembuka/penutup blok kode.
+- **Baris 67**: `` — Baris kosong untuk kerapian.
+- **Baris 68**: `  static AppUser _bacaUser(dynamic response) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 70**: `    final data = readMap(body['data']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 71**: `` — Baris kosong untuk kerapian.
+- **Baris 72**: `    if (data.isEmpty) {` — Pengecekan kondisi.
+- **Baris 73**: `      throw const ApiException(0, 'Data pengguna tidak ditemukan.');` — Melempar error agar ditangani pemanggil.
+- **Baris 74**: `    }` — Pembuka/penutup blok kode.
+- **Baris 75**: `` — Baris kosong untuk kerapian.
+- **Baris 76**: `    return AppUser.fromJson(data);` — Mengembalikan nilai dari fungsi.
+- **Baris 77**: `  }` — Pembuka/penutup blok kode.
+- **Baris 78**: `}` — Pembuka/penutup blok kode.
+
+## lib/service/event_service.dart
+
+Jumlah baris: 144
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:typed_data';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../model/event_item.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../model/model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import 'api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `` — Baris kosong untuk kerapian.
+- **Baris 8**: `class EventListResult {` — Mendefinisikan class bernama EventListResult.
+- **Baris 9**: `  final List<EventItem> items;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `  final int page;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `  final int totalPages;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `  final int total;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `` — Baris kosong untuk kerapian.
+- **Baris 14**: `  const EventListResult({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `    required this.items,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `    required this.page,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `    required this.totalPages,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `    required this.total,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `}` — Pembuka/penutup blok kode.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `class EventService {` — Mendefinisikan class bernama EventService.
+- **Baris 23**: `  static Future<EventListResult> list({` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `    String search = '',` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 25**: `    String location = '',` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 26**: `    String sortBy = 'date',` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 27**: `    String order = 'asc',` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 28**: `    int page = 1,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 29**: `    int limit = 12,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 30**: `  }) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `    final response = await ApiService.get(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `      '/events',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `      query: {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `        'search': search,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `        'location': location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `        'sort_by': sortBy,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `        'order': order,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `        'page': page,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `        'limit': limit,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `` — Baris kosong untuk kerapian.
+- **Baris 43**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 44**: `    final data = body['data'];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 45**: `    final pagination = readMap(body['pagination']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 46**: `` — Baris kosong untuk kerapian.
+- **Baris 47**: `    final items = <EventItem>[];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 48**: `    if (data is List) {` — Pengecekan kondisi.
+- **Baris 49**: `      for (final item in data) {` — Perulangan untuk memproses beberapa data.
+- **Baris 50**: `        items.add(EventItem.fromJson(readMap(item)));` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `      }` — Pembuka/penutup blok kode.
+- **Baris 52**: `    }` — Pembuka/penutup blok kode.
+- **Baris 53**: `` — Baris kosong untuk kerapian.
+- **Baris 54**: `    return EventListResult(` — Mengembalikan nilai dari fungsi.
+- **Baris 55**: `      items: items,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `      page: readInt(pagination['page'], page),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `      totalPages: readInt(pagination['totalPages'], 1),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `      total: readInt(pagination['total'], items.length),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `  }` — Pembuka/penutup blok kode.
+- **Baris 61**: `` — Baris kosong untuk kerapian.
+- **Baris 62**: `  static Future<EventItem> detail(int id) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `    final response = await ApiService.get('/events/$id');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 64**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 65**: `    final data = readMap(body['data']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 66**: `` — Baris kosong untuk kerapian.
+- **Baris 67**: `    if (data.isEmpty) {` — Pengecekan kondisi.
+- **Baris 68**: `      throw const ApiException(404, 'Event tidak ditemukan.');` — Melempar error agar ditangani pemanggil.
+- **Baris 69**: `    }` — Pembuka/penutup blok kode.
+- **Baris 70**: `` — Baris kosong untuk kerapian.
+- **Baris 71**: `    return EventItem.fromJson(data);` — Mengembalikan nilai dari fungsi.
+- **Baris 72**: `  }` — Pembuka/penutup blok kode.
+- **Baris 73**: `` — Baris kosong untuk kerapian.
+- **Baris 74**: `  static Future<dynamic> create({` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `    required Map<String, String> fields,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `    Uint8List? bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `    String? bannerName,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 78**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `    return ApiService.multipart(` — Mengembalikan nilai dari fungsi.
+- **Baris 80**: `      'POST',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `      '/events',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `      fields: fields,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `      fileField: 'banner',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `      fileBytes: bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `      fileName: bannerName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `  }` — Pembuka/penutup blok kode.
+- **Baris 88**: `` — Baris kosong untuk kerapian.
+- **Baris 89**: `  static Future<dynamic> update({` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `    required int id,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `    required Map<String, String> fields,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `    Uint8List? bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `    String? bannerName,` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 94**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 95**: `    return ApiService.multipart(` — Mengembalikan nilai dari fungsi.
+- **Baris 96**: `      'PATCH',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `      '/events/$id',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `      fields: fields,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 99**: `      fileField: 'banner',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `      fileBytes: bannerBytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `      fileName: bannerName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `  }` — Pembuka/penutup blok kode.
+- **Baris 104**: `` — Baris kosong untuk kerapian.
+- **Baris 105**: `  static Future<dynamic> delete(int id) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `    return ApiService.delete('/events/$id');` — Mengembalikan nilai dari fungsi.
+- **Baris 107**: `  }` — Pembuka/penutup blok kode.
+- **Baris 108**: `` — Baris kosong untuk kerapian.
+- **Baris 109**: `  static Future<List<EventItem>> mine(int userId) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `    final hasil = <EventItem>[];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 111**: `    var page = 1;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 112**: `    var totalPages = 1;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 113**: `` — Baris kosong untuk kerapian.
+- **Baris 114**: `    while (page <= totalPages && page <= 10) {` — Perulangan selama kondisi terpenuhi.
+- **Baris 115**: `      final result = await list(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 116**: `        page: page,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `        limit: 50,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `        sortBy: 'date',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `        order: 'asc',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `` — Baris kosong untuk kerapian.
+- **Baris 122**: `      hasil.addAll(result.items.where((event) => event.createdBy == userId));` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `      totalPages = result.totalPages;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `      page++;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `    }` — Pembuka/penutup blok kode.
+- **Baris 126**: `` — Baris kosong untuk kerapian.
+- **Baris 127**: `    return hasil;` — Mengembalikan nilai dari fungsi.
+- **Baris 128**: `  }` — Pembuka/penutup blok kode.
+- **Baris 129**: `` — Baris kosong untuk kerapian.
+- **Baris 130**: `  static Future<List<Ticket>> participants(int eventId) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 131**: `    final response = await ApiService.get('/events/$eventId/registrations');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 132**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 133**: `    final data = body['data'];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 134**: `` — Baris kosong untuk kerapian.
+- **Baris 135**: `    final hasil = <Ticket>[];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 136**: `    if (data is List) {` — Pengecekan kondisi.
+- **Baris 137**: `      for (final item in data) {` — Perulangan untuk memproses beberapa data.
+- **Baris 138**: `        hasil.add(Ticket.fromJson(readMap(item)));` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `      }` — Pembuka/penutup blok kode.
+- **Baris 140**: `    }` — Pembuka/penutup blok kode.
+- **Baris 141**: `` — Baris kosong untuk kerapian.
+- **Baris 142**: `    return hasil;` — Mengembalikan nilai dari fungsi.
+- **Baris 143**: `  }` — Pembuka/penutup blok kode.
+- **Baris 144**: `}` — Pembuka/penutup blok kode.
+
+## lib/service/registration_service.dart
+
+Jumlah baris: 72
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:typed_data';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../model/model_utils.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import 'api.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `` — Baris kosong untuk kerapian.
+- **Baris 7**: `class RegistrationService {` — Mendefinisikan class bernama RegistrationService.
+- **Baris 8**: `  static Future<Ticket> create(int eventId) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 9**: `    final response = await ApiService.post(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `      '/registrations',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 11**: `      body: {'event_id': eventId},` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `    return Ticket.fromJson(readMap(body['data']));` — Mengembalikan nilai dari fungsi.
+- **Baris 15**: `  }` — Pembuka/penutup blok kode.
+- **Baris 16**: `` — Baris kosong untuk kerapian.
+- **Baris 17**: `  static Future<List<Ticket>> myTickets() async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `    final response = await ApiService.get('/registrations/my-tickets');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 20**: `    final data = body['data'];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 21**: `` — Baris kosong untuk kerapian.
+- **Baris 22**: `    final hasil = <Ticket>[];` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 23**: `    if (data is List) {` — Pengecekan kondisi.
+- **Baris 24**: `      for (final item in data) {` — Perulangan untuk memproses beberapa data.
+- **Baris 25**: `        hasil.add(Ticket.fromJson(readMap(item)));` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `      }` — Pembuka/penutup blok kode.
+- **Baris 27**: `    }` — Pembuka/penutup blok kode.
+- **Baris 28**: `` — Baris kosong untuk kerapian.
+- **Baris 29**: `    return hasil;` — Mengembalikan nilai dari fungsi.
+- **Baris 30**: `  }` — Pembuka/penutup blok kode.
+- **Baris 31**: `` — Baris kosong untuk kerapian.
+- **Baris 32**: `  static Future<Ticket> detail(int id) async {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `    final response = await ApiService.get('/registrations/$id');` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 34**: `    final body = readMap(response);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 35**: `    final data = readMap(body['data']);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 36**: `` — Baris kosong untuk kerapian.
+- **Baris 37**: `    if (data.isEmpty) {` — Pengecekan kondisi.
+- **Baris 38**: `      throw const ApiException(404, 'Tiket tidak ditemukan.');` — Melempar error agar ditangani pemanggil.
+- **Baris 39**: `    }` — Pembuka/penutup blok kode.
+- **Baris 40**: `` — Baris kosong untuk kerapian.
+- **Baris 41**: `    return Ticket.fromJson(data);` — Mengembalikan nilai dari fungsi.
+- **Baris 42**: `  }` — Pembuka/penutup blok kode.
+- **Baris 43**: `` — Baris kosong untuk kerapian.
+- **Baris 44**: `  static Future<dynamic> uploadPaymentProof({` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `    required int registrationId,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `    required Uint8List bytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `    required String fileName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `  }) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `    return ApiService.multipart(` — Mengembalikan nilai dari fungsi.
+- **Baris 50**: `      'PATCH',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `      '/registrations/$registrationId/payment',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `      fileField: 'payment_proof',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `      fileBytes: bytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `      fileName: fileName,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `  }` — Pembuka/penutup blok kode.
+- **Baris 57**: `` — Baris kosong untuk kerapian.
+- **Baris 58**: `  static Future<dynamic> updateStatus(int registrationId, String status) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `    return ApiService.patch(` — Mengembalikan nilai dari fungsi.
+- **Baris 60**: `      '/registrations/$registrationId/status',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `      body: {'status': status},` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `  }` — Pembuka/penutup blok kode.
+- **Baris 64**: `` — Baris kosong untuk kerapian.
+- **Baris 65**: `  static Future<dynamic> cancel(int registrationId) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `    return updateStatus(registrationId, 'cancelled');` — Mengembalikan nilai dari fungsi.
+- **Baris 67**: `  }` — Pembuka/penutup blok kode.
+- **Baris 68**: `` — Baris kosong untuk kerapian.
+- **Baris 69**: `  static Future<dynamic> approve(int registrationId) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `    return updateStatus(registrationId, 'approved');` — Mengembalikan nilai dari fungsi.
+- **Baris 71**: `  }` — Pembuka/penutup blok kode.
+- **Baris 72**: `}` — Pembuka/penutup blok kode.
+
+## lib/utils/pilih_gambar.dart
+
+Jumlah baris: 53
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'dart:typed_data';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import 'package:image_picker/image_picker.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `class GambarPilihan {` — Mendefinisikan class bernama GambarPilihan.
+- **Baris 6**: `  final Uint8List bytes;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final String nama;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const GambarPilihan({required this.bytes, required this.nama});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `}` — Pembuka/penutup blok kode.
+- **Baris 11**: `` — Baris kosong untuk kerapian.
+- **Baris 12**: `class PilihGambarException implements Exception {` — Mendefinisikan class bernama PilihGambarException.
+- **Baris 13**: `  final String message;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `  const PilihGambarException(this.message);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 16**: `` — Baris kosong untuk kerapian.
+- **Baris 17**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `  String toString() => message;` — Fungsi/method `toString` untuk menjalankan bagian logika ini.
+- **Baris 19**: `}` — Pembuka/penutup blok kode.
+- **Baris 20**: `` — Baris kosong untuk kerapian.
+- **Baris 21**: `Future<GambarPilihan?> pilihGambarDariGaleri() async {` — Fungsi/method `pilihGambarDariGaleri` untuk menjalankan bagian logika ini.
+- **Baris 22**: `  final picker = ImagePicker();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 23**: `  final file = await picker.pickImage(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 24**: `    source: ImageSource.gallery,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `    imageQuality: 85,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `    maxWidth: 1800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `  );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `` — Baris kosong untuk kerapian.
+- **Baris 29**: `  if (file == null) return null;` — Pengecekan kondisi.
+- **Baris 30**: `` — Baris kosong untuk kerapian.
+- **Baris 31**: `  final nama = file.name.toLowerCase();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `  final dikenal = nama.endsWith('.jpg') \|\|` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 33**: `      nama.endsWith('.jpeg') \|\|` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `      nama.endsWith('.png');` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `` — Baris kosong untuk kerapian.
+- **Baris 36**: `  if (!dikenal && nama.contains('.')) {` — Pengecekan kondisi.
+- **Baris 37**: `    throw const PilihGambarException(` — Melempar error agar ditangani pemanggil.
+- **Baris 38**: `      'Pilih gambar dengan format JPG atau PNG.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `  }` — Pembuka/penutup blok kode.
+- **Baris 41**: `` — Baris kosong untuk kerapian.
+- **Baris 42**: `  final bytes = await file.readAsBytes();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 43**: `  if (bytes.length > 5 * 1024 * 1024) {` — Pengecekan kondisi.
+- **Baris 44**: `    throw const PilihGambarException('Ukuran gambar maksimal 5 MB.');` — Melempar error agar ditangani pemanggil.
+- **Baris 45**: `  }` — Pembuka/penutup blok kode.
+- **Baris 46**: `` — Baris kosong untuk kerapian.
+- **Baris 47**: `  return GambarPilihan(` — Mengembalikan nilai dari fungsi.
+- **Baris 48**: `    bytes: bytes,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `    nama: dikenal` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `        ? file.name` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `        : 'gambar_${DateTime.now().millisecondsSinceEpoch}.jpg',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `  );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/auth_header.dart
+
+Jumlah baris: 124
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import 'brand_mark.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `` — Baris kosong untuk kerapian.
+- **Baris 6**: `class AuthHeader extends StatelessWidget {` — Mendefinisikan class bernama AuthHeader.
+- **Baris 7**: `  final String title;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `  final String subtitle;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 9**: `` — Baris kosong untuk kerapian.
+- **Baris 10**: `  const AuthHeader({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `    required this.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `    required this.subtitle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 18**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 19**: `      width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `        borderRadius: BorderRadius.circular(26),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `        gradient: const LinearGradient(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `          begin: Alignment.topLeft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `          end: Alignment.bottomRight,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `          colors: [AppColors.brandDark, AppColors.brand],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `      child: Stack(` — Menyusun layout tampilan.
+- **Baris 30**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `          Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `            right: -54,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `            top: -58,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `            child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `              width: 168,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `              height: 168,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `                shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `                border: Border.all(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `                  color: Colors.white.withValues(alpha: 0.10),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `          Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `            right: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `            bottom: -46,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `            child: Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `              width: 110,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `              height: 110,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `              decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `                shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `                color: Colors.white.withValues(alpha: 0.05),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `          Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `            padding: const EdgeInsets.all(24),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `            child: Column(` — Menyusun layout tampilan.
+- **Baris 60**: `              crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `                const BrandMark(light: true, size: 38),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 63**: `                const SizedBox(height: 26),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 64**: `                Text(` — Menampilkan teks di UI.
+- **Baris 65**: `                  title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `                  style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `                    color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `                    fontSize: 26,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `                    height: 1.15,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `                    fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `                    letterSpacing: -0.6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `                const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 75**: `                Text(` — Menampilkan teks di UI.
+- **Baris 76**: `                  subtitle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `                  style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `                    color: Colors.white.withValues(alpha: 0.72),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `                    fontSize: 13,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `                    height: 1.5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `                const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 84**: `                Wrap(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `                  spacing: 14,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `                  runSpacing: 8,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `                  children: const [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `                    _Perks(ikon: Icons.local_activity_outlined, teks: 'Tiket digital'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `                    _Perks(ikon: Icons.verified_outlined, teks: 'Status transparan'),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `                  ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 92**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 93**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 94**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 95**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `  }` — Pembuka/penutup blok kode.
+- **Baris 99**: `}` — Pembuka/penutup blok kode.
+- **Baris 100**: `` — Baris kosong untuk kerapian.
+- **Baris 101**: `class _Perks extends StatelessWidget {` — Mendefinisikan class bernama _Perks.
+- **Baris 102**: `  final IconData ikon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 103**: `  final String teks;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 104**: `` — Baris kosong untuk kerapian.
+- **Baris 105**: `  const _Perks({required this.ikon, required this.teks});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 106**: `` — Baris kosong untuk kerapian.
+- **Baris 107**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 109**: `    return Row(` — Mengembalikan nilai dari fungsi.
+- **Baris 110**: `      mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `        Icon(ikon, size: 14, color: Colors.white.withValues(alpha: 0.62)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `        const SizedBox(width: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 114**: `        Text(` — Menampilkan teks di UI.
+- **Baris 115**: `          teks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `          style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `            fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `            color: Colors.white.withValues(alpha: 0.70),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `  }` — Pembuka/penutup blok kode.
+- **Baris 124**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/brand_mark.dart
+
+Jumlah baris: 51
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `class BrandMark extends StatelessWidget {` — Mendefinisikan class bernama BrandMark.
+- **Baris 6**: `  final double size;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final bool light;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const BrandMark({super.key, this.size = 40, this.light = false});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `` — Baris kosong untuk kerapian.
+- **Baris 11**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 13**: `    return Row(` — Mengembalikan nilai dari fungsi.
+- **Baris 14**: `      mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `        Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `          width: size,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `          height: size,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `          decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `            color: light` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `                ? Colors.white.withValues(alpha: 0.14)` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `                : AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `            borderRadius: BorderRadius.circular(size * 0.3),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `            border: light` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `                ? Border.all(color: Colors.white.withValues(alpha: 0.18))` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `                : null,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `          child: ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `            borderRadius: BorderRadius.circular(size * 0.3),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `            child: Image.asset(` — Menampilkan gambar.
+- **Baris 31**: `              'assets/logo.jpg',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `              width: size,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `              height: size,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `              fit: BoxFit.cover,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `        SizedBox(width: size * 0.28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `        Text(` — Menampilkan teks di UI.
+- **Baris 40**: `          'GATIX',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `          style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `            fontSize: size * 0.62,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `            fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `            letterSpacing: -1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `            color: light ? Colors.white : AppColors.ink,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `  }` — Pembuka/penutup blok kode.
+- **Baris 51**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/event_card.dart
+
+Jumlah baris: 186
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../model/event_item.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import 'network_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `` — Baris kosong untuk kerapian.
+- **Baris 8**: `class EventCard extends StatelessWidget {` — Mendefinisikan class bernama EventCard.
+- **Baris 9**: `  final EventItem event;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `` — Baris kosong untuk kerapian.
+- **Baris 12**: `  const EventCard({super.key, required this.event, required this.onTap});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `` — Baris kosong untuk kerapian.
+- **Baris 14**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 16**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 17**: `` — Baris kosong untuk kerapian.
+- **Baris 18**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 19**: `      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `      shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `        borderRadius: BorderRadius.circular(AppRadius.card),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `        side: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `        child: Column(` — Menyusun layout tampilan.
+- **Baris 28**: `          crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `            Stack(` — Menyusun layout tampilan.
+- **Baris 31**: `              children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `                SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `                  height: 156,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `                  width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `                  child: NetworkBanner(url: event.bannerUrl),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `                Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `                  left: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `                  top: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `                  child: _Pil(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `                    teks: event.gratis ? 'Gratis' : formatRupiah(event.price),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `                    warnaTeks: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `                    warnaLatar: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `                if (event.kuotaHabis)` — Pengecekan kondisi.
+- **Baris 47**: `                  const Positioned(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 48**: `                    right: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `                    top: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `                    child: _Pil(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `                      teks: 'Kuota habis',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `                      warnaTeks: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `                      warnaLatar: AppColors.dangerSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `              ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `            Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `              child: Column(` — Menyusun layout tampilan.
+- **Baris 61**: `                crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `                  Text(` — Menampilkan teks di UI.
+- **Baris 64**: `                    event.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `                    maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `                    overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `                    style: tema.textTheme.titleMedium?.copyWith(fontSize: 16),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `                  const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 70**: `                  _BarisInfo(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `                    ikon: Icons.calendar_today_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `                    teks: formatTanggal(event.date),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `                  const SizedBox(height: 5),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 75**: `                  _BarisInfo(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `                    ikon: Icons.place_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `                    teks: event.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `                  const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 80**: `                  ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `                    borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `                    child: LinearProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `                      value: event.quota <= 0` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `                          ? 0` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `                          : (event.taken / event.quota).clamp(0.0, 1.0),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `                      minHeight: 5,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `                      backgroundColor: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `                      color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `                  const SizedBox(height: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 92**: `                  Row(` — Menyusun layout tampilan.
+- **Baris 93**: `                    children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 94**: `                      Text(` — Menampilkan teks di UI.
+- **Baris 95**: `                        'Tersisa ${event.availableQuota} dari ${event.quota} tiket',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `                        style: tema.textTheme.bodySmall?.copyWith(fontSize: 11),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `                      const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 99**: `                      const Text(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 100**: `                        'Lihat detail',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `                        style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `                          fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `                          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `                          color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 105**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `                      const SizedBox(width: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 108**: `                      const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 109**: `                        Icons.chevron_right_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `                        size: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `                        color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `                    ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `  }` — Pembuka/penutup blok kode.
+- **Baris 123**: `}` — Pembuka/penutup blok kode.
+- **Baris 124**: `` — Baris kosong untuk kerapian.
+- **Baris 125**: `class _BarisInfo extends StatelessWidget {` — Mendefinisikan class bernama _BarisInfo.
+- **Baris 126**: `  final IconData ikon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 127**: `  final String teks;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 128**: `` — Baris kosong untuk kerapian.
+- **Baris 129**: `  const _BarisInfo({required this.ikon, required this.teks});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 130**: `` — Baris kosong untuk kerapian.
+- **Baris 131**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 132**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 133**: `    return Row(` — Mengembalikan nilai dari fungsi.
+- **Baris 134**: `      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `        Icon(ikon, size: 14, color: AppColors.muted),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `        const SizedBox(width: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 137**: `        Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `          child: Text(` — Menampilkan teks di UI.
+- **Baris 139**: `            teks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `            maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 141**: `            overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `            style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 146**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 147**: `  }` — Pembuka/penutup blok kode.
+- **Baris 148**: `}` — Pembuka/penutup blok kode.
+- **Baris 149**: `` — Baris kosong untuk kerapian.
+- **Baris 150**: `class _Pil extends StatelessWidget {` — Mendefinisikan class bernama _Pil.
+- **Baris 151**: `  final String teks;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 152**: `  final Color warnaTeks;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 153**: `  final Color warnaLatar;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 154**: `` — Baris kosong untuk kerapian.
+- **Baris 155**: `  const _Pil({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 156**: `    required this.teks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 157**: `    required this.warnaTeks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 158**: `    required this.warnaLatar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 159**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 160**: `` — Baris kosong untuk kerapian.
+- **Baris 161**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 162**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 163**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 164**: `      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 165**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 166**: `        color: warnaLatar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 167**: `        borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 168**: `        boxShadow: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 169**: `          BoxShadow(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 170**: `            color: Colors.black.withValues(alpha: 0.06),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 171**: `            blurRadius: 8,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 172**: `            offset: const Offset(0, 2),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 173**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 174**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 175**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 176**: `      child: Text(` — Menampilkan teks di UI.
+- **Baris 177**: `        teks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 178**: `        style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 179**: `          color: warnaTeks,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 180**: `          fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 181**: `          fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 182**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 183**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 184**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 185**: `  }` — Pembuka/penutup blok kode.
+- **Baris 186**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/info_banner.dart
+
+Jumlah baris: 47
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `class InfoBanner extends StatelessWidget {` — Mendefinisikan class bernama InfoBanner.
+- **Baris 4**: `  final IconData icon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 5**: `  final String message;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 6**: `  final Color color;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final Color background;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const InfoBanner({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 11**: `    required this.icon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `    required this.message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `    required this.color,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `    required this.background,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `` — Baris kosong untuk kerapian.
+- **Baris 17**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 19**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 20**: `      width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `      padding: const EdgeInsets.all(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `        color: background,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `        borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `        border: Border.all(color: color.withValues(alpha: 0.18)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `      child: Row(` — Menyusun layout tampilan.
+- **Baris 28**: `        crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `          Icon(icon, size: 18, color: color),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `          const SizedBox(width: 8),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `          Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `            child: Text(` — Menampilkan teks di UI.
+- **Baris 34**: `              message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `              style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `                color: color,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `                fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `                height: 1.45,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `                fontWeight: FontWeight.w500,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `  }` — Pembuka/penutup blok kode.
+- **Baris 47**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/initials_avatar.dart
+
+Jumlah baris: 40
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `class InitialsAvatar extends StatelessWidget {` — Mendefinisikan class bernama InitialsAvatar.
+- **Baris 6**: `  final String name;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final double size;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const InitialsAvatar({super.key, required this.name, this.size = 48});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `` — Baris kosong untuk kerapian.
+- **Baris 11**: `  String get _inisial {` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `    final bagian = name.trim().split(RegExp(r'\s+'));` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 13**: `    if (bagian.isEmpty \|\| bagian.first.isEmpty) return 'G';` — Pengecekan kondisi.
+- **Baris 14**: `    if (bagian.length == 1) return bagian.first.substring(0, 1).toUpperCase();` — Pengecekan kondisi.
+- **Baris 15**: `    return (bagian.first.substring(0, 1) + bagian.last.substring(0, 1))` — Mengembalikan nilai dari fungsi.
+- **Baris 16**: `        .toUpperCase();` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `  }` — Pembuka/penutup blok kode.
+- **Baris 18**: `` — Baris kosong untuk kerapian.
+- **Baris 19**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 21**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 22**: `      width: size,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `      height: size,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `      alignment: Alignment.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `        color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `        shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `        border: Border.all(color: AppColors.brandLine),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `      child: Text(` — Menampilkan teks di UI.
+- **Baris 31**: `        _inisial,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `        style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `          color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `          fontSize: size * 0.32,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `          fontWeight: FontWeight.w800,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `  }` — Pembuka/penutup blok kode.
+- **Baris 40**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/network_banner.dart
+
+Jumlah baris: 65
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `class NetworkBanner extends StatelessWidget {` — Mendefinisikan class bernama NetworkBanner.
+- **Baris 6**: `  final String? url;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `  final BoxFit fit;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `  final IconData fallbackIcon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 9**: `` — Baris kosong untuk kerapian.
+- **Baris 10**: `  const NetworkBanner({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `    required this.url,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `    this.fit = BoxFit.cover,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `    this.fallbackIcon = Icons.image_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `` — Baris kosong untuk kerapian.
+- **Baris 17**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 19**: `    final gambar = url;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 20**: `` — Baris kosong untuk kerapian.
+- **Baris 21**: `    if (gambar == null \|\| gambar.isEmpty) {` — Pengecekan kondisi.
+- **Baris 22**: `      return _placeholder();` — Mengembalikan nilai dari fungsi.
+- **Baris 23**: `    }` — Pembuka/penutup blok kode.
+- **Baris 24**: `` — Baris kosong untuk kerapian.
+- **Baris 25**: `    return Image.network(` — Mengembalikan nilai dari fungsi.
+- **Baris 26**: `      gambar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `      fit: fit,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `      width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `      height: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `      loadingBuilder: (context, child, progress) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `        if (progress == null) return child;` — Pengecekan kondisi.
+- **Baris 32**: `        return _placeholder(loading: true);` — Mengembalikan nilai dari fungsi.
+- **Baris 33**: `      },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `      errorBuilder: (context, error, stackTrace) => _placeholder(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `  }` — Pembuka/penutup blok kode.
+- **Baris 37**: `` — Baris kosong untuk kerapian.
+- **Baris 38**: `  Widget _placeholder({bool loading = false}) {` — Fungsi/method `_placeholder` untuk menjalankan bagian logika ini.
+- **Baris 39**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 40**: `      decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `        gradient: LinearGradient(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `          begin: Alignment.topLeft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `          end: Alignment.bottomRight,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `          colors: [AppColors.brandSoft, Color(0xFFF4E7E7)],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `      child: Center(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `        child: loading` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `            ? const SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `                width: 22,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `                height: 22,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `                child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `                  strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `                  color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `              )` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `            : Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `                fallbackIcon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `                size: 40,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `                color: AppColors.brand.withValues(alpha: 0.35),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `  }` — Pembuka/penutup blok kode.
+- **Baris 65**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/proof_viewer.dart
+
+Jumlah baris: 65
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `void tampilkanBuktiPembayaran(BuildContext context, String url) {` — Fungsi/method `tampilkanBuktiPembayaran` untuk menjalankan bagian logika ini.
+- **Baris 4**: `  showDialog(` — Menampilkan dialog konfirmasi/pilihan.
+- **Baris 5**: `    context: context,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 6**: `    builder: (context) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 7**: `      return Dialog(` — Mengembalikan nilai dari fungsi.
+- **Baris 8**: `        backgroundColor: Colors.black,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 9**: `        insetPadding: const EdgeInsets.all(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 10**: `        shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 11**: `          borderRadius: BorderRadius.circular(18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 13**: `        clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `        child: SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `          height: MediaQuery.sizeOf(context).height * 0.72,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `          child: Stack(` — Menyusun layout tampilan.
+- **Baris 17**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `              Positioned.fill(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `                child: InteractiveViewer(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `                  minScale: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `                  maxScale: 4,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `                  child: Image.network(` — Menampilkan gambar.
+- **Baris 23**: `                    url,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `                    fit: BoxFit.contain,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `                    loadingBuilder: (context, child, progress) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `                      if (progress == null) return child;` — Pengecekan kondisi.
+- **Baris 27**: `                      return const Center(` — Mengembalikan nilai dari fungsi.
+- **Baris 28**: `                        child: CircularProgressIndicator(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `                          color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `                          strokeWidth: 2,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `                      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `                    },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `                    errorBuilder: (context, error, stackTrace) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `                      return const Center(` — Mengembalikan nilai dari fungsi.
+- **Baris 36**: `                        child: Text(` — Menampilkan teks di UI.
+- **Baris 37**: `                          'Gagal memuat bukti pembayaran.',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `                          style: TextStyle(color: Colors.white70),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `                      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `                    },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `              Positioned(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `                top: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `                right: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `                child: Material(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `                  color: Colors.black.withValues(alpha: 0.45),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `                  shape: const CircleBorder(),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `                  clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `                  child: IconButton(` — Membuat tombol aksi.
+- **Baris 53**: `                    tooltip: 'Tutup',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `                    onPressed: () => Navigator.pop(context),` — Berpindah halaman atau mengatur route.
+- **Baris 55**: `                    icon: const Icon(Icons.close_rounded, color: Colors.white),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `                ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `      );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `    },` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `  );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/state_view.dart
+
+Jumlah baris: 147
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `` — Baris kosong untuk kerapian.
+- **Baris 5**: `class LoadingState extends StatelessWidget {` — Mendefinisikan class bernama LoadingState.
+- **Baris 6**: `  final String message;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 7**: `` — Baris kosong untuk kerapian.
+- **Baris 8**: `  const LoadingState({super.key, this.message = 'Memuat data...'});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 9**: `` — Baris kosong untuk kerapian.
+- **Baris 10**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 11**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 12**: `    return Center(` — Mengembalikan nilai dari fungsi.
+- **Baris 13**: `      child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 14**: `        padding: const EdgeInsets.all(32),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 15**: `        child: Column(` — Menyusun layout tampilan.
+- **Baris 16**: `          mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 17**: `          children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `            const SizedBox(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 19**: `              width: 26,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `              height: 26,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `              child: CircularProgressIndicator(strokeWidth: 2.4),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `            const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 24**: `            Text(` — Menampilkan teks di UI.
+- **Baris 25**: `              message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `              style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `              textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 33**: `  }` — Pembuka/penutup blok kode.
+- **Baris 34**: `}` — Pembuka/penutup blok kode.
+- **Baris 35**: `` — Baris kosong untuk kerapian.
+- **Baris 36**: `class ErrorState extends StatelessWidget {` — Mendefinisikan class bernama ErrorState.
+- **Baris 37**: `  final String message;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 38**: `  final VoidCallback onRetry;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 39**: `  final String title;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 40**: `` — Baris kosong untuk kerapian.
+- **Baris 41**: `  const ErrorState({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 42**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `    required this.message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `    required this.onRetry,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `    this.title = 'Gagal memuat data',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 47**: `` — Baris kosong untuk kerapian.
+- **Baris 48**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 49**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 50**: `    return Padding(` — Mengembalikan nilai dari fungsi.
+- **Baris 51**: `      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `      child: Column(` — Menyusun layout tampilan.
+- **Baris 53**: `        mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `          Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `            width: 56,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `            height: 56,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 58**: `            decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 59**: `              color: AppColors.dangerSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `              shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `            child: const Icon(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `              Icons.cloud_off_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `              color: AppColors.danger,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 65**: `              size: 26,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 66**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `          const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 69**: `          Text(` — Menampilkan teks di UI.
+- **Baris 70**: `            title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `            style: Theme.of(context).textTheme.titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 72**: `            textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 73**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `          const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 75**: `          Text(` — Menampilkan teks di UI.
+- **Baris 76**: `            message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `            style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `            textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `          const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 81**: `          OutlinedButton.icon(` — Membuat tombol aksi.
+- **Baris 82**: `            onPressed: onRetry,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `            icon: const Icon(Icons.refresh_rounded, size: 18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `            label: const Text('Coba lagi'),` — Menampilkan teks di UI.
+- **Baris 85**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 86**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 87**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 88**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 89**: `  }` — Pembuka/penutup blok kode.
+- **Baris 90**: `}` — Pembuka/penutup blok kode.
+- **Baris 91**: `` — Baris kosong untuk kerapian.
+- **Baris 92**: `class EmptyState extends StatelessWidget {` — Mendefinisikan class bernama EmptyState.
+- **Baris 93**: `  final IconData icon;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 94**: `  final String title;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 95**: `  final String message;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 96**: `  final String? actionLabel;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 97**: `  final VoidCallback? onAction;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 98**: `` — Baris kosong untuk kerapian.
+- **Baris 99**: `  const EmptyState({` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 100**: `    super.key,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 101**: `    required this.icon,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 102**: `    required this.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `    required this.message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `    this.actionLabel,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 105**: `    this.onAction,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `  });` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `` — Baris kosong untuk kerapian.
+- **Baris 108**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 110**: `    return Padding(` — Mengembalikan nilai dari fungsi.
+- **Baris 111**: `      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `      child: Column(` — Menyusun layout tampilan.
+- **Baris 113**: `        mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 114**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 115**: `          Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 116**: `            width: 60,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 117**: `            height: 60,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 118**: `            decoration: const BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 119**: `              color: AppColors.brandSoft,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `              shape: BoxShape.circle,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 121**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 122**: `            child: Icon(icon, color: AppColors.brand, size: 28),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `          const SizedBox(height: 16),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 125**: `          Text(` — Menampilkan teks di UI.
+- **Baris 126**: `            title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 127**: `            style: Theme.of(context).textTheme.titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 128**: `            textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 129**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 130**: `          const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 131**: `          Text(` — Menampilkan teks di UI.
+- **Baris 132**: `            message,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 133**: `            style: Theme.of(context).textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 134**: `            textAlign: TextAlign.center,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 136**: `          if (actionLabel != null && onAction != null) ...[` — Pengecekan kondisi.
+- **Baris 137**: `            const SizedBox(height: 18),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 138**: `            OutlinedButton(` — Membuat tombol aksi.
+- **Baris 139**: `              onPressed: onAction,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 140**: `              child: Text(actionLabel!),` — Menampilkan teks di UI.
+- **Baris 141**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 142**: `          ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 143**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 144**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 146**: `  }` — Pembuka/penutup blok kode.
+- **Baris 147**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/status_badge.dart
+
+Jumlah baris: 66
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `` — Baris kosong untuk kerapian.
+- **Baris 6**: `class StatusBadge extends StatelessWidget {` — Mendefinisikan class bernama StatusBadge.
+- **Baris 7**: `  final String status;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `  const StatusBadge({super.key, required this.status});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 10**: `` — Baris kosong untuk kerapian.
+- **Baris 11**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 12**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 13**: `    final warna = _warna(status);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `    final latar = _latar(status);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 15**: `` — Baris kosong untuk kerapian.
+- **Baris 16**: `    return Container(` — Mengembalikan nilai dari fungsi.
+- **Baris 17**: `      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 18**: `      decoration: BoxDecoration(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 19**: `        color: latar,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 20**: `        borderRadius: BorderRadius.circular(999),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `        border: Border.all(color: warna.withValues(alpha: 0.18)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `      child: Row(` — Menyusun layout tampilan.
+- **Baris 24**: `        mainAxisSize: MainAxisSize.min,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `        children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `          Container(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `            width: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `            height: 6,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `            decoration: BoxDecoration(color: warna, shape: BoxShape.circle),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 31**: `          const SizedBox(width: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 32**: `          Text(` — Menampilkan teks di UI.
+- **Baris 33**: `            labelStatus(status),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `            style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `              color: warna,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `              fontSize: 11,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `              fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `            ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `        ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `  }` — Pembuka/penutup blok kode.
+- **Baris 44**: `` — Baris kosong untuk kerapian.
+- **Baris 45**: `  Color _warna(String status) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `    switch (status) {` — Memilih aksi berdasarkan nilai.
+- **Baris 47**: `      case 'approved':` — Salah satu cabang dari switch.
+- **Baris 48**: `        return AppColors.success;` — Mengembalikan nilai dari fungsi.
+- **Baris 49**: `      case 'cancelled':` — Salah satu cabang dari switch.
+- **Baris 50**: `        return AppColors.danger;` — Mengembalikan nilai dari fungsi.
+- **Baris 51**: `      default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 52**: `        return AppColors.warning;` — Mengembalikan nilai dari fungsi.
+- **Baris 53**: `    }` — Pembuka/penutup blok kode.
+- **Baris 54**: `  }` — Pembuka/penutup blok kode.
+- **Baris 55**: `` — Baris kosong untuk kerapian.
+- **Baris 56**: `  Color _latar(String status) {` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `    switch (status) {` — Memilih aksi berdasarkan nilai.
+- **Baris 58**: `      case 'approved':` — Salah satu cabang dari switch.
+- **Baris 59**: `        return AppColors.successSoft;` — Mengembalikan nilai dari fungsi.
+- **Baris 60**: `      case 'cancelled':` — Salah satu cabang dari switch.
+- **Baris 61**: `        return AppColors.dangerSoft;` — Mengembalikan nilai dari fungsi.
+- **Baris 62**: `      default:` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `        return AppColors.warningSoft;` — Mengembalikan nilai dari fungsi.
+- **Baris 64**: `    }` — Pembuka/penutup blok kode.
+- **Baris 65**: `  }` — Pembuka/penutup blok kode.
+- **Baris 66**: `}` — Pembuka/penutup blok kode.
+
+## lib/widgets/ticket_card.dart
+
+Jumlah baris: 152
+
+### Penjelasan per baris
+
+- **Baris 1**: `import 'package:flutter/material.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 2**: `` — Baris kosong untuk kerapian.
+- **Baris 3**: `import '../config/api_config.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 4**: `import '../config/app_theme.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 5**: `import '../model/ticket.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 6**: `import 'network_banner.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 7**: `import 'status_badge.dart';` — Mengimpor library atau file lain yang dibutuhkan.
+- **Baris 8**: `` — Baris kosong untuk kerapian.
+- **Baris 9**: `class TicketCard extends StatelessWidget {` — Mendefinisikan class bernama TicketCard.
+- **Baris 10**: `  final Ticket ticket;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 11**: `  final VoidCallback onTap;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 12**: `` — Baris kosong untuk kerapian.
+- **Baris 13**: `  const TicketCard({super.key, required this.ticket, required this.onTap});` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 14**: `` — Baris kosong untuk kerapian.
+- **Baris 15**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 16**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 17**: `    final tema = Theme.of(context);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 18**: `` — Baris kosong untuk kerapian.
+- **Baris 19**: `    return Material(` — Mengembalikan nilai dari fungsi.
+- **Baris 20**: `      color: Colors.white,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 21**: `      clipBehavior: Clip.antiAlias,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 22**: `      shape: RoundedRectangleBorder(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 23**: `        borderRadius: BorderRadius.circular(18),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 24**: `        side: const BorderSide(color: AppColors.line),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 25**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 26**: `      child: InkWell(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 27**: `        onTap: onTap,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 28**: `        child: Padding(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 29**: `          padding: const EdgeInsets.all(14),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 30**: `          child: Column(` — Menyusun layout tampilan.
+- **Baris 31**: `            children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 32**: `              Row(` — Menyusun layout tampilan.
+- **Baris 33**: `                crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 34**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 35**: `                  ClipRRect(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 36**: `                    borderRadius: BorderRadius.circular(12),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 37**: `                    child: SizedBox(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 38**: `                      width: 78,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 39**: `                      height: 78,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 40**: `                      child: NetworkBanner(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 41**: `                        url: ticket.bannerUrl,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 42**: `                        fallbackIcon: Icons.local_activity_outlined,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 43**: `                      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 44**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 45**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 46**: `                  const SizedBox(width: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 47**: `                  Expanded(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 48**: `                    child: Column(` — Menyusun layout tampilan.
+- **Baris 49**: `                      crossAxisAlignment: CrossAxisAlignment.start,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 50**: `                      children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 51**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 52**: `                          ticket.title,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 53**: `                          maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 54**: `                          overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 55**: `                          style: tema.textTheme.titleMedium,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 56**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 57**: `                        const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 58**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 59**: `                          formatTanggal(ticket.date),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 60**: `                          style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 61**: `                          maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 62**: `                          overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 63**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 64**: `                        const SizedBox(height: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 65**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 66**: `                          ticket.location,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 67**: `                          style: tema.textTheme.bodySmall,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 68**: `                          maxLines: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 69**: `                          overflow: TextOverflow.ellipsis,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 70**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 71**: `                        const SizedBox(height: 6),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 72**: `                        Text(` — Menampilkan teks di UI.
+- **Baris 73**: `                          formatRupiah(ticket.price),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 74**: `                          style: const TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 75**: `                            fontSize: 13,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 76**: `                            fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 77**: `                            color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 78**: `                          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 79**: `                        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 80**: `                      ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 81**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 82**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 83**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 84**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 85**: `              const SizedBox(height: 12),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 86**: `              const _GarisPutus(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 87**: `              const SizedBox(height: 10),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 88**: `              Row(` — Menyusun layout tampilan.
+- **Baris 89**: `                children: [` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 90**: `                  StatusBadge(status: ticket.status),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 91**: `                  const Spacer(),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 92**: `                  const Text(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 93**: `                    'Lihat tiket',` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 94**: `                    style: TextStyle(` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 95**: `                      fontSize: 12,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 96**: `                      fontWeight: FontWeight.w700,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 97**: `                      color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 98**: `                    ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 99**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 100**: `                  const SizedBox(width: 2),` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 101**: `                  const Icon(` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 102**: `                    Icons.chevron_right_rounded,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 103**: `                    size: 18,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 104**: `                    color: AppColors.brand,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 105**: `                  ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 106**: `                ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 107**: `              ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 108**: `            ],` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 109**: `          ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 110**: `        ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 111**: `      ),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 112**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 113**: `  }` — Pembuka/penutup blok kode.
+- **Baris 114**: `}` — Pembuka/penutup blok kode.
+- **Baris 115**: `` — Baris kosong untuk kerapian.
+- **Baris 116**: `class _GarisPutus extends StatelessWidget {` — Mendefinisikan class bernama _GarisPutus.
+- **Baris 117**: `  const _GarisPutus();` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 118**: `` — Baris kosong untuk kerapian.
+- **Baris 119**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 120**: `  Widget build(BuildContext context) {` — Fungsi/method `build` untuk menjalankan bagian logika ini.
+- **Baris 121**: `    return SizedBox(` — Mengembalikan nilai dari fungsi.
+- **Baris 122**: `      height: 1,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 123**: `      width: double.infinity,` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 124**: `      child: CustomPaint(painter: _TitikPutusPainter(AppColors.line)),` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 125**: `    );` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 126**: `  }` — Pembuka/penutup blok kode.
+- **Baris 127**: `}` — Pembuka/penutup blok kode.
+- **Baris 128**: `` — Baris kosong untuk kerapian.
+- **Baris 129**: `class _TitikPutusPainter extends CustomPainter {` — Mendefinisikan class bernama _TitikPutusPainter.
+- **Baris 130**: `  final Color color;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 131**: `` — Baris kosong untuk kerapian.
+- **Baris 132**: `  const _TitikPutusPainter(this.color);` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 133**: `` — Baris kosong untuk kerapian.
+- **Baris 134**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 135**: `  void paint(Canvas canvas, Size size) {` — Fungsi/method `paint` untuk menjalankan bagian logika ini.
+- **Baris 136**: `    final cat = Paint()` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 137**: `      ..color = color` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 138**: `      ..strokeWidth = 1;` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 139**: `` — Baris kosong untuk kerapian.
+- **Baris 140**: `    const lebar = 5.0;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 141**: `    const jarak = 5.0;` — Mendeklarasikan variabel, konstanta, atau tipe data.
+- **Baris 142**: `` — Baris kosong untuk kerapian.
+- **Baris 143**: `    for (var x = 0.0; x < size.width; x += lebar + jarak) {` — Perulangan untuk memproses beberapa data.
+- **Baris 144**: `      canvas.drawLine(Offset(x, 0), Offset(x + lebar, 0), cat);` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 145**: `    }` — Pembuka/penutup blok kode.
+- **Baris 146**: `  }` — Pembuka/penutup blok kode.
+- **Baris 147**: `` — Baris kosong untuk kerapian.
+- **Baris 148**: `  @override` — Baris kode Dart untuk menjalankan logika/flow aplikasi.
+- **Baris 149**: `  bool shouldRepaint(covariant _TitikPutusPainter oldDelegate) {` — Fungsi/method `shouldRepaint` untuk menjalankan bagian logika ini.
+- **Baris 150**: `    return oldDelegate.color != color;` — Mengembalikan nilai dari fungsi.
+- **Baris 151**: `  }` — Pembuka/penutup blok kode.
+- **Baris 152**: `}` — Pembuka/penutup blok kode.
+
